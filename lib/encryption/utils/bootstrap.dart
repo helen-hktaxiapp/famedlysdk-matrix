@@ -289,8 +289,9 @@ class Bootstrap {
         }
         // alright, we re-encrypted all the secrets. We delete the dead weight only *after* we set our key to the default key
       }
-      final updatedAccountData = client!.onSync.stream.firstWhere((syncUpdate) =>
-          syncUpdate.accountData!.any((accountData) =>
+      final updatedAccountData = client.onSync.stream.firstWhere((syncUpdate) =>
+          syncUpdate.accountData != null &&
+          syncUpdate.accountData.any((accountData) =>
               accountData.type == EventTypes.SecretStorageDefaultKey));
       await encryption!.ssss.setDefaultKeyId(newSsssKey.keyId);
       await updatedAccountData;
