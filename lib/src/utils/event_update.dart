@@ -31,30 +31,30 @@ enum EventUpdateType {
 /// already known event.
 class EventUpdate {
   /// Usually 'timeline', 'state' or whatever.
-  final EventUpdateType type;
+  final EventUpdateType? type;
 
   /// Most events belong to a room. If not, this equals to eventType.
-  final String roomID;
+  final String? roomID;
 
   @Deprecated("Use `content['type']` instead.")
-  String get eventType => content['type'];
+  String? get eventType => content!['type'];
 
   // The json payload of the content of this event.
-  final Map<String, dynamic> content;
+  final Map<String, dynamic>? content;
 
   // the order where to stort this event
-  final double sortOrder;
+  final double? sortOrder;
 
   EventUpdate({this.roomID, this.type, this.content, this.sortOrder});
 
-  Future<EventUpdate> decrypt(Room room, {bool store = false}) async {
-    if (content['type'] != EventTypes.Encrypted ||
-        !room.client.encryptionEnabled) {
+  Future<EventUpdate> decrypt(Room? room, {bool store = false}) async {
+    if (content!['type'] != EventTypes.Encrypted ||
+        !room!.client!.encryptionEnabled) {
       return this;
     }
     try {
-      final decrpytedEvent = await room.client.encryption.decryptRoomEvent(
-          room.id, Event.fromJson(content, room, sortOrder),
+      final decrpytedEvent = await room.client!.encryption!.decryptRoomEvent(
+          room.id, Event.fromJson(content!, room, sortOrder),
           store: store, updateType: type);
       return EventUpdate(
         roomID: roomID,

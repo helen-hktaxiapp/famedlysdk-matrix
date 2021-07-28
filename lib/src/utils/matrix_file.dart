@@ -26,32 +26,32 @@ import 'package:mime/mime.dart';
 import '../../matrix.dart';
 
 class MatrixFile {
-  Uint8List bytes;
-  String name;
-  String mimeType;
+  Uint8List? bytes;
+  String? name;
+  String? mimeType;
 
   /// Encrypts this file and returns the
   /// encryption information as an [EncryptedFile].
   Future<EncryptedFile> encrypt() async {
-    return await encryptFile(bytes);
+    return await encryptFile(bytes!);
   }
 
   MatrixFile({this.bytes, this.name, this.mimeType}) {
     mimeType ??=
-        lookupMimeType(name, headerBytes: bytes) ?? 'application/octet-stream';
-    name = name.split('/').last.toLowerCase();
+        lookupMimeType(name!, headerBytes: bytes) ?? 'application/octet-stream';
+    name = name!.split('/').last.toLowerCase();
   }
 
-  int get size => bytes.length;
+  int get size => bytes!.length;
 
   String get msgType {
-    if (mimeType.toLowerCase().startsWith('image/')) {
+    if (mimeType!.toLowerCase().startsWith('image/')) {
       return MessageTypes.Image;
     }
-    if (mimeType.toLowerCase().startsWith('video/')) {
+    if (mimeType!.toLowerCase().startsWith('video/')) {
       return MessageTypes.Video;
     }
-    if (mimeType.toLowerCase().startsWith('audio/')) {
+    if (mimeType!.toLowerCase().startsWith('audio/')) {
       return MessageTypes.Audio;
     }
     return MessageTypes.File;
@@ -64,14 +64,14 @@ class MatrixFile {
 }
 
 class MatrixImageFile extends MatrixFile {
-  int width;
-  int height;
-  String blurhash;
+  int? width;
+  int? height;
+  String? blurhash;
 
   MatrixImageFile(
-      {Uint8List bytes,
-      String name,
-      String mimeType,
+      {Uint8List? bytes,
+      String? name,
+      String? mimeType,
       this.width,
       this.height,
       this.blurhash})
@@ -88,14 +88,14 @@ class MatrixImageFile extends MatrixFile {
 }
 
 class MatrixVideoFile extends MatrixFile {
-  int width;
-  int height;
-  int duration;
+  int? width;
+  int? height;
+  int? duration;
 
   MatrixVideoFile(
-      {Uint8List bytes,
-      String name,
-      String mimeType,
+      {Uint8List? bytes,
+      String? name,
+      String? mimeType,
       this.width,
       this.height,
       this.duration})
@@ -112,10 +112,10 @@ class MatrixVideoFile extends MatrixFile {
 }
 
 class MatrixAudioFile extends MatrixFile {
-  int duration;
+  int? duration;
 
   MatrixAudioFile(
-      {Uint8List bytes, String name, String mimeType, this.duration})
+      {Uint8List? bytes, String? name, String? mimeType, this.duration})
       : super(bytes: bytes, name: name, mimeType: mimeType);
   @override
   String get msgType => 'm.audio';

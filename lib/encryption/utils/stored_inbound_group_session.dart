@@ -17,16 +17,16 @@
  */
 
 class StoredInboundGroupSession {
-  final int clientId;
-  final String roomId;
-  final String sessionId;
-  final String pickle;
-  final String content;
-  final String indexes;
-  final String allowedAtIndex;
-  final bool uploaded;
-  final String senderKey;
-  final String senderClaimedKeys;
+  final int? clientId;
+  final String? roomId;
+  final String? sessionId;
+  final String? pickle;
+  final String? content;
+  final String? indexes;
+  final String? allowedAtIndex;
+  final bool? uploaded;
+  final String? senderKey;
+  final String? senderClaimedKeys;
 
   StoredInboundGroupSession({
     this.clientId,

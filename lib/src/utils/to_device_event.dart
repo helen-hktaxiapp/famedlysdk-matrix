@@ -19,17 +19,17 @@
 import '../../matrix.dart';
 
 class ToDeviceEvent extends BasicEventWithSender {
-  Map<String, dynamic> encryptedContent;
+  Map<String, dynamic>? encryptedContent;
 
   String get sender => senderId;
   set sender(String sender) => senderId = sender;
 
   ToDeviceEvent({
-    String sender,
-    String type,
-    Map<String, dynamic> content,
+    required String sender,
+    required String type,
+    required Map<String, dynamic> content,
     this.encryptedContent,
-  }) {
+  }) : super(senderId: '', content: {}, type: '') {
     senderId = sender;
     this.type = type;
     this.content = content;
@@ -44,10 +44,10 @@ class ToDeviceEvent extends BasicEventWithSender {
 }
 
 class ToDeviceEventDecryptionError extends ToDeviceEvent {
-  Exception exception;
-  StackTrace stackTrace;
+  Exception? exception;
+  StackTrace? stackTrace;
   ToDeviceEventDecryptionError({
-    ToDeviceEvent toDeviceEvent,
+    required ToDeviceEvent toDeviceEvent,
     this.exception,
     this.stackTrace,
   }) : super(

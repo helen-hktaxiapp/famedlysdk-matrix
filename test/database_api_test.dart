@@ -45,19 +45,19 @@ Future<bool> olmEnabled() async {
   return olmEnabled;
 }
 
-void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
-  DatabaseApi database;
-  int toDeviceQueueIndex;
+void testDatabase(Future<DatabaseApi> futureDatabase, int? clientId) {
+  late DatabaseApi database;
+  int? toDeviceQueueIndex;
   test('Open', () async {
     database = await futureDatabase;
   });
   test('insertIntoToDeviceQueue', () async {
-    toDeviceQueueIndex = await database.insertIntoToDeviceQueue(
+    toDeviceQueueIndex = await (database.insertIntoToDeviceQueue(
       clientId,
       'm.test',
       'txnId',
       '{"foo":"bar"}',
-    );
+    ) as FutureOr<int?>);
   });
   test('getToDeviceEventQueue', () async {
     final toDeviceQueue = await database.getToDeviceEventQueue(clientId);
@@ -92,16 +92,16 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
           membership: Membership.join,
         ));
     final rooms = await database.getRoomList(Client('testclient'));
-    expect(rooms.single.id, '!testroom');
+    expect(rooms.single!.id, '!testroom');
   });
   test('getRoomList', () async {
     final list = await database.getRoomList(Client('testclient'));
-    expect(list.single.id, '!testroom');
+    expect(list.single!.id, '!testroom');
   });
   test('setRoomPrevBatch', () async {
     await database.setRoomPrevBatch('1234', clientId, '!testroom');
     final rooms = await database.getRoomList(Client('testclient'));
-    expect(rooms.single.prev_batch, '1234');
+    expect(rooms.single!.prev_batch, '1234');
   });
   test('forgetRoom', () async {
     await database.forgetRoom(clientId, '!testroom');
@@ -112,7 +112,7 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
     await database.getClient('name');
   });
   test('insertClient', () async {
-    clientId = await database.insertClient(
+    clientId = await (database.insertClient(
       'name',
       'homeserverUrl',
       'token',
@@ -121,8 +121,8 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
       'deviceName',
       'prevBatch',
       'olmAccount',
-    );
-    final client = await database.getClient('name');
+    ) as FutureOr<int?>);
+    final client = await (database.getClient('name') as FutureOr<Map<String?, dynamic>>);
     expect(client['token'], 'token');
   });
   test('updateClient', () async {
@@ -136,17 +136,17 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
       'olmAccount',
       clientId,
     );
-    final client = await database.getClient('name');
+    final client = await (database.getClient('name') as FutureOr<Map<String?, dynamic>>);
     expect(client['token'], 'token_different');
   });
   test('updateClientKeys', () async {
     await database.updateClientKeys('olmAccount2', clientId);
-    final client = await database.getClient('name');
+    final client = await (database.getClient('name') as FutureOr<Map<String?, dynamic>>);
     expect(client['olm_account'], 'olmAccount2');
   });
   test('storeSyncFilterId', () async {
     await database.storeSyncFilterId('1234', clientId);
-    final client = await database.getClient('name');
+    final client = await (database.getClient('name') as FutureOr<Map<String?, dynamic>>);
     expect(client['sync_filter_id'], '1234');
   });
   test('getAccountData', () async {
@@ -185,8 +185,8 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
     );
   });
   test('getEventById', () async {
-    final event = await database.getEventById(
-        clientId, '\$event:example.com', Room(id: '!testroom:example.com'));
+    final event = await (database.getEventById(
+        clientId, '\$event:example.com', Room(id: '!testroom:example.com')) as FutureOr<Event>);
     expect(event.type, EventTypes.Message);
   });
   test('getEventList', () async {
@@ -234,12 +234,12 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
       'senderKey',
       '{}',
     );
-    final session = await database.getInboundGroupSession(
+    final session = await (database.getInboundGroupSession(
       clientId,
       '!testroom:example.com',
       'sessionId',
-    );
-    expect(jsonDecode(session.content)['foo'], 'bar');
+    ) as FutureOr<StoredInboundGroupSession>);
+    expect(jsonDecode(session.content!)['foo'], 'bar');
   });
   test('markInboundGroupSessionAsUploaded', () async {
     await database.markInboundGroupSessionAsUploaded(
@@ -271,7 +271,7 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
   test('storeSSSSCache', () async {
     await database.storeSSSSCache(
         clientId, 'type', 'keyId', 'ciphertext', '{}');
-    final cache = await database.getSSSSCache(clientId, 'type');
+    final cache = await (database.getSSSSCache(clientId, 'type') as FutureOr<SSSSCache>);
     expect(cache.type, 'type');
     expect(cache.keyId, 'keyId');
     expect(cache.ciphertext, 'ciphertext');
@@ -327,12 +327,12 @@ void testDatabase(Future<DatabaseApi> futureDatabase, int clientId) {
       0,
       0,
     );
-    final session = await database.getOutboundGroupSession(
+    final session = await (database.getOutboundGroupSession(
       clientId,
       '!testroom:example.com',
       '@alice:example.com',
-    );
-    expect(session.devices.isEmpty, true);
+    ) as FutureOr<OutboundGroupSession>);
+    expect(session.devices!.isEmpty, true);
   });
   test('getLastSentMessageUserDeviceKey', () async {
     final list = await database.getLastSentMessageUserDeviceKey(

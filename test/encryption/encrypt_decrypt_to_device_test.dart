@@ -34,11 +34,11 @@ void main() {
     Logs().level = Level.error;
     var olmEnabled = true;
 
-    Client client;
+    Client? client;
     final otherClient = Client('othertestclient',
         httpClient: FakeMatrixApi(), databaseBuilder: getDatabase);
-    DeviceKeys device;
-    Map<String, dynamic> payload;
+    DeviceKeys? device;
+    late Map<String, dynamic> payload;
 
     test('setupClient', () async {
       try {
@@ -52,7 +52,7 @@ void main() {
       if (!olmEnabled) return;
 
       client = await getClient();
-      await client.abortSync();
+      await client!.abortSync();
       await otherClient.checkHomeserver('https://fakeserver.notexisting',
           checkWellKnown: false);
       await otherClient.init(
@@ -67,22 +67,22 @@ void main() {
 
       await Future.delayed(Duration(milliseconds: 10));
       device = DeviceKeys.fromJson({
-        'user_id': client.userID,
-        'device_id': client.deviceID,
+        'user_id': client!.userID,
+        'device_id': client!.deviceID,
         'algorithms': [
           AlgorithmTypes.olmV1Curve25519AesSha2,
           AlgorithmTypes.megolmV1AesSha2
         ],
         'keys': {
-          'curve25519:${client.deviceID}': client.identityKey,
-          'ed25519:${client.deviceID}': client.fingerprintKey,
+          'curve25519:${client!.deviceID}': client!.identityKey,
+          'ed25519:${client!.deviceID}': client!.fingerprintKey,
         },
       }, client);
     });
 
     test('encryptToDeviceMessage', () async {
       if (!olmEnabled) return;
-      payload = await otherClient.encryption
+      payload = await otherClient.encryption!
           .encryptToDeviceMessage([device], 'm.to_device', {'hello': 'foxies'});
     });
 
@@ -91,33 +91,33 @@ void main() {
       final encryptedEvent = ToDeviceEvent(
         sender: '@othertest:fakeServer.notExisting',
         type: EventTypes.Encrypted,
-        content: payload[client.userID][client.deviceID],
+        content: payload[client!.userID!][client!.deviceID],
       );
       final decryptedEvent =
-          await client.encryption.decryptToDeviceEvent(encryptedEvent);
+          await client!.encryption!.decryptToDeviceEvent(encryptedEvent);
       expect(decryptedEvent.type, 'm.to_device');
       expect(decryptedEvent.content['hello'], 'foxies');
     });
 
     test('decryptToDeviceEvent nocache', () async {
       if (!olmEnabled) return;
-      client.encryption.olmManager.olmSessions.clear();
-      payload = await otherClient.encryption.encryptToDeviceMessage(
+      client!.encryption!.olmManager.olmSessions.clear();
+      payload = await otherClient.encryption!.encryptToDeviceMessage(
           [device], 'm.to_device', {'hello': 'superfoxies'});
       final encryptedEvent = ToDeviceEvent(
         sender: '@othertest:fakeServer.notExisting',
         type: EventTypes.Encrypted,
-        content: payload[client.userID][client.deviceID],
+        content: payload[client!.userID!][client!.deviceID],
       );
       final decryptedEvent =
-          await client.encryption.decryptToDeviceEvent(encryptedEvent);
+          await client!.encryption!.decryptToDeviceEvent(encryptedEvent);
       expect(decryptedEvent.type, 'm.to_device');
       expect(decryptedEvent.content['hello'], 'superfoxies');
     });
 
     test('dispose client', () async {
       if (!olmEnabled) return;
-      await client.dispose(closeDatabase: true);
+      await client!.dispose(closeDatabase: true);
       await otherClient.dispose(closeDatabase: true);
     });
   });

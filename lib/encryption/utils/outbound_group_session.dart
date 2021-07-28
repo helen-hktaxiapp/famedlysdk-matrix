@@ -27,12 +27,12 @@ class OutboundGroupSession {
   /// This way we can easily know if a new user is added, leaves, a new devices is added, and,
   /// very importantly, if we block a device. These are all important for determining if/when
   /// an outbound session needs to be rotated.
-  Map<String, Map<String, bool>> devices;
-  DateTime creationTime;
-  olm.OutboundGroupSession outboundGroupSession;
-  int sentMessages;
+  Map<String?, Map<String?, bool>>? devices;
+  DateTime? creationTime;
+  olm.OutboundGroupSession? outboundGroupSession;
+  int? sentMessages;
   bool get isValid => outboundGroupSession != null;
-  final String key;
+  final String? key;
 
   OutboundGroupSession(
       {this.devices,
@@ -41,12 +41,12 @@ class OutboundGroupSession {
       this.sentMessages,
       this.key});
 
-  OutboundGroupSession.fromJson(Map<String, dynamic> dbEntry, String key)
+  OutboundGroupSession.fromJson(Map<String, dynamic> dbEntry, String? key)
       : key = key {
     try {
       devices = {};
       for (final entry in json.decode(dbEntry['device_ids']).entries) {
-        devices[entry.key] = Map<String, bool>.from(entry.value);
+        devices![entry.key] = Map<String, bool>.from(entry.value);
       }
     } catch (e) {
       // devices is bad (old data), so just not use this session
@@ -57,7 +57,7 @@ class OutboundGroupSession {
     }
     outboundGroupSession = olm.OutboundGroupSession();
     try {
-      outboundGroupSession.unpickle(key, dbEntry['pickle']);
+      outboundGroupSession!.unpickle(key!, dbEntry['pickle']);
       creationTime =
           DateTime.fromMillisecondsSinceEpoch(dbEntry['creation_time']);
       sentMessages = dbEntry['sent_messages'];

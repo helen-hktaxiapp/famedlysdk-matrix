@@ -25,15 +25,15 @@ import 'fake_matrix_api.dart';
 
 void main() {
   group('Commands', () {
-    Client client;
-    Room room;
+    Client? client;
+    Room? room;
 
     final getLastMessagePayload =
-        ([String type = 'm.room.message', String stateKey]) {
+        ([String type = 'm.room.message', String? stateKey]) {
       final state = stateKey != null;
       return json.decode(FakeMatrixApi.calledEndpoints.entries
           .firstWhere((e) => e.key.startsWith(
-              '/client/r0/rooms/${Uri.encodeComponent(room.id)}/${state ? 'state' : 'send'}/${Uri.encodeComponent(type)}${state && stateKey.isNotEmpty ? '/' + Uri.encodeComponent(stateKey) : ''}'))
+              '/client/r0/rooms/${Uri.encodeComponent(room!.id!)}/${state ? 'state' : 'send'}/${Uri.encodeComponent(type)}${state && stateKey!.isNotEmpty ? '/' + Uri.encodeComponent(stateKey) : ''}'))
           .value
           .first);
     };
@@ -41,23 +41,23 @@ void main() {
     test('setupClient', () async {
       client = await getClient();
       room = Room(id: '!1234:fakeServer.notExisting', client: client);
-      room.setState(Event(
+      room!.setState(Event(
         type: 'm.room.power_levels',
         content: {},
         room: room,
         stateKey: '',
       ));
-      room.setState(Event(
+      room!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client.userID,
+        stateKey: client!.userID,
       ));
     });
 
     test('send', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/send Hello World');
+      await room!.sendTextEvent('/send Hello World');
       var sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -65,7 +65,7 @@ void main() {
       });
 
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('Beep Boop');
+      await room!.sendTextEvent('Beep Boop');
       sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -73,7 +73,7 @@ void main() {
       });
 
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('Beep *Boop*');
+      await room!.sendTextEvent('Beep *Boop*');
       sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -83,7 +83,7 @@ void main() {
       });
 
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('//send Hello World');
+      await room!.sendTextEvent('//send Hello World');
       sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -93,7 +93,7 @@ void main() {
 
     test('me', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/me heya');
+      await room!.sendTextEvent('/me heya');
       final sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.emote',
@@ -103,7 +103,7 @@ void main() {
 
     test('plain', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/plain *floof*');
+      await room!.sendTextEvent('/plain *floof*');
       final sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -113,7 +113,7 @@ void main() {
 
     test('html', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/html <b>yay</b>');
+      await room!.sendTextEvent('/html <b>yay</b>');
       final sent = getLastMessagePayload();
       expect(sent, {
         'msgtype': 'm.text',
@@ -125,7 +125,7 @@ void main() {
 
     test('react', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/react 🦊',
+      await room!.sendTextEvent('/react 🦊',
           inReplyTo: Event(eventId: '\$event'));
       final sent = getLastMessagePayload('m.reaction');
       expect(sent, {
@@ -139,10 +139,10 @@ void main() {
 
     test('join', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/join !newroom:example.com');
+      await room!.sendTextEvent('/join !newroom:example.com');
       expect(
           FakeMatrixApi
-                  .calledEndpoints['/client/r0/join/!newroom%3Aexample.com']
+                  .calledEndpoints['/client/r0/join/!newroom%3Aexample.com']!
                   .first !=
               null,
           true);
@@ -150,11 +150,11 @@ void main() {
 
     test('leave', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/leave');
+      await room!.sendTextEvent('/leave');
       expect(
           FakeMatrixApi
                   .calledEndpoints[
-                      '/client/r0/rooms/!1234%3AfakeServer.notExisting/leave']
+                      '/client/r0/rooms/!1234%3AfakeServer.notExisting/leave']!
                   .first !=
               null,
           true);
@@ -162,14 +162,14 @@ void main() {
 
     test('op', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/op @user:example.org');
+      await room!.sendTextEvent('/op @user:example.org');
       var sent = getLastMessagePayload('m.room.power_levels', '');
       expect(sent, {
         'users': {'@user:example.org': 50}
       });
 
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/op @user:example.org 100');
+      await room!.sendTextEvent('/op @user:example.org 100');
       sent = getLastMessagePayload('m.room.power_levels', '');
       expect(sent, {
         'users': {'@user:example.org': 100}
@@ -178,11 +178,11 @@ void main() {
 
     test('kick', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/kick @baduser:example.org');
+      await room!.sendTextEvent('/kick @baduser:example.org');
       expect(
           json.decode(FakeMatrixApi
               .calledEndpoints[
-                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/kick']
+                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/kick']!
               .first),
           {
             'user_id': '@baduser:example.org',
@@ -191,11 +191,11 @@ void main() {
 
     test('ban', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/ban @baduser:example.org');
+      await room!.sendTextEvent('/ban @baduser:example.org');
       expect(
           json.decode(FakeMatrixApi
               .calledEndpoints[
-                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/ban']
+                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/ban']!
               .first),
           {
             'user_id': '@baduser:example.org',
@@ -204,11 +204,11 @@ void main() {
 
     test('unban', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/unban @baduser:example.org');
+      await room!.sendTextEvent('/unban @baduser:example.org');
       expect(
           json.decode(FakeMatrixApi
               .calledEndpoints[
-                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/unban']
+                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/unban']!
               .first),
           {
             'user_id': '@baduser:example.org',
@@ -217,11 +217,11 @@ void main() {
 
     test('invite', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/invite @baduser:example.org');
+      await room!.sendTextEvent('/invite @baduser:example.org');
       expect(
           json.decode(FakeMatrixApi
               .calledEndpoints[
-                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/invite']
+                  '/client/r0/rooms/!1234%3AfakeServer.notExisting/invite']!
               .first),
           {
             'user_id': '@baduser:example.org',
@@ -230,8 +230,8 @@ void main() {
 
     test('myroomnick', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/myroomnick Foxies~');
-      final sent = getLastMessagePayload('m.room.member', client.userID);
+      await room!.sendTextEvent('/myroomnick Foxies~');
+      final sent = getLastMessagePayload('m.room.member', client!.userID);
       expect(sent, {
         'displayname': 'Foxies~',
         'membership': 'join',
@@ -240,8 +240,8 @@ void main() {
 
     test('myroomavatar', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      await room.sendTextEvent('/myroomavatar mxc://beep/boop');
-      final sent = getLastMessagePayload('m.room.member', client.userID);
+      await room!.sendTextEvent('/myroomavatar mxc://beep/boop');
+      final sent = getLastMessagePayload('m.room.member', client!.userID);
       expect(sent, {
         'avatar_url': 'mxc://beep/boop',
         'membership': 'join',
@@ -249,7 +249,7 @@ void main() {
     });
 
     test('dispose client', () async {
-      await client.dispose(closeDatabase: true);
+      await client!.dispose(closeDatabase: true);
     });
   });
 }

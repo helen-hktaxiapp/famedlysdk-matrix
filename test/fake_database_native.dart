@@ -26,16 +26,16 @@ import 'package:hive/hive.dart';
 import 'package:moor/moor.dart';
 import 'package:moor/ffi.dart' as moor;
 
-Future<DatabaseApi> getDatabase(Client _) => getHiveDatabase(_);
+Future<DatabaseApi> getDatabase(Client? _) => getHiveDatabase(_);
 
-Future<Database> getMoorDatabase(Client _) async {
+Future<Database> getMoorDatabase(Client? _) async {
   moorRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   return Database(moor.VmDatabase.memory());
 }
 
 bool hiveInitialized = false;
 
-Future<FamedlySdkHiveDatabase> getHiveDatabase(Client c) async {
+Future<FamedlySdkHiveDatabase> getHiveDatabase(Client? c) async {
   if (!hiveInitialized) {
     final fileSystem = MemoryFileSystem();
     final testHivePath =

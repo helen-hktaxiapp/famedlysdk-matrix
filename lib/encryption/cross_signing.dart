@@ -27,14 +27,14 @@ import 'ssss.dart';
 
 class CrossSigning {
   final Encryption encryption;
-  Client get client => encryption.client;
+  Client? get client => encryption.client;
   CrossSigning(this.encryption) {
     encryption.ssss.setValidator(EventTypes.CrossSigningSelfSigning,
-        (String secret) async {
+        (String? secret) async {
       final keyObj = olm.PkSigning();
       try {
-        return keyObj.init_with_seed(base64.decode(secret)) ==
-            client.userDeviceKeys[client.userID].selfSigningKey.ed25519Key;
+        return keyObj.init_with_seed(base64.decode(secret!)) ==
+            client!.userDeviceKeys[client!.userID]!.selfSigningKey!.ed25519Key;
       } catch (_) {
         return false;
       } finally {
@@ -42,11 +42,11 @@ class CrossSigning {
       }
     });
     encryption.ssss.setValidator(EventTypes.CrossSigningUserSigning,
-        (String secret) async {
+        (String? secret) async {
       final keyObj = olm.PkSigning();
       try {
-        return keyObj.init_with_seed(base64.decode(secret)) ==
-            client.userDeviceKeys[client.userID].userSigningKey.ed25519Key;
+        return keyObj.init_with_seed(base64.decode(secret!)) ==
+            client!.userDeviceKeys[client!.userID]!.userSigningKey!.ed25519Key;
       } catch (_) {
         return false;
       } finally {
@@ -72,10 +72,10 @@ class CrossSigning {
   }
 
   Future<void> selfSign(
-      {String passphrase,
-      String recoveryKey,
-      String keyOrPassphrase,
-      OpenSSSS openSsss}) async {
+      {String? passphrase,
+      String? recoveryKey,
+      String? keyOrPassphrase,
+      OpenSSSS? openSsss}) async {
     var handle = openSsss;
     if (handle == null) {
       handle = encryption.ssss.open(EventTypes.CrossSigningMasterKey);
@@ -97,12 +97,12 @@ class CrossSigning {
       keyObj.free();
     }
     if (masterPubkey == null ||
-        !client.userDeviceKeys.containsKey(client.userID) ||
-        !client.userDeviceKeys[client.userID].deviceKeys
-            .containsKey(client.deviceID)) {
+        !client!.userDeviceKeys.containsKey(client!.userID) ||
+        !client!.userDeviceKeys[client!.userID]!.deviceKeys
+            .containsKey(client!.deviceID)) {
       throw Exception('Master or user keys not found');
     }
-    final masterKey = client.userDeviceKeys[client.userID].masterKey;
+    final masterKey = client!.userDeviceKeys[client!.userID]!.masterKey;
     if (masterKey == null || masterKey.ed25519Key != masterPubkey) {
       throw Exception('Master pubkey key doesn\'t match');
     }
@@ -111,43 +111,43 @@ class CrossSigning {
     // and now sign both our own key and our master key
     await sign([
       masterKey,
-      client.userDeviceKeys[client.userID].deviceKeys[client.deviceID]
+      client!.userDeviceKeys[client!.userID]!.deviceKeys[client!.deviceID]
     ]);
   }
 
-  bool signable(List<SignableKey> keys) => keys.any((key) =>
-      key is CrossSigningKey && key.usage.contains('master') ||
+  bool signable(List<SignableKey?> keys) => keys.any((key) =>
+      key is CrossSigningKey && key.usage!.contains('master') ||
       key is DeviceKeys &&
-          key.userId == client.userID &&
-          key.identifier != client.deviceID);
+          key.userId == client!.userID &&
+          key.identifier != client!.deviceID);
 
-  Future<void> sign(List<SignableKey> keys) async {
-    Uint8List selfSigningKey;
-    Uint8List userSigningKey;
+  Future<void> sign(List<SignableKey?> keys) async {
+    Uint8List? selfSigningKey;
+    Uint8List? userSigningKey;
     final signedKeys = <MatrixSignableKey>[];
     final addSignature =
-        (SignableKey key, SignableKey signedWith, String signature) {
+        (SignableKey? key, SignableKey? signedWith, String signature) {
       if (key == null || signedWith == null || signature == null) {
         return;
       }
       final signedKey = key.cloneForSigning();
-      signedKey.signatures[signedWith.userId] = <String, String>{};
-      signedKey.signatures[signedWith.userId]
+      signedKey.signatures![signedWith.userId] = <String, String>{};
+      signedKey.signatures![signedWith.userId]!
           ['ed25519:${signedWith.identifier}'] = signature;
       signedKeys.add(signedKey);
     };
     for (final key in keys) {
-      if (key.userId == client.userID) {
+      if (key!.userId == client!.userID) {
         // we are singing a key of ourself
         if (key is CrossSigningKey) {
-          if (key.usage.contains('master')) {
+          if (key.usage!.contains('master')) {
             // okay, we'll sign our own master key
             final signature =
                 encryption.olmManager.signString(key.signingContent);
             addSignature(
                 key,
-                client
-                    .userDeviceKeys[client.userID].deviceKeys[client.deviceID],
+                client!
+                    .userDeviceKeys[client!.userID]!.deviceKeys[client!.deviceID],
                 signature);
           }
           // we don't care about signing other cross-signing keys
@@ -159,24 +159,24 @@ class CrossSigning {
           if (selfSigningKey.isNotEmpty) {
             final signature = _sign(key.signingContent, selfSigningKey);
             addSignature(key,
-                client.userDeviceKeys[client.userID].selfSigningKey, signature);
+                client!.userDeviceKeys[client!.userID]!.selfSigningKey, signature);
           }
         }
-      } else if (key is CrossSigningKey && key.usage.contains('master')) {
+      } else if (key is CrossSigningKey && key.usage!.contains('master')) {
         // we are signing someone elses master key
         userSigningKey ??= base64.decode(await encryption.ssss
                 .getCached(EventTypes.CrossSigningUserSigning) ??
             '');
         if (userSigningKey.isNotEmpty) {
           final signature = _sign(key.signingContent, userSigningKey);
-          addSignature(key, client.userDeviceKeys[client.userID].userSigningKey,
+          addSignature(key, client!.userDeviceKeys[client!.userID]!.userSigningKey,
               signature);
         }
       }
     }
     if (signedKeys.isNotEmpty) {
       // post our new keys!
-      await client.uploadKeySignatures(signedKeys);
+      await client!.uploadKeySignatures(signedKeys);
     }
   }
 

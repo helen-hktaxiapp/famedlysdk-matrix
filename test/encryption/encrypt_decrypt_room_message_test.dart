@@ -28,10 +28,10 @@ void main() {
     Logs().level = Level.error;
     var olmEnabled = true;
 
-    Client client;
+    late Client client;
     final roomId = '!726s6s6q:example.com';
-    Room room;
-    Map<String, dynamic> payload;
+    Room? room;
+    late Map<String, dynamic> payload;
     final now = DateTime.now();
 
     test('setupClient', () async {
@@ -51,7 +51,7 @@ void main() {
 
     test('encrypt payload', () async {
       if (!olmEnabled) return;
-      payload = await client.encryption.encryptGroupMessagePayload(roomId, {
+      payload = await client.encryption!.encryptGroupMessagePayload(roomId, {
         'msgtype': 'm.text',
         'text': 'Hello foxies!',
       });
@@ -73,7 +73,7 @@ void main() {
         eventId: '\$event',
       );
       final decryptedEvent =
-          await client.encryption.decryptRoomEvent(roomId, encryptedEvent);
+          await client.encryption!.decryptRoomEvent(roomId, encryptedEvent);
       expect(decryptedEvent.type, 'm.room.message');
       expect(decryptedEvent.content['msgtype'], 'm.text');
       expect(decryptedEvent.content['text'], 'Hello foxies!');
@@ -81,7 +81,7 @@ void main() {
 
     test('decrypt payload nocache', () async {
       if (!olmEnabled) return;
-      client.encryption.keyManager.clearInboundGroupSessions();
+      client.encryption!.keyManager!.clearInboundGroupSessions();
       final encryptedEvent = Event(
         type: EventTypes.Encrypted,
         content: payload,
@@ -92,11 +92,11 @@ void main() {
         senderId: '@alice:example.com',
       );
       final decryptedEvent =
-          await client.encryption.decryptRoomEvent(roomId, encryptedEvent);
+          await client.encryption!.decryptRoomEvent(roomId, encryptedEvent);
       expect(decryptedEvent.type, 'm.room.message');
       expect(decryptedEvent.content['msgtype'], 'm.text');
       expect(decryptedEvent.content['text'], 'Hello foxies!');
-      await client.encryption
+      await client.encryption!
           .decryptRoomEvent(roomId, encryptedEvent, store: true);
     });
 

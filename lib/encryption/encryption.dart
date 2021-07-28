@@ -31,24 +31,24 @@ import 'ssss.dart';
 import 'utils/bootstrap.dart';
 
 class Encryption {
-  final Client client;
-  final bool debug;
-  final bool enableE2eeRecovery;
+  final Client? client;
+  final bool? debug;
+  final bool? enableE2eeRecovery;
 
   bool get enabled => olmManager.enabled;
 
   /// Returns the base64 encoded keys to store them in a store.
   /// This String should **never** leave the device!
-  String get pickledOlmAccount => olmManager.pickledOlmAccount;
+  String? get pickledOlmAccount => olmManager.pickledOlmAccount;
 
-  String get fingerprintKey => olmManager.fingerprintKey;
-  String get identityKey => olmManager.identityKey;
+  String? get fingerprintKey => olmManager.fingerprintKey;
+  String? get identityKey => olmManager.identityKey;
 
-  KeyManager keyManager;
-  OlmManager olmManager;
-  KeyVerificationManager keyVerificationManager;
-  CrossSigning crossSigning;
-  SSSS ssss;
+  KeyManager? keyManager;
+  late OlmManager olmManager;
+  late KeyVerificationManager keyVerificationManager;
+  late CrossSigning crossSigning;
+  late SSSS ssss;
 
   Encryption({
     this.client,
@@ -62,7 +62,7 @@ class Encryption {
     crossSigning = CrossSigning(this);
   }
 
-  Future<void> init(String olmAccount) async {
+  Future<void> init(String? olmAccount) async {
     await olmManager.init(olmAccount);
     _backgroundTasksRunning = true;
     _backgroundTasks(); // start the background tasks
@@ -80,13 +80,13 @@ class Encryption {
     }
   }
 
-  Bootstrap bootstrap({void Function() onUpdate}) => Bootstrap(
+  Bootstrap bootstrap({void Function()? onUpdate}) => Bootstrap(
         encryption: this,
         onUpdate: onUpdate,
       );
 
   void handleDeviceOneTimeKeysCount(
-      Map<String, int> countJson, List<String> unusedFallbackKeyTypes) {
+      Map<String, int>? countJson, List<String>? unusedFallbackKeyTypes) {
     runInRoot(() => olmManager.handleDeviceOneTimeKeysCount(
         countJson, unusedFallbackKeyTypes));
   }
@@ -99,14 +99,14 @@ class Encryption {
     if (event.type == EventTypes.RoomKey) {
       // a new room key. We need to handle this asap, before other
       // events in /sync are handled
-      await keyManager.handleToDeviceEvent(event);
+      await keyManager!.handleToDeviceEvent(event);
     }
     if ([EventTypes.RoomKeyRequest, EventTypes.ForwardedRoomKey]
         .contains(event.type)) {
       // "just" room key request things. We don't need these asap, so we handle
       // them in the background
       // ignore: unawaited_futures
-      runInRoot(() => keyManager.handleToDeviceEvent(event));
+      runInRoot(() => keyManager!.handleToDeviceEvent(event));
     }
     if (event.type == EventTypes.Dummy) {
       // the previous device just had to create a new olm session, due to olm session
@@ -126,7 +126,7 @@ class Encryption {
       // ignore: unawaited_futures
       runInRoot(() => ssss.handleToDeviceEvent(event));
     }
-    if (event.sender == client.userID) {
+    if (event.sender == client!.userID) {
       // maybe we need to re-try SSSS secrets
       // ignore: unawaited_futures
       runInRoot(() => ssss.periodicallyRequestMissingCache());
@@ -137,19 +137,19 @@ class Encryption {
     if (update.type == EventUpdateType.ephemeral) {
       return;
     }
-    if (update.content['type'].startsWith('m.key.verification.') ||
-        (update.content['type'] == EventTypes.Message &&
-            (update.content['content']['msgtype'] is String) &&
-            update.content['content']['msgtype']
+    if (update.content!['type'].startsWith('m.key.verification.') ||
+        (update.content!['type'] == EventTypes.Message &&
+            (update.content!['content']['msgtype'] is String) &&
+            update.content!['content']['msgtype']
                 .startsWith('m.key.verification.'))) {
       // "just" key verification, no need to do this in sync
 
       // ignore: unawaited_futures
       runInRoot(() => keyVerificationManager.handleEventUpdate(update));
     }
-    if (update.content['sender'] == client.userID &&
-        (!update.content.containsKey('unsigned') ||
-            !update.content['unsigned'].containsKey('transaction_id'))) {
+    if (update.content!['sender'] == client!.userID &&
+        (!update.content!.containsKey('unsigned') ||
+            !update.content!['unsigned'].containsKey('transaction_id'))) {
       // maybe we need to re-try SSSS secrets
       // ignore: unawaited_futures
       runInRoot(() => ssss.periodicallyRequestMissingCache());
@@ -164,7 +164,7 @@ class Encryption {
           '[LibOlm] Could not decrypt to device event from ${event.sender} with content: ${event.content}',
           e,
           s);
-      client.onEncryptionError.add(
+      client!.onEncryptionError.add(
         SdkError(
           exception: e is Exception ? e : Exception(e),
           stackTrace: s,
@@ -174,13 +174,13 @@ class Encryption {
     }
   }
 
-  Event decryptRoomEventSync(String roomId, Event event) {
+  Event decryptRoomEventSync(String? roomId, Event event) {
     final content = event.parsedRoomEncryptedContent;
     if (event.type != EventTypes.Encrypted ||
         content.ciphertextMegolm == null) {
       return event;
     }
-    Map<String, dynamic> decryptedPayload;
+    Map<String, dynamic>? decryptedPayload;
     var canRequestSession = false;
     try {
       if (content.algorithm != AlgorithmTypes.megolmV1AesSha2) {
@@ -189,7 +189,7 @@ class Encryption {
       final sessionId = content.sessionId;
       final senderKey = content.senderKey;
       final inboundGroupSession =
-          keyManager.getInboundGroupSession(roomId, sessionId, senderKey);
+          keyManager!.getInboundGroupSession(roomId, sessionId, senderKey);
       if (inboundGroupSession == null) {
         canRequestSession = true;
         throw DecryptException(DecryptException.unknownSession);
@@ -197,8 +197,8 @@ class Encryption {
       // decrypt errors here may mean we have a bad session key - others might have a better one
       canRequestSession = true;
 
-      final decryptResult = inboundGroupSession.inboundGroupSession
-          .decrypt(content.ciphertextMegolm);
+      final decryptResult = inboundGroupSession.inboundGroupSession!
+          .decrypt(content.ciphertextMegolm!);
       canRequestSession = false;
       // we can't have the key be an int, else json-serializing will fail, thus we need it to be a string
       final messageIndexKey = 'key-' + decryptResult.message_index.toString();
@@ -206,37 +206,37 @@ class Encryption {
           '|' +
           event.originServerTs.millisecondsSinceEpoch.toString();
       final haveIndex =
-          inboundGroupSession.indexes.containsKey(messageIndexKey);
+          inboundGroupSession.indexes!.containsKey(messageIndexKey);
       if (haveIndex &&
-          inboundGroupSession.indexes[messageIndexKey] != messageIndexValue) {
+          inboundGroupSession.indexes![messageIndexKey] != messageIndexValue) {
         Logs().e('[Decrypt] Could not decrypt due to a corrupted session.');
         throw DecryptException(DecryptException.channelCorrupted);
       }
-      inboundGroupSession.indexes[messageIndexKey] = messageIndexValue;
+      inboundGroupSession.indexes![messageIndexKey] = messageIndexValue;
       if (!haveIndex) {
         // now we persist the udpated indexes into the database.
         // the entry should always exist. In the case it doesn't, the following
         // line *could* throw an error. As that is a future, though, and we call
         // it un-awaited here, nothing happens, which is exactly the result we want
-        client.database?.updateInboundGroupSessionIndexes(
+        client!.database?.updateInboundGroupSessionIndexes(
             json.encode(inboundGroupSession.indexes),
-            client.id,
+            client!.id,
             roomId,
             sessionId);
       }
       decryptedPayload = json.decode(decryptResult.plaintext);
     } catch (exception) {
       // alright, if this was actually by our own outbound group session, we might as well clear it
-      if (client.enableE2eeRecovery &&
+      if (client!.enableE2eeRecovery &&
           exception.toString() != DecryptException.unknownSession &&
-          (keyManager
+          (keyManager!
                       .getOutboundGroupSession(roomId)
                       ?.outboundGroupSession
                       ?.session_id() ??
                   '') ==
               content.sessionId) {
         runInRoot(() =>
-            keyManager.clearOrUseOutboundGroupSession(roomId, wipe: true));
+            keyManager!.clearOrUseOutboundGroupSession(roomId, wipe: true));
       }
       if (canRequestSession) {
         decryptedPayload = {
@@ -257,11 +257,11 @@ class Encryption {
       }
     }
     if (event.content['m.relates_to'] != null) {
-      decryptedPayload['content']['m.relates_to'] =
+      decryptedPayload!['content']['m.relates_to'] =
           event.content['m.relates_to'];
     }
     return Event(
-      content: decryptedPayload['content'],
+      content: decryptedPayload!['content'],
       type: decryptedPayload['type'],
       senderId: event.senderId,
       eventId: event.eventId,
@@ -276,32 +276,32 @@ class Encryption {
     );
   }
 
-  Future<Event> decryptRoomEvent(String roomId, Event event,
+  Future<Event> decryptRoomEvent(String? roomId, Event event,
       {bool store = false,
-      EventUpdateType updateType = EventUpdateType.timeline}) async {
+      EventUpdateType? updateType = EventUpdateType.timeline}) async {
     if (event.type != EventTypes.Encrypted) {
       return event;
     }
     try {
-      if (client.database != null &&
-          keyManager.getInboundGroupSession(roomId, event.content['session_id'],
+      if (client!.database != null &&
+          keyManager!.getInboundGroupSession(roomId, event.content['session_id'],
                   event.content['sender_key']) ==
               null) {
-        await keyManager.loadInboundGroupSession(
+        await keyManager!.loadInboundGroupSession(
             roomId, event.content['session_id'], event.content['sender_key']);
       }
       event = decryptRoomEventSync(roomId, event);
       if (event.type == EventTypes.Encrypted &&
           event.content['can_request_session'] == true) {
-        keyManager.maybeAutoRequest(
+        keyManager!.maybeAutoRequest(
             roomId, event.content['session_id'], event.content['sender_key']);
       }
       if (event.type != EventTypes.Encrypted && store) {
         if (updateType != EventUpdateType.history) {
           event.room?.setState(event);
         }
-        await client.database?.storeEventUpdate(
-          client.id,
+        await client!.database?.storeEventUpdate(
+          client!.id,
           EventUpdate(
             content: event.toJson(),
             roomID: event.roomId,
@@ -320,30 +320,30 @@ class Encryption {
   /// Encrypts the given json payload and creates a send-ready m.room.encrypted
   /// payload. This will create a new outgoingGroupSession if necessary.
   Future<Map<String, dynamic>> encryptGroupMessagePayload(
-      String roomId, Map<String, dynamic> payload,
+      String? roomId, Map<String, dynamic> payload,
       {String type = EventTypes.Message}) async {
-    final room = client.getRoomById(roomId);
+    final room = client!.getRoomById(roomId);
     if (room == null || !room.encrypted || !enabled) {
       return payload;
     }
     if (room.encryptionAlgorithm != AlgorithmTypes.megolmV1AesSha2) {
       throw ('Unknown encryption algorithm');
     }
-    if (keyManager.getOutboundGroupSession(roomId) == null) {
-      await keyManager.loadOutboundGroupSession(roomId);
+    if (keyManager!.getOutboundGroupSession(roomId) == null) {
+      await keyManager!.loadOutboundGroupSession(roomId);
     }
-    await keyManager.clearOrUseOutboundGroupSession(roomId);
-    if (keyManager.getOutboundGroupSession(roomId) == null) {
-      await keyManager.createOutboundGroupSession(roomId);
+    await keyManager!.clearOrUseOutboundGroupSession(roomId);
+    if (keyManager!.getOutboundGroupSession(roomId) == null) {
+      await keyManager!.createOutboundGroupSession(roomId);
     }
-    final sess = keyManager.getOutboundGroupSession(roomId);
+    final sess = keyManager!.getOutboundGroupSession(roomId);
     if (sess == null) {
       throw ('Unable to create new outbound group session');
     }
     // we clone the payload as we do not want to remove 'm.relates_to' from the
     // original payload passed into this function
     payload = payload.copy();
-    final Map<String, dynamic> mRelatesTo = payload.remove('m.relates_to');
+    final Map<String, dynamic>? mRelatesTo = payload.remove('m.relates_to');
     final payloadContent = {
       'content': payload,
       'type': type,
@@ -352,32 +352,32 @@ class Encryption {
     final encryptedPayload = <String, dynamic>{
       'algorithm': AlgorithmTypes.megolmV1AesSha2,
       'ciphertext':
-          sess.outboundGroupSession.encrypt(json.encode(payloadContent)),
-      'device_id': client.deviceID,
+          sess.outboundGroupSession!.encrypt(json.encode(payloadContent)),
+      'device_id': client!.deviceID,
       'sender_key': identityKey,
-      'session_id': sess.outboundGroupSession.session_id(),
+      'session_id': sess.outboundGroupSession!.session_id(),
       if (mRelatesTo != null) 'm.relates_to': mRelatesTo,
     };
-    await keyManager.storeOutboundGroupSession(roomId, sess);
+    await keyManager!.storeOutboundGroupSession(roomId, sess);
     return encryptedPayload;
   }
 
   Future<Map<String, dynamic>> encryptToDeviceMessage(
-      List<DeviceKeys> deviceKeys,
-      String type,
-      Map<String, dynamic> payload) async {
+      List<DeviceKeys?> deviceKeys,
+      String? type,
+      Map<String, dynamic>? payload) async {
     return await olmManager.encryptToDeviceMessage(deviceKeys, type, payload);
   }
 
   Future<void> autovalidateMasterOwnKey() async {
     // check if we can set our own master key as verified, if it isn't yet
-    if (client.database != null &&
-        client.userDeviceKeys.containsKey(client.userID)) {
-      final masterKey = client.userDeviceKeys[client.userID].masterKey;
+    if (client!.database != null &&
+        client!.userDeviceKeys.containsKey(client!.userID)) {
+      final masterKey = client!.userDeviceKeys[client!.userID]!.masterKey;
       if (masterKey != null &&
-          !masterKey.directVerified &&
+          !masterKey.directVerified! &&
           masterKey
-              .hasValidSignatureChain(onlyValidateUserIds: {client.userID})) {
+              .hasValidSignatureChain(onlyValidateUserIds: {client!.userID})) {
         await masterKey.setVerified(true);
       }
     }
@@ -386,11 +386,11 @@ class Encryption {
   // this method is responsible for all background tasks, such as uploading online key backups
   bool _backgroundTasksRunning = true;
   void _backgroundTasks() {
-    if (!_backgroundTasksRunning || !client.isLogged()) {
+    if (!_backgroundTasksRunning || !client!.isLogged()) {
       return;
     }
 
-    keyManager.backgroundTasks();
+    keyManager!.backgroundTasks();
 
 //    autovalidateMasterOwnKey();
 
@@ -401,7 +401,7 @@ class Encryption {
 
   void dispose() {
     _backgroundTasksRunning = false;
-    keyManager.dispose();
+    keyManager!.dispose();
     olmManager.dispose();
     keyVerificationManager.dispose();
   }
@@ -409,7 +409,7 @@ class Encryption {
 
 class DecryptException implements Exception {
   String cause;
-  String libolmMessage;
+  String? libolmMessage;
   DecryptException(this.cause, [this.libolmMessage]);
 
   @override

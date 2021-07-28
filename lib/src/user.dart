@@ -24,11 +24,11 @@ import 'room.dart';
 /// Represents a Matrix User which may be a participant in a Matrix Room.
 class User extends Event {
   factory User(
-    String id, {
-    String membership,
-    String displayName,
-    String avatarUrl,
-    Room room,
+    String? id, {
+    String? membership,
+    String? displayName,
+    String? avatarUrl,
+    Room? room,
   }) {
     final content = <String, String>{};
     if (membership != null) content['membership'] = membership;
@@ -40,21 +40,23 @@ class User extends Event {
       typeKey: EventTypes.RoomMember,
       roomId: room?.id,
       room: room,
-      originServerTs: DateTime.now(),
+      originServerTs: DateTime.now(), 
+      senderId: '', 
+      eventId: '',
     );
   }
 
   User.fromState(
       {dynamic prevContent,
-      String stateKey,
-      dynamic content,
-      String typeKey,
-      String eventId,
-      String roomId,
-      String senderId,
-      DateTime originServerTs,
+      String? stateKey,
+      required dynamic content,
+      required String typeKey,
+      required String eventId,
+      String? roomId,
+      required String senderId,
+      required DateTime originServerTs,
       dynamic unsigned,
-      Room room})
+      Room? room})
       : super(
             stateKey: stateKey,
             prevContent: prevContent,
@@ -68,16 +70,16 @@ class User extends Event {
             room: room);
 
   /// The full qualified Matrix ID in the format @username:server.abc.
-  String get id => stateKey;
+  String? get id => stateKey;
 
   /// The displayname of the user if the user has set one.
-  String get displayName =>
+  String? get displayName =>
       content != null && content.containsKey('displayname')
           ? content['displayname']
-          : (prevContent != null ? prevContent['displayname'] : null);
+          : (prevContent != null ? prevContent!['displayname'] : null);
 
   /// Returns the power level of this user.
-  int get powerLevel => room?.getPowerLevelByUserId(id);
+  int? get powerLevel => room?.getPowerLevelByUserId(id);
 
   /// The membership status of the user. One of:
   /// join
@@ -92,12 +94,12 @@ class User extends Event {
       }, orElse: () => Membership.join);
 
   /// The avatar if the user has one.
-  Uri get avatarUrl => content != null && content.containsKey('avatar_url')
+  Uri? get avatarUrl => content != null && content.containsKey('avatar_url')
       ? (content['avatar_url'] is String
           ? Uri.tryParse(content['avatar_url'])
           : null)
-      : (prevContent != null && prevContent['avatar_url'] is String
-          ? Uri.tryParse(prevContent['avatar_url'])
+      : (prevContent != null && prevContent!['avatar_url'] is String
+          ? Uri.tryParse(prevContent!['avatar_url'])
           : null);
 
   /// Returns the displayname or the local part of the Matrix ID if the user
@@ -106,9 +108,9 @@ class User extends Event {
   /// the first character of each word becomes uppercase.
   /// If [mxidLocalPartFallback] is true, then the local part of the mxid will be shown
   /// if there is no other displayname available. If not then this will return "Unknown user".
-  String calcDisplayname({
-    bool formatLocalpart,
-    bool mxidLocalPartFallback,
+  String? calcDisplayname({
+    bool? formatLocalpart,
+    bool? mxidLocalPartFallback,
   }) {
     formatLocalpart ??= room?.client?.formatLocalpart ?? true;
     mxidLocalPartFallback ??= room?.client?.mxidLocalPartFallback ?? true;
@@ -117,9 +119,9 @@ class User extends Event {
     }
     if (stateKey != null && mxidLocalPartFallback) {
       if (!formatLocalpart) {
-        return stateKey.localpart;
+        return stateKey!.localpart;
       }
-      final words = stateKey.localpart.replaceAll('_', ' ').split(' ');
+      final words = stateKey!.localpart!.replaceAll('_', ' ').split(' ');
       for (var i = 0; i < words.length; i++) {
         if (words[i].isNotEmpty) {
           words[i] = words[i][0].toUpperCase() + words[i].substring(1);
@@ -131,37 +133,37 @@ class User extends Event {
   }
 
   /// Call the Matrix API to kick this user from this room.
-  Future<void> kick() => room.kick(id);
+  Future<void> kick() => room!.kick(id!);
 
   /// Call the Matrix API to ban this user from this room.
-  Future<void> ban() => room.ban(id);
+  Future<void> ban() => room!.ban(id!);
 
   /// Call the Matrix API to unban this banned user from this room.
-  Future<void> unban() => room.unban(id);
+  Future<void> unban() => room!.unban(id!);
 
   /// Call the Matrix API to change the power level of this user.
-  Future<void> setPower(int power) => room.setPower(id, power);
+  Future<void> setPower(int power) => room!.setPower(id, power);
 
   /// Returns an existing direct chat ID with this user or creates a new one.
   /// Returns null on error.
-  Future<String> startDirectChat() => room.client.startDirectChat(id);
+  Future<String> startDirectChat() => room!.client!.startDirectChat(id);
 
   /// The newest presence of this user if there is any and null if not.
-  Presence get presence => room.client.presences[id];
+  Presence? get presence => room!.client!.presences[id!];
 
   /// Whether the client is able to ban/unban this user.
-  bool get canBan => room.canBan && powerLevel < room.ownPowerLevel;
+  bool get canBan => room!.canBan && powerLevel! < room!.ownPowerLevel!;
 
   /// Whether the client is able to kick this user.
   bool get canKick =>
       [Membership.join, Membership.invite].contains(membership) &&
-      room.canKick &&
-      powerLevel < room.ownPowerLevel;
+      room!.canKick &&
+      powerLevel! < room!.ownPowerLevel!;
 
   /// Whether the client is allowed to change the power level of this user.
   /// Please be aware that you can only set the power level to at least your own!
   bool get canChangePowerLevel =>
-      room.canChangePowerLevel && powerLevel < room.ownPowerLevel;
+      room!.canChangePowerLevel && powerLevel! < room!.ownPowerLevel!;
 
   @override
   bool operator ==(dynamic other) => (other is User &&
@@ -171,25 +173,25 @@ class User extends Event {
 
   /// Get the mention text to use in a plain text body to mention this specific user
   /// in this specific room
-  String get mention {
+  String? get mention {
     // if the displayname has [ or ] or : we can't build our more fancy stuff, so fall back to the id
     // [] is used for the delimitors
     // If we allowed : we could get collissions with the mxid fallbacks
     if ((displayName?.isEmpty ?? true) ||
-        {'[', ']', ':'}.any((c) => displayName.contains(c))) {
+        {'[', ']', ':'}.any((c) => displayName!.contains(c))) {
       return id;
     }
 
     var identifier = '@';
     // if we have non-word characters we need to surround with []
-    if (!RegExp(r'^\w+$').hasMatch(displayName)) {
+    if (!RegExp(r'^\w+$').hasMatch(displayName!)) {
       identifier += '[$displayName]';
     } else {
-      identifier += displayName;
+      identifier += displayName!;
     }
 
     // get all the users with the same display name
-    final allUsersWithSameDisplayname = room.getParticipants();
+    final allUsersWithSameDisplayname = room!.getParticipants();
     allUsersWithSameDisplayname.removeWhere((user) =>
         user.id == id ||
         (user.displayName?.isEmpty ?? true) ||
@@ -198,8 +200,8 @@ class User extends Event {
       return identifier;
     }
     // ok, we have multiple users with the same display name....time to calculate a hash
-    final hashes = allUsersWithSameDisplayname.map((u) => _hash(u.id));
-    final ourHash = _hash(id);
+    final hashes = allUsersWithSameDisplayname.map((u) => _hash(u.id!));
+    final ourHash = _hash(id!);
     // hash collission...just return our own mxid again
     if (hashes.contains(ourHash)) {
       return id;

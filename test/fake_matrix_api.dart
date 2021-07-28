@@ -25,7 +25,7 @@ import 'package:http/testing.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-Map<String, dynamic> decodeJson(dynamic data) {
+Map<String, dynamic>? decodeJson(dynamic data) {
   if (data is String) {
     return json.decode(data);
   }
@@ -38,7 +38,7 @@ Map<String, dynamic> decodeJson(dynamic data) {
 class FakeMatrixApi extends MockClient {
   static final calledEndpoints = <String, List<dynamic>>{};
   static int eventCounter = 0;
-  static sdk.Client client;
+  static sdk.Client? client;
   static bool failToDevice = false;
 
   FakeMatrixApi()
@@ -84,9 +84,9 @@ class FakeMatrixApi extends MockClient {
           if (!calledEndpoints.containsKey(action)) {
             calledEndpoints[action] = <dynamic>[];
           }
-          calledEndpoints[action].add(data);
-          if (api.containsKey(method) && api[method].containsKey(action)) {
-            res = api[method][action](data);
+          calledEndpoints[action]!.add(data);
+          if (api.containsKey(method) && api[method]!.containsKey(action)) {
+            res = api[method]![action](data);
             if (res is Map && res.containsKey('errcode')) {
               if (res['errcode'] == 'M_NOT_FOUND') {
                 statusCode = 404;
@@ -123,14 +123,14 @@ class FakeMatrixApi extends MockClient {
             final type = Uri.decodeComponent(action.split('/').last);
             final syncUpdate = sdk.SyncUpdate(nextBatch: '')
               ..accountData = [
-                sdk.BasicEvent(content: decodeJson(data), type: type)
+                sdk.BasicEvent(content: decodeJson(data)!, type: type)
               ];
-            if (client.database != null) {
-              await client.database.transaction(() async {
-                await client.handleSync(syncUpdate);
+            if (client!.database != null) {
+              await client!.database!.transaction(() async {
+                await client!.handleSync(syncUpdate);
               });
             } else {
-              await client.handleSync(syncUpdate);
+              await client!.handleSync(syncUpdate);
             }
             res = {};
           } else {
@@ -1803,7 +1803,7 @@ class FakeMatrixApi extends MockClient {
       '/client/r0/keys/claim': (var req) => {
             'failures': {},
             'one_time_keys': {
-              if (decodeJson(req)['one_time_keys']['@alice:example.com'] !=
+              if (decodeJson(req)!['one_time_keys']['@alice:example.com'] !=
                   null)
                 '@alice:example.com': {
                   'JLAFKJWSCS': {
@@ -1818,7 +1818,7 @@ class FakeMatrixApi extends MockClient {
                     }
                   }
                 },
-              if (decodeJson(req)['one_time_keys']
+              if (decodeJson(req)!['one_time_keys']
                       ['@test:fakeServer.notExisting'] !=
                   null)
                 '@test:fakeServer.notExisting': {
@@ -1858,7 +1858,7 @@ class FakeMatrixApi extends MockClient {
             'one_time_key_counts': {
               'curve25519': 10,
               'signed_curve25519':
-                  decodeJson(req)['one_time_keys']?.keys?.length ?? 0,
+                  decodeJson(req)!['one_time_keys']?.keys?.length ?? 0,
             }
           },
       '/client/r0/keys/query': (var req) => {
@@ -2098,17 +2098,17 @@ class FakeMatrixApi extends MockClient {
             'self_signing_key',
             'user_signing_key'
           }) {
-            if (jsonBody[keyType] != null) {
+            if (jsonBody![keyType] != null) {
               final key =
                   sdk.CrossSigningKey.fromJson(jsonBody[keyType], client);
-              client.userDeviceKeys[client.userID].crossSigningKeys
-                  .removeWhere((k, v) => v.usage.contains(key.usage.first));
-              client.userDeviceKeys[client.userID]
+              client!.userDeviceKeys[client!.userID]!.crossSigningKeys
+                  .removeWhere((k, v) => v!.usage!.contains(key.usage!.first));
+              client!.userDeviceKeys[client!.userID]!
                   .crossSigningKeys[key.publicKey] = key;
             }
           }
           // and generate a fake sync
-          client.handleSync(sdk.SyncUpdate(nextBatch: ''));
+          client!.handleSync(sdk.SyncUpdate(nextBatch: ''));
         }
         return {};
       },

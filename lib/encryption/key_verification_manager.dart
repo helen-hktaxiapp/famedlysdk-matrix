@@ -22,14 +22,14 @@ import 'utils/key_verification.dart';
 
 class KeyVerificationManager {
   final Encryption encryption;
-  Client get client => encryption.client;
+  Client? get client => encryption.client;
 
   KeyVerificationManager(this.encryption);
 
-  final Map<String, KeyVerification> _requests = {};
+  final Map<String?, KeyVerification> _requests = {};
 
   Future<void> cleanup() async {
-    final Set entriesToDispose = <String>{};
+    final Set entriesToDispose = <String?>{};
     for (final entry in _requests.entries) {
       var dispose = entry.value.canceled ||
           entry.value.state == KeyVerificationState.done ||
@@ -54,7 +54,7 @@ class KeyVerificationManager {
 
   Future<void> handleToDeviceEvent(ToDeviceEvent event) async {
     if (!event.type.startsWith('m.key.verification.') ||
-        client.verificationMethods.isEmpty) {
+        client!.verificationMethods!.isEmpty) {
       return;
     }
     // we have key verification going on!
@@ -65,7 +65,7 @@ class KeyVerificationManager {
     if (_requests.containsKey(transactionId)) {
       // make sure that new requests can't come from ourself
       if (!{EventTypes.KeyVerificationRequest}.contains(event.type)) {
-        await _requests[transactionId].handlePayload(event.type, event.content);
+        await _requests[transactionId]!.handlePayload(event.type, event.content);
       }
     } else {
       if (!{EventTypes.KeyVerificationRequest, EventTypes.KeyVerificationStart}
@@ -80,19 +80,19 @@ class KeyVerificationManager {
         newKeyRequest.dispose();
       } else {
         _requests[transactionId] = newKeyRequest;
-        client.onKeyVerificationRequest.add(newKeyRequest);
+        client!.onKeyVerificationRequest.add(newKeyRequest);
       }
     }
   }
 
   Future<void> handleEventUpdate(EventUpdate update) async {
-    final event = update.content;
+    final event = update.content!;
     final type = event['type'].startsWith('m.key.verification.')
         ? event['type']
         : event['content']['msgtype'];
     if (type == null ||
         !type.startsWith('m.key.verification.') ||
-        client.verificationMethods.isEmpty) {
+        client!.verificationMethods!.isEmpty) {
       return;
     }
     if (type == EventTypes.KeyVerificationRequest) {
@@ -105,22 +105,22 @@ class KeyVerificationManager {
     if (_requests.containsKey(transactionId)) {
       final req = _requests[transactionId];
       final otherDeviceId = event['content']['from_device'];
-      if (event['sender'] != client.userID) {
-        await req.handlePayload(type, event['content'], event['event_id']);
-      } else if (event['sender'] == client.userID &&
+      if (event['sender'] != client!.userID) {
+        await req!.handlePayload(type, event['content'], event['event_id']);
+      } else if (event['sender'] == client!.userID &&
           otherDeviceId != null &&
-          otherDeviceId != client.deviceID) {
+          otherDeviceId != client!.deviceID) {
         // okay, another of our devices answered
-        req.otherDeviceAccepted();
+        req!.otherDeviceAccepted();
         req.dispose();
         _requests.remove(transactionId);
       }
-    } else if (event['sender'] != client.userID) {
+    } else if (event['sender'] != client!.userID) {
       if (!{EventTypes.KeyVerificationRequest, EventTypes.KeyVerificationStart}
           .contains(type)) {
         return; // we can only start on these
       }
-      final room = client.getRoomById(update.roomID) ??
+      final room = client!.getRoomById(update.roomID) ??
           Room(id: update.roomID, client: client);
       final newKeyRequest = KeyVerification(
           encryption: encryption, userId: event['sender'], room: room);
@@ -132,7 +132,7 @@ class KeyVerificationManager {
       } else {
         // new request! Let's notify it and stuff
         _requests[transactionId] = newKeyRequest;
-        client.onKeyVerificationRequest.add(newKeyRequest);
+        client!.onKeyVerificationRequest.add(newKeyRequest);
       }
     }
   }

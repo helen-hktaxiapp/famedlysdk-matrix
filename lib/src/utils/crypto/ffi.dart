@@ -26,7 +26,7 @@ final PKCS5_PBKDF2_HMAC = libcrypto.lookupFunction<
         int passlen,
         Pointer<Uint8> salt,
         int saltlen,
-        int iter,
+        int? iter,
         Pointer<NativeType> digest,
         int keylen,
         Pointer<Uint8> out)>('PKCS5_PBKDF2_HMAC');

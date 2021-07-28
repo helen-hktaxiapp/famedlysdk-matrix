@@ -21,7 +21,7 @@ mixin EventType {
 }
 
 class MarkedUnread {
-  bool unread;
+  bool? unread;
 
   MarkedUnread(this.unread);
 

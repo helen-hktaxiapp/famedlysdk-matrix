@@ -10,10 +10,10 @@ class EncryptedFile {
     this.iv,
     this.sha256,
   });
-  Uint8List data;
-  String k;
-  String iv;
-  String sha256;
+  Uint8List? data;
+  String? k;
+  String? iv;
+  String? sha256;
 }
 
 Future<EncryptedFile> encryptFile(Uint8List input) async {
@@ -29,13 +29,13 @@ Future<EncryptedFile> encryptFile(Uint8List input) async {
   );
 }
 
-Future<Uint8List> decryptFile(EncryptedFile input) async {
-  if (base64.encode(await sha256(input.data)) !=
-      base64.normalize(input.sha256)) {
+Future<Uint8List?> decryptFile(EncryptedFile input) async {
+  if (base64.encode(await sha256(input.data!)) !=
+      base64.normalize(input.sha256!)) {
     return null;
   }
 
-  final key = base64.decode(base64.normalize(input.k));
-  final iv = base64.decode(base64.normalize(input.iv));
-  return await aesCtr.encrypt(input.data, key, iv);
+  final key = base64.decode(base64.normalize(input.k!));
+  final iv = base64.decode(base64.normalize(input.iv!));
+  return await aesCtr.encrypt(input.data!, key, iv);
 }

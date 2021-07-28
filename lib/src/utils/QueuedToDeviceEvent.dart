@@ -18,10 +18,10 @@
 import 'dart:convert';
 
 class QueuedToDeviceEvent {
-  final int id;
-  final String type;
-  final String txnId;
-  final Map<String, dynamic> content;
+  final int? id;
+  final String? type;
+  final String? txnId;
+  final Map<String, dynamic>? content;
 
   QueuedToDeviceEvent({this.id, this.type, this.txnId, this.content});
 

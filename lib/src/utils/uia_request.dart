@@ -34,12 +34,12 @@ enum UiaRequestState {
 
 /// Wrapper to handle User interactive authentication requests
 class UiaRequest<T> {
-  void Function(UiaRequestState state) onUpdate;
-  final Future<T> Function(AuthenticationData auth) request;
-  String session;
+  void Function(UiaRequestState state)? onUpdate;
+  final Future<T> Function(AuthenticationData auth)? request;
+  String? session;
   UiaRequestState _state = UiaRequestState.loading;
-  T result;
-  Exception error;
+  T? result;
+  late Exception error;
   Set<String> nextStages = <String>{};
   Map<String, dynamic> params = <String, dynamic>{};
 
@@ -55,12 +55,12 @@ class UiaRequest<T> {
     _run();
   }
 
-  Future<T> _run([AuthenticationData auth]) async {
+  Future<T?> _run([AuthenticationData? auth]) async {
     state = UiaRequestState.loading;
     try {
       auth ??=
           AuthenticationData(session: session, type: AuthenticationTypes.token);
-      final res = await request(auth);
+      final res = await request!(auth);
       state = UiaRequestState.done;
       result = res;
       return res;
@@ -88,10 +88,10 @@ class UiaRequest<T> {
     }
   }
 
-  Future<T> completeStage(AuthenticationData auth) => _run(auth);
+  Future<T?> completeStage(AuthenticationData auth) => _run(auth);
 
   /// Cancel this uia request for example if the app can not handle this stage.
-  void cancel([Exception err]) {
+  void cancel([Exception? err]) {
     error = err ?? Exception('Request has been canceled');
     state = UiaRequestState.fail;
   }

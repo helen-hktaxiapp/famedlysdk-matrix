@@ -20,189 +20,189 @@ import 'package:matrix/matrix.dart';
 
 class FakeMatrixLocalizations extends MatrixLocalizations {
   @override
-  String acceptedTheInvitation(String targetName) {
+  String? acceptedTheInvitation(String? targetName) {
     // TODO: implement acceptedTheInvitation
     return null;
   }
 
   @override
-  String activatedEndToEndEncryption(String senderName) {
+  String activatedEndToEndEncryption(String? senderName) {
     // TODO: implement activatedEndToEndEncryption
     return '$senderName activatedEndToEndEncryption';
   }
 
   @override
   // TODO: implement anyoneCanJoin
-  String get anyoneCanJoin => null;
+  String? get anyoneCanJoin => null;
 
   @override
-  String bannedUser(String senderName, String targetName) {
+  String? bannedUser(String? senderName, String? targetName) {
     // TODO: implement bannedUser
     return null;
   }
 
   @override
-  String changedTheChatAvatar(String senderName) {
+  String? changedTheChatAvatar(String? senderName) {
     // TODO: implement changedTheChatAvatar
     return null;
   }
 
   @override
-  String changedTheChatDescriptionTo(String senderName, String content) {
+  String? changedTheChatDescriptionTo(String? senderName, String? content) {
     // TODO: implement changedTheChatDescriptionTo
     return null;
   }
 
   @override
-  String changedTheChatNameTo(String senderName, String content) {
+  String? changedTheChatNameTo(String? senderName, String? content) {
     // TODO: implement changedTheChatNameTo
     return null;
   }
 
   @override
-  String changedTheChatPermissions(String senderName) {
+  String? changedTheChatPermissions(String? senderName) {
     // TODO: implement changedTheChatPermissions
     return null;
   }
 
   @override
-  String changedTheDisplaynameTo(String targetName, String newDisplayname) {
+  String? changedTheDisplaynameTo(String? targetName, String newDisplayname) {
     // TODO: implement changedTheDisplaynameTo
     return null;
   }
 
   @override
-  String changedTheGuestAccessRules(String senderName) {
+  String? changedTheGuestAccessRules(String? senderName) {
     // TODO: implement changedTheGuestAccessRules
     return null;
   }
 
   @override
-  String changedTheGuestAccessRulesTo(
-      String senderName, String localizedString) {
+  String? changedTheGuestAccessRulesTo(
+      String? senderName, String? localizedString) {
     // TODO: implement changedTheGuestAccessRulesTo
     return null;
   }
 
   @override
-  String changedTheHistoryVisibility(String senderName) {
+  String? changedTheHistoryVisibility(String? senderName) {
     // TODO: implement changedTheHistoryVisibility
     return null;
   }
 
   @override
-  String changedTheHistoryVisibilityTo(
-      String senderName, String localizedString) {
+  String? changedTheHistoryVisibilityTo(
+      String? senderName, String? localizedString) {
     // TODO: implement changedTheHistoryVisibilityTo
     return null;
   }
 
   @override
-  String changedTheJoinRules(String senderName) {
+  String? changedTheJoinRules(String? senderName) {
     // TODO: implement changedTheJoinRules
     return null;
   }
 
   @override
-  String changedTheJoinRulesTo(String senderName, String localizedString) {
+  String? changedTheJoinRulesTo(String? senderName, String? localizedString) {
     // TODO: implement changedTheJoinRulesTo
     return null;
   }
 
   @override
-  String changedTheProfileAvatar(String targetName) {
+  String? changedTheProfileAvatar(String? targetName) {
     // TODO: implement changedTheProfileAvatar
     return null;
   }
 
   @override
-  String changedTheRoomAliases(String senderName) {
+  String? changedTheRoomAliases(String? senderName) {
     // TODO: implement changedTheRoomAliases
     return null;
   }
 
   @override
-  String changedTheRoomInvitationLink(String senderName) {
+  String? changedTheRoomInvitationLink(String? senderName) {
     // TODO: implement changedTheRoomInvitationLink
     return null;
   }
 
   @override
   // TODO: implement channelCorruptedDecryptError
-  String get channelCorruptedDecryptError => null;
+  String? get channelCorruptedDecryptError => null;
 
   @override
-  String couldNotDecryptMessage(String errorText) {
+  String? couldNotDecryptMessage(String? errorText) {
     // TODO: implement couldNotDecryptMessage
     return null;
   }
 
   @override
-  String createdTheChat(String senderName) {
+  String? createdTheChat(String? senderName) {
     // TODO: implement createdTheChat
     return null;
   }
 
   @override
   // TODO: implement emptyChat
-  String get emptyChat => null;
+  String? get emptyChat => null;
 
   @override
   // TODO: implement encryptionNotEnabled
-  String get encryptionNotEnabled => null;
+  String? get encryptionNotEnabled => null;
 
   @override
   // TODO: implement fromJoining
-  String get fromJoining => null;
+  String? get fromJoining => null;
 
   @override
   // TODO: implement fromTheInvitation
-  String get fromTheInvitation => null;
+  String? get fromTheInvitation => null;
 
   @override
-  String groupWith(String displayname) {
+  String? groupWith(String? displayname) {
     // TODO: implement groupWith
     return null;
   }
 
   @override
   // TODO: implement guestsAreForbidden
-  String get guestsAreForbidden => null;
+  String? get guestsAreForbidden => null;
 
   @override
   // TODO: implement guestsCanJoin
-  String get guestsCanJoin => null;
+  String? get guestsCanJoin => null;
 
   @override
-  String hasWithdrawnTheInvitationFor(String senderName, String targetName) {
+  String? hasWithdrawnTheInvitationFor(String? senderName, String? targetName) {
     // TODO: implement hasWithdrawnTheInvitationFor
     return null;
   }
 
   @override
-  String invitedUser(String senderName, String targetName) {
+  String? invitedUser(String? senderName, String? targetName) {
     // TODO: implement invitedUser
     return null;
   }
 
   @override
   // TODO: implement invitedUsersOnly
-  String get invitedUsersOnly => null;
+  String? get invitedUsersOnly => null;
 
   @override
-  String joinedTheChat(String targetName) {
+  String? joinedTheChat(String? targetName) {
     // TODO: implement joinedTheChat
     return null;
   }
 
   @override
-  String kicked(String senderName, String targetName) {
+  String? kicked(String? senderName, String? targetName) {
     // TODO: implement kicked
     return null;
   }
 
   @override
-  String kickedAndBanned(String senderName, String targetName) {
+  String? kickedAndBanned(String? senderName, String? targetName) {
     // TODO: implement kickedAndBanned
     return null;
   }
@@ -216,117 +216,117 @@ class FakeMatrixLocalizations extends MatrixLocalizations {
   String get noPermission => 'noPermission';
 
   @override
-  String redactedAnEvent(String senderName) {
+  String? redactedAnEvent(String? senderName) {
     // TODO: implement redactedAnEvent
     return null;
   }
 
   @override
-  String rejectedTheInvitation(String targetName) {
+  String? rejectedTheInvitation(String? targetName) {
     // TODO: implement rejectedTheInvitation
     return null;
   }
 
   @override
-  String removedBy(String calcDisplayname) {
+  String? removedBy(String? calcDisplayname) {
     // TODO: implement removedBy
     return null;
   }
 
   @override
   // TODO: implement roomHasBeenUpgraded
-  String get roomHasBeenUpgraded => null;
+  String? get roomHasBeenUpgraded => null;
 
   @override
-  String sentAFile(String senderName) {
+  String? sentAFile(String? senderName) {
     // TODO: implement sentAFile
     return null;
   }
 
   @override
-  String sentAPicture(String senderName) {
+  String? sentAPicture(String? senderName) {
     // TODO: implement sentAPicture
     return null;
   }
 
   @override
-  String sentASticker(String senderName) {
+  String? sentASticker(String? senderName) {
     // TODO: implement sentASticker
     return null;
   }
 
   @override
-  String sentAVideo(String senderName) {
+  String? sentAVideo(String? senderName) {
     // TODO: implement sentAVideo
     return null;
   }
 
   @override
-  String sentAnAudio(String senderName) {
+  String? sentAnAudio(String? senderName) {
     // TODO: implement sentAnAudio
     return null;
   }
 
   @override
-  String sharedTheLocation(String senderName) {
+  String? sharedTheLocation(String? senderName) {
     // TODO: implement sharedTheLocation
     return null;
   }
 
   @override
-  String unbannedUser(String senderName, String targetName) {
+  String? unbannedUser(String? senderName, String? targetName) {
     // TODO: implement unbannedUser
     return null;
   }
 
   @override
   // TODO: implement unknownEncryptionAlgorithm
-  String get unknownEncryptionAlgorithm => null;
+  String? get unknownEncryptionAlgorithm => null;
 
   @override
-  String unknownEvent(String typeKey) {
+  String? unknownEvent(String typeKey) {
     // TODO: implement unknownEvent
     return null;
   }
 
   @override
-  String userLeftTheChat(String targetName) {
+  String? userLeftTheChat(String? targetName) {
     // TODO: implement userLeftTheChat
     return null;
   }
 
   @override
   // TODO: implement visibleForAllParticipants
-  String get visibleForAllParticipants => null;
+  String? get visibleForAllParticipants => null;
 
   @override
   // TODO: implement visibleForEveryone
-  String get visibleForEveryone => null;
+  String? get visibleForEveryone => null;
 
   @override
   // TODO: implement you
-  String get you => null;
+  String? get you => null;
 
   @override
-  String answeredTheCall(String senderName) {
+  String? answeredTheCall(String? senderName) {
     // TODO: implement answeredTheCall
     return null;
   }
 
   @override
-  String endedTheCall(String senderName) {
+  String? endedTheCall(String? senderName) {
     // TODO: implement endedTheCall
     return null;
   }
 
   @override
-  String sentCallInformations(String senderName) {
+  String? sentCallInformations(String? senderName) {
     // TODO: implement sentCallInformations
     return null;
   }
 
   @override
-  String startedACall(String senderName) {
+  String? startedACall(String? senderName) {
     // TODO: implement startedACall
     return null;
   }

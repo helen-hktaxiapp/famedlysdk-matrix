@@ -132,7 +132,7 @@ void main() {
           ]
         }
       }));
-      expect(user1.presence.presence.presence, PresenceType.online);
+      expect(user1.presence!.presence.presence, PresenceType.online);
     });
     test('canBan', () async {
       expect(user1.canBan, false);

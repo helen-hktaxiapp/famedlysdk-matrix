@@ -20,28 +20,28 @@ import '../../matrix.dart';
 
 /// Represents a new room or an update for an
 /// already known room.
-class RoomUpdate {
+class RoomUpdate{
   /// All rooms have an idea in the format: !uniqueid:server.abc
-  final String id;
+  final String? id;
 
   /// The current membership state of the user in this room.
-  final Membership membership;
+  final Membership? membership;
 
   /// Represents the number of unead notifications. This probably doesn't fit the number
   /// of unread messages.
-  final num notification_count;
+  final num? notification_count;
 
   // The number of unread highlighted notifications.
-  final num highlight_count;
+  final num? highlight_count;
 
   /// If there are too much new messages, the `homeserver` will only send the
   /// last X (default is 10) messages and set the `limitedTimeline` flag to true.
-  final bool limitedTimeline;
+  final bool? limitedTimeline;
 
   /// Represents the current position of the client in the room history.
-  final String prev_batch;
+  final String? prev_batch;
 
-  final RoomSummary summary;
+  final RoomSummary? summary;
 
   RoomUpdate({
     this.id,
@@ -88,5 +88,5 @@ class RoomUpdate {
                       prev_batch: update.timeline?.prevBatch ?? '',
                       summary: null,
                     )
-                  : null;
+                  : throw('Room Update is null');
 }

@@ -70,12 +70,12 @@ void main() {
       };
       final crossKey = CrossSigningKey.fromJson(rawJson, null);
       expect(json.encode(crossKey.toJson()), json.encode(rawJson));
-      expect(crossKey.usage.first, 'master');
+      expect(crossKey.usage!.first, 'master');
     });
 
     var olmEnabled = true;
 
-    Client client;
+    Client? client;
 
     test('setupClient', () async {
       try {
@@ -131,8 +131,8 @@ void main() {
     test('set blocked / verified', () async {
       if (!olmEnabled) return;
       final key =
-          client.userDeviceKeys[client.userID].deviceKeys['OTHERDEVICE'];
-      client.userDeviceKeys[client.userID].deviceKeys['UNSIGNEDDEVICE'] =
+          client!.userDeviceKeys[client!.userID]!.deviceKeys['OTHERDEVICE']!;
+      client!.userDeviceKeys[client!.userID]!.deviceKeys['UNSIGNEDDEVICE'] =
           DeviceKeys.fromJson({
         'user_id': '@test:fakeServer.notExisting',
         'device_id': 'UNSIGNEDDEVICE',
@@ -153,10 +153,10 @@ void main() {
           },
         },
       }, client);
-      final masterKey = client.userDeviceKeys[client.userID].masterKey;
+      final masterKey = client!.userDeviceKeys[client!.userID]!.masterKey!;
       masterKey.setDirectVerified(true);
       // we need to populate the ssss cache to be able to test signing easily
-      final handle = client.encryption.ssss.open();
+      final handle = client!.encryption!.ssss.open();
       await handle.unlock(recoveryKey: ssssKey);
       await handle.maybeCacheAll();
 
@@ -170,7 +170,7 @@ void main() {
       expect(key.verified, true); // still verified via cross-sgining
       expect(key.encryptToDevice, true);
       expect(
-          client.userDeviceKeys[client.userID].deviceKeys['UNSIGNEDDEVICE']
+          client!.userDeviceKeys[client!.userID]!.deviceKeys['UNSIGNEDDEVICE']!
               .encryptToDevice,
           false);
 
@@ -178,7 +178,7 @@ void main() {
       await masterKey.setBlocked(true);
       expect(masterKey.verified, false);
       expect(
-          client.userDeviceKeys[client.userID].deviceKeys['UNSIGNEDDEVICE']
+          client!.userDeviceKeys[client!.userID]!.deviceKeys['UNSIGNEDDEVICE']!
               .encryptToDevice,
           true);
       await masterKey.setBlocked(false);
@@ -201,62 +201,62 @@ void main() {
               .any((k) => k == '/client/r0/keys/signatures/upload'),
           false);
       expect(key.directVerified, false);
-      client.userDeviceKeys[client.userID].deviceKeys.remove('UNSIGNEDDEVICE');
+      client!.userDeviceKeys[client!.userID]!.deviceKeys.remove('UNSIGNEDDEVICE');
     });
 
     test('verification based on signatures', () async {
       if (!olmEnabled) return;
-      final user = client.userDeviceKeys[client.userID];
-      user.masterKey.setDirectVerified(true);
-      expect(user.deviceKeys['GHTYAJCE'].crossVerified, true);
-      expect(user.deviceKeys['GHTYAJCE'].signed, true);
-      expect(user.getKey('GHTYAJCE').crossVerified, true);
-      expect(user.deviceKeys['OTHERDEVICE'].crossVerified, true);
-      expect(user.selfSigningKey.crossVerified, true);
+      final user = client!.userDeviceKeys[client!.userID]!;
+      user.masterKey!.setDirectVerified(true);
+      expect(user.deviceKeys['GHTYAJCE']!.crossVerified, true);
+      expect(user.deviceKeys['GHTYAJCE']!.signed, true);
+      expect(user.getKey('GHTYAJCE')!.crossVerified, true);
+      expect(user.deviceKeys['OTHERDEVICE']!.crossVerified, true);
+      expect(user.selfSigningKey!.crossVerified, true);
       expect(
           user
-              .getKey('F9ypFzgbISXCzxQhhSnXMkc1vq12Luna3Nw5rqViOJY')
+              .getKey('F9ypFzgbISXCzxQhhSnXMkc1vq12Luna3Nw5rqViOJY')!
               .crossVerified,
           true);
-      expect(user.userSigningKey.crossVerified, true);
+      expect(user.userSigningKey!.crossVerified, true);
       expect(user.verified, UserVerifiedStatus.verified);
-      user.masterKey.setDirectVerified(false);
-      expect(user.deviceKeys['GHTYAJCE'].crossVerified, false);
-      expect(user.deviceKeys['OTHERDEVICE'].crossVerified, false);
+      user.masterKey!.setDirectVerified(false);
+      expect(user.deviceKeys['GHTYAJCE']!.crossVerified, false);
+      expect(user.deviceKeys['OTHERDEVICE']!.crossVerified, false);
       expect(user.verified, UserVerifiedStatus.unknown);
 
-      user.deviceKeys['OTHERDEVICE'].setDirectVerified(true);
+      user.deviceKeys['OTHERDEVICE']!.setDirectVerified(true);
       expect(user.verified, UserVerifiedStatus.verified);
-      user.deviceKeys['OTHERDEVICE'].setDirectVerified(false);
+      user.deviceKeys['OTHERDEVICE']!.setDirectVerified(false);
 
-      user.masterKey.setDirectVerified(true);
-      user.deviceKeys['GHTYAJCE'].signatures[client.userID]
+      user.masterKey!.setDirectVerified(true);
+      user.deviceKeys['GHTYAJCE']!.signatures![client!.userID!]!
           .removeWhere((k, v) => k != 'ed25519:GHTYAJCE');
-      expect(user.deviceKeys['GHTYAJCE'].verified,
+      expect(user.deviceKeys['GHTYAJCE']!.verified,
           true); // it's our own device, should be direct verified
       expect(
-          user.deviceKeys['GHTYAJCE'].signed, false); // not verified for others
-      user.deviceKeys['OTHERDEVICE'].signatures.clear();
+          user.deviceKeys['GHTYAJCE']!.signed, false); // not verified for others
+      user.deviceKeys['OTHERDEVICE']!.signatures!.clear();
       expect(user.verified, UserVerifiedStatus.unknownDevice);
     });
 
     test('start verification', () async {
       if (!olmEnabled) return;
-      var req = client
-          .userDeviceKeys['@alice:example.com'].deviceKeys['JLAFKJWSCS']
+      var req = client!
+          .userDeviceKeys['@alice:example.com']!.deviceKeys['JLAFKJWSCS']!
           .startVerification();
       expect(req != null, true);
       expect(req.room != null, false);
 
       req =
-          await client.userDeviceKeys['@alice:example.com'].startVerification();
+          await client!.userDeviceKeys['@alice:example.com']!.startVerification();
       expect(req != null, true);
       expect(req.room != null, true);
     });
 
     test('dispose client', () async {
       if (!olmEnabled) return;
-      await client.dispose(closeDatabase: true);
+      await client!.dispose(closeDatabase: true);
     });
   });
 }

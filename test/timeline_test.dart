@@ -36,9 +36,9 @@ void main() {
     final insertList = <int>[];
     var olmEnabled = true;
 
-    Client client;
-    Room room;
-    Timeline timeline;
+    Client? client;
+    Room? room;
+    late Timeline timeline;
     test('create stuff', () async {
       try {
         await olm.init();
@@ -49,7 +49,7 @@ void main() {
       }
       Logs().i('[LibOlm] Enabled: $olmEnabled');
       client = await getClient();
-      client.sendMessageTimeoutSeconds = 5;
+      client!.sendMessageTimeoutSeconds = 5;
 
       room = Room(
           id: roomID, client: client, prev_batch: '1234', roomAccountData: {});
@@ -65,10 +65,10 @@ void main() {
     });
 
     test('Create', () async {
-      await client.checkHomeserver('https://fakeserver.notexisting',
+      await client!.checkHomeserver('https://fakeserver.notexisting',
           checkWellKnown: false);
 
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -79,8 +79,8 @@ void main() {
             'event_id': '2',
             'origin_server_ts': testTimeStamp - 1000
           },
-          sortOrder: room.newSortOrder));
-      client.onEvent.add(EventUpdate(
+          sortOrder: room!.newSortOrder));
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -91,7 +91,7 @@ void main() {
             'event_id': '1',
             'origin_server_ts': testTimeStamp
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
 
       expect(timeline.sub != null, true);
 
@@ -112,7 +112,7 @@ void main() {
           true);
       expect(timeline.events[0].receipts, []);
 
-      room.roomAccountData['m.receipt'] = BasicRoomEvent.fromJson({
+      room!.roomAccountData['m.receipt'] = BasicRoomEvent.fromJson({
         'type': 'm.receipt',
         'content': {
           '@alice:example.com': {
@@ -128,7 +128,7 @@ void main() {
       expect(timeline.events[0].receipts.length, 1);
       expect(timeline.events[0].receipts[0].user.id, '@alice:example.com');
 
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -139,7 +139,7 @@ void main() {
             'event_id': '3',
             'origin_server_ts': testTimeStamp + 1000
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
 
       await Future.delayed(Duration(milliseconds: 50));
 
@@ -151,7 +151,7 @@ void main() {
     });
 
     test('Send message', () async {
-      await room.sendTextEvent('test', txid: '1234');
+      await room!.sendTextEvent('test', txid: '1234');
 
       await Future.delayed(Duration(milliseconds: 50));
 
@@ -162,7 +162,7 @@ void main() {
       expect(eventId.startsWith('\$event'), true);
       expect(timeline.events[0].status, 1);
 
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -174,7 +174,7 @@ void main() {
             'unsigned': {'transaction_id': '1234'},
             'origin_server_ts': DateTime.now().millisecondsSinceEpoch
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
 
       await Future.delayed(Duration(milliseconds: 50));
 
@@ -186,7 +186,7 @@ void main() {
     });
 
     test('Send message with error', () async {
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -197,17 +197,17 @@ void main() {
             'event_id': 'abc',
             'origin_server_ts': testTimeStamp
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
 
       expect(updateCount, 7);
-      await room.sendTextEvent('test', txid: 'errortxid');
+      await room!.sendTextEvent('test', txid: 'errortxid');
       await Future.delayed(Duration(milliseconds: 50));
 
       expect(updateCount, 9);
-      await room.sendTextEvent('test', txid: 'errortxid2');
+      await room!.sendTextEvent('test', txid: 'errortxid2');
       await Future.delayed(Duration(milliseconds: 50));
-      await room.sendTextEvent('test', txid: 'errortxid3');
+      await room!.sendTextEvent('test', txid: 'errortxid3');
       await Future.delayed(Duration(milliseconds: 50));
 
       expect(updateCount, 13);
@@ -231,17 +231,17 @@ void main() {
     });
 
     test('getEventById', () async {
-      var event = await timeline.getEventById('abc');
+      var event = await (timeline.getEventById('abc') as FutureOr<Event>);
       expect(event.content, {'msgtype': 'm.text', 'body': 'Testcase'});
 
-      event = await timeline.getEventById('not_found');
+      event = await (timeline.getEventById('not_found') as FutureOr<Event>);
       expect(event, null);
 
-      event = await timeline.getEventById('unencrypted_event');
+      event = await (timeline.getEventById('unencrypted_event') as FutureOr<Event>);
       expect(event.body, 'This is an example text message');
 
       if (olmEnabled) {
-        event = await timeline.getEventById('encrypted_event');
+        event = await (timeline.getEventById('encrypted_event') as FutureOr<Event>);
         // the event is invalid but should have traces of attempting to decrypt
         expect(event.messageType, MessageTypes.BadEncrypted);
       }
@@ -249,7 +249,7 @@ void main() {
 
     test('Resend message', () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -261,7 +261,7 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'newresend'},
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, -1);
       await timeline.events[0].sendAgain();
@@ -278,7 +278,7 @@ void main() {
     test('Request history', () async {
       timeline.events.clear();
       expect(timeline.canRequestHistory, true);
-      await room.requestHistory();
+      await room!.requestHistory();
 
       await Future.delayed(Duration(milliseconds: 50));
 
@@ -287,12 +287,12 @@ void main() {
       expect(timeline.events[0].eventId, '3143273582443PhrSn:example.org');
       expect(timeline.events[1].eventId, '2143273582443PhrSn:example.org');
       expect(timeline.events[2].eventId, '1143273582443PhrSn:example.org');
-      expect(room.prev_batch, 't47409-4357353_219380_26003_2265');
+      expect(room!.prev_batch, 't47409-4357353_219380_26003_2265');
       await timeline.events[2].redactEvent(reason: 'test', txid: '1234');
     });
 
     test('Clear cache on limited timeline', () async {
-      client.onRoomUpdate.add(RoomUpdate(
+      client!.onRoomUpdate.add(RoomUpdate(
         id: roomID,
         membership: Membership.join,
         notification_count: 0,
@@ -306,7 +306,7 @@ void main() {
 
     test('sort errors on top', () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -317,8 +317,8 @@ void main() {
             'event_id': 'abc',
             'origin_server_ts': testTimeStamp
           },
-          sortOrder: room.newSortOrder));
-      client.onEvent.add(EventUpdate(
+          sortOrder: room!.newSortOrder));
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -329,7 +329,7 @@ void main() {
             'event_id': 'def',
             'origin_server_ts': testTimeStamp + 5
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, -1);
       expect(timeline.events[1].status, 2);
@@ -337,7 +337,7 @@ void main() {
 
     test('sending event to failed update', () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -348,11 +348,11 @@ void main() {
             'event_id': 'will-fail',
             'origin_server_ts': DateTime.now().millisecondsSinceEpoch,
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 0);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -363,7 +363,7 @@ void main() {
             'event_id': 'will-fail',
             'origin_server_ts': testTimeStamp
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, -1);
       expect(timeline.events.length, 1);
@@ -371,7 +371,7 @@ void main() {
     test('sending an event and the http request finishes first, 0 -> 1 -> 2',
         () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -382,11 +382,11 @@ void main() {
             'event_id': 'transaction',
             'origin_server_ts': DateTime.now().millisecondsSinceEpoch,
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 0);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -398,11 +398,11 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'}
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 1);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -414,7 +414,7 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'}
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
@@ -422,7 +422,7 @@ void main() {
     test('sending an event where the sync reply arrives first, 0 -> 2 -> 1',
         () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -436,11 +436,11 @@ void main() {
               'transaction_id': 'transaction',
             },
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 0);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -454,11 +454,11 @@ void main() {
               messageSendingStatusKey: 2,
             },
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -472,14 +472,14 @@ void main() {
               messageSendingStatusKey: 1,
             },
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
     });
     test('sending an event 0 -> -1 -> 2', () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -490,11 +490,11 @@ void main() {
             'event_id': 'transaction',
             'origin_server_ts': DateTime.now().millisecondsSinceEpoch,
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 0);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -505,11 +505,11 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'},
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, -1);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -521,14 +521,14 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'},
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
     });
     test('sending an event 0 -> 2 -> -1', () async {
       timeline.events.clear();
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -539,11 +539,11 @@ void main() {
             'event_id': 'transaction',
             'origin_server_ts': DateTime.now().millisecondsSinceEpoch,
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 0);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -555,11 +555,11 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'},
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
-      client.onEvent.add(EventUpdate(
+      client!.onEvent.add(EventUpdate(
           type: EventUpdateType.timeline,
           roomID: roomID,
           content: {
@@ -570,13 +570,13 @@ void main() {
             'origin_server_ts': testTimeStamp,
             'unsigned': {'transaction_id': 'transaction'},
           },
-          sortOrder: room.newSortOrder));
+          sortOrder: room!.newSortOrder));
       await Future.delayed(Duration(milliseconds: 50));
       expect(timeline.events[0].status, 2);
       expect(timeline.events.length, 1);
     });
     test('logout', () async {
-      await client.logout();
+      await client!.logout();
     });
   });
 }

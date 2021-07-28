@@ -32,9 +32,9 @@ void main() {
     Logs().level = Level.error;
     var olmEnabled = true;
 
-    Client client;
-    Map<String, dynamic> oldSecret;
-    String origKeyId;
+    late Client client;
+    Map<String, dynamic>? oldSecret;
+    String? origKeyId;
 
     test('setupClient', () async {
       client = await getClient();
@@ -52,8 +52,8 @@ void main() {
       Logs().i('[LibOlm] Enabled: $olmEnabled');
       if (!olmEnabled) return;
 
-      Bootstrap bootstrap;
-      bootstrap = client.encryption.bootstrap(
+      Bootstrap? bootstrap;
+      bootstrap = client.encryption!.bootstrap(
         onUpdate: () async {
           while (bootstrap == null) {
             await Future.delayed(Duration(milliseconds: 5));
@@ -81,7 +81,7 @@ void main() {
       while (bootstrap.state != BootstrapState.done) {
         await Future.delayed(Duration(milliseconds: 50));
       }
-      final defaultKey = client.encryption.ssss.open();
+      final defaultKey = client.encryption!.ssss.open();
       await defaultKey.unlock(passphrase: 'foxies');
 
       // test all the x-signing keys match up
@@ -93,8 +93,8 @@ void main() {
           final pubKey = keyObj.init_with_seed(privateKey);
           expect(
               pubKey,
-              client.userDeviceKeys[client.userID]
-                  .getCrossSigningKey(keyType)
+              client.userDeviceKeys[client.userID]!
+                  .getCrossSigningKey(keyType)!
                   .publicKey);
         } finally {
           keyObj.free();
@@ -103,14 +103,14 @@ void main() {
 
       await defaultKey.store('foxes', 'floof');
       await Future.delayed(Duration(milliseconds: 50));
-      oldSecret = json.decode(json.encode(client.accountData['foxes'].content));
+      oldSecret = json.decode(json.encode(client.accountData['foxes']!.content));
       origKeyId = defaultKey.keyId;
     }, timeout: Timeout(Duration(minutes: 2)));
 
     test('change recovery passphrase', () async {
       if (!olmEnabled) return;
-      Bootstrap bootstrap;
-      bootstrap = client.encryption.bootstrap(
+      Bootstrap? bootstrap;
+      bootstrap = client.encryption!.bootstrap(
         onUpdate: () async {
           while (bootstrap == null) {
             await Future.delayed(Duration(milliseconds: 5));
@@ -120,7 +120,7 @@ void main() {
           } else if (bootstrap.state == BootstrapState.askUseExistingSsss) {
             bootstrap.useExistingSsss(false);
           } else if (bootstrap.state == BootstrapState.askUnlockSsss) {
-            await bootstrap.oldSsssKeys[client.encryption.ssss.defaultKeyId]
+            await bootstrap.oldSsssKeys![client.encryption!.ssss.defaultKeyId!]!
                 .unlock(passphrase: 'foxies');
             bootstrap.unlockedSsss();
           } else if (bootstrap.state == BootstrapState.askNewSsss) {
@@ -135,7 +135,7 @@ void main() {
       while (bootstrap.state != BootstrapState.done) {
         await Future.delayed(Duration(milliseconds: 50));
       }
-      final defaultKey = client.encryption.ssss.open();
+      final defaultKey = client.encryption!.ssss.open();
       await defaultKey.unlock(passphrase: 'newfoxies');
 
       // test all the x-signing keys match up
@@ -147,8 +147,8 @@ void main() {
           final pubKey = keyObj.init_with_seed(privateKey);
           expect(
               pubKey,
-              client.userDeviceKeys[client.userID]
-                  .getCrossSigningKey(keyType)
+              client.userDeviceKeys[client.userID]!
+                  .getCrossSigningKey(keyType)!
                   .publicKey);
         } finally {
           keyObj.free();
@@ -160,11 +160,11 @@ void main() {
 
     test('change passphrase with multiple keys', () async {
       if (!olmEnabled) return;
-      await client.setAccountData(client.userID, 'foxes', oldSecret);
+      await client.setAccountData(client.userID!, 'foxes', oldSecret!);
       await Future.delayed(Duration(milliseconds: 50));
 
-      Bootstrap bootstrap;
-      bootstrap = client.encryption.bootstrap(
+      Bootstrap? bootstrap;
+      bootstrap = client.encryption!.bootstrap(
         onUpdate: () async {
           while (bootstrap == null) {
             await Future.delayed(Duration(milliseconds: 5));
@@ -174,9 +174,9 @@ void main() {
           } else if (bootstrap.state == BootstrapState.askUseExistingSsss) {
             bootstrap.useExistingSsss(false);
           } else if (bootstrap.state == BootstrapState.askUnlockSsss) {
-            await bootstrap.oldSsssKeys[client.encryption.ssss.defaultKeyId]
+            await bootstrap.oldSsssKeys![client.encryption!.ssss.defaultKeyId!]!
                 .unlock(passphrase: 'newfoxies');
-            await bootstrap.oldSsssKeys[origKeyId].unlock(passphrase: 'foxies');
+            await bootstrap.oldSsssKeys![origKeyId!]!.unlock(passphrase: 'foxies');
             bootstrap.unlockedSsss();
           } else if (bootstrap.state == BootstrapState.askNewSsss) {
             await bootstrap.newSsss('supernewfoxies');
@@ -190,7 +190,7 @@ void main() {
       while (bootstrap.state != BootstrapState.done) {
         await Future.delayed(Duration(milliseconds: 50));
       }
-      final defaultKey = client.encryption.ssss.open();
+      final defaultKey = client.encryption!.ssss.open();
       await defaultKey.unlock(passphrase: 'supernewfoxies');
 
       // test all the x-signing keys match up
@@ -202,8 +202,8 @@ void main() {
           final pubKey = keyObj.init_with_seed(privateKey);
           expect(
               pubKey,
-              client.userDeviceKeys[client.userID]
-                  .getCrossSigningKey(keyType)
+              client.userDeviceKeys[client.userID]!
+                  .getCrossSigningKey(keyType)!
                   .publicKey);
         } finally {
           keyObj.free();
@@ -216,8 +216,8 @@ void main() {
     test('setup new ssss', () async {
       if (!olmEnabled) return;
       client.accountData.clear();
-      Bootstrap bootstrap;
-      bootstrap = client.encryption.bootstrap(
+      Bootstrap? bootstrap;
+      bootstrap = client.encryption!.bootstrap(
         onUpdate: () async {
           while (bootstrap == null) {
             await Future.delayed(Duration(milliseconds: 5));
@@ -235,18 +235,18 @@ void main() {
       while (bootstrap.state != BootstrapState.done) {
         await Future.delayed(Duration(milliseconds: 50));
       }
-      final defaultKey = client.encryption.ssss.open();
+      final defaultKey = client.encryption!.ssss.open();
       await defaultKey.unlock(passphrase: 'thenewestfoxies');
     }, timeout: Timeout(Duration(minutes: 2)));
 
     test('bad ssss', () async {
       if (!olmEnabled) return;
       client.accountData.clear();
-      await client.setAccountData(client.userID, 'foxes', oldSecret);
+      await client.setAccountData(client.userID!, 'foxes', oldSecret!);
       await Future.delayed(Duration(milliseconds: 50));
       var askedBadSsss = false;
-      Bootstrap bootstrap;
-      bootstrap = client.encryption.bootstrap(
+      Bootstrap? bootstrap;
+      bootstrap = client.encryption!.bootstrap(
         onUpdate: () async {
           while (bootstrap == null) {
             await Future.delayed(Duration(milliseconds: 5));

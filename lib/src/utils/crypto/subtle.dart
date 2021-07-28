@@ -16,20 +16,20 @@ class CryptoKey {}
 @anonymous
 class Pbkdf2Params {
   external factory Pbkdf2Params(
-      {String name, String hash, Uint8List salt, int iterations});
-  String name;
-  String hash;
-  Uint8List salt;
-  int iterations;
+      {String? name, String? hash, Uint8List? salt, int? iterations});
+  late String name;
+  late String hash;
+  late Uint8List salt;
+  late int iterations;
 }
 
 @JS()
 @anonymous
 class AesCtrParams {
-  external factory AesCtrParams({String name, Uint8List counter, int length});
-  String name;
-  Uint8List counter;
-  int length;
+  external factory AesCtrParams({String? name, Uint8List? counter, int? length});
+  late String name;
+  late Uint8List counter;
+  late int length;
 }
 
 @JS('crypto.subtle.encrypt')

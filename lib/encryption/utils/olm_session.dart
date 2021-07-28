@@ -21,12 +21,12 @@ import 'package:olm/olm.dart' as olm;
 import '../../matrix.dart';
 
 class OlmSession {
-  String identityKey;
-  String sessionId;
-  olm.Session session;
-  DateTime lastReceived;
-  final String key;
-  String get pickledSession => session.pickle(key);
+  String? identityKey;
+  String? sessionId;
+  olm.Session? session;
+  DateTime? lastReceived;
+  final String? key;
+  String get pickledSession => session!.pickle(key!);
 
   bool get isValid => session != null;
 
@@ -41,12 +41,12 @@ class OlmSession {
   OlmSession.fromJson(Map<String, dynamic> dbEntry, String key) : key = key {
     session = olm.Session();
     try {
-      session.unpickle(key, dbEntry['pickle']);
+      session!.unpickle(key, dbEntry['pickle']);
       identityKey = dbEntry['identity_key'];
       sessionId = dbEntry['session_id'];
       lastReceived =
           DateTime.fromMillisecondsSinceEpoch(dbEntry['last_received'] ?? 0);
-      assert(sessionId == session.session_id());
+      assert(sessionId == session!.session_id());
     } catch (e, s) {
       Logs().e('[LibOlm] Could not unpickle olm session', e, s);
       dispose();

@@ -28,7 +28,7 @@ import '../../matrix.dart';
 Stream<T> streamTotalTimeout<T>(
     Stream<T> stream, Future<Null> timeoutFuture) async* {
   final si = StreamIterator(stream);
-  while (await Future.any([si.moveNext(), timeoutFuture])) {
+  while (await Future.any([si.moveNext(), timeoutFuture.then((dynamic value) => value!)])) {
     yield si.current;
   }
 }
@@ -58,7 +58,8 @@ abstract class TimeoutHttpClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     final timeoutFuture = Completer<Null>().future.timeout(timeout);
-    final response = await Future.any([inner.send(request), timeoutFuture]);
+    // ignore: omit_local_variable_types
+    final http.StreamedResponse response = await Future.any([inner.send(request), timeoutFuture.then((dynamic value) => value!)]);
     return replaceStream(
         response, streamTotalTimeout(response.stream, timeoutFuture));
   }
@@ -90,7 +91,7 @@ class VariableTimeoutHttpClient extends TimeoutHttpClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request,
-      {Duration timeout}) async {
+      {Duration? timeout}) async {
     try {
       final response = await super.send(request);
       return replaceStream(response, (() async* {

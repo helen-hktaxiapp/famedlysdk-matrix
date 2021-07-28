@@ -49,22 +49,22 @@ extension MatrixIdExtension on String {
     return true;
   }
 
-  String get sigil => isValidMatrixId ? substring(0, 1) : null;
+  String? get sigil => isValidMatrixId ? substring(0, 1) : null;
 
-  String get localpart => isValidMatrixId ? _getParts().first : null;
+  String? get localpart => isValidMatrixId ? _getParts().first : null;
 
-  String get domain => isValidMatrixId ? _getParts().last : null;
+  String? get domain => isValidMatrixId ? _getParts().last : null;
 
   bool equals(String other) => toLowerCase() == other?.toLowerCase();
 
   /// Separate a matrix identifier string into a primary indentifier, a secondary identifier,
   /// a query string and already parsed `via` parameters. A matrix identifier string
   /// can be an mxid, a matrix.to-url or a matrix-uri.
-  MatrixIdentifierStringExtensionResults parseIdentifierIntoParts() {
+  MatrixIdentifierStringExtensionResults? parseIdentifierIntoParts() {
     const matrixUriPrefix = 'matrix:';
 
     final via = <String>{};
-    String action;
+    String? action;
     final parseQueryString = (qs) {
       if (qs != null) {
         // as there might be multiple "via" tags we can't just use Uri.splitQueryString, we need to do our own thing
@@ -136,7 +136,7 @@ extension MatrixIdExtension on String {
     final match = RegExp(r'^([#!@+][^:]*:[^\/?]*)(?:\/(\$[^?]*))?(?:\?(.*))?$')
         .firstMatch(s);
     if (match == null ||
-        !match.group(1).isValidMatrixId ||
+        !match.group(1)!.isValidMatrixId ||
         !(match.group(2)?.isValidMatrixId ?? true)) {
       return null;
     }
@@ -154,11 +154,11 @@ extension MatrixIdExtension on String {
 }
 
 class MatrixIdentifierStringExtensionResults {
-  final String primaryIdentifier;
-  final String secondaryIdentifier;
-  final String queryString;
-  final Set<String> via;
-  final String action;
+  final String? primaryIdentifier;
+  final String? secondaryIdentifier;
+  final String? queryString;
+  final Set<String>? via;
+  final String? action;
 
   MatrixIdentifierStringExtensionResults(
       {this.primaryIdentifier,

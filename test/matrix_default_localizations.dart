@@ -20,76 +20,76 @@ import 'package:matrix/matrix.dart';
 class MatrixDefaultLocalizations extends MatrixLocalizations {
   const MatrixDefaultLocalizations();
   @override
-  String acceptedTheInvitation(String targetName) =>
+  String acceptedTheInvitation(String? targetName) =>
       '$targetName accepted the invitation';
 
   @override
-  String activatedEndToEndEncryption(String senderName) =>
+  String activatedEndToEndEncryption(String? senderName) =>
       '$senderName activated end to end encryption';
 
   @override
   String get anyoneCanJoin => 'Anyone can join';
 
   @override
-  String bannedUser(String senderName, String targetName) =>
+  String bannedUser(String? senderName, String? targetName) =>
       '$senderName banned $targetName';
 
   @override
-  String changedTheChatAvatar(String senderName) =>
+  String changedTheChatAvatar(String? senderName) =>
       '$senderName changed the chat avatar';
 
   @override
-  String changedTheChatDescriptionTo(String senderName, String content) =>
+  String changedTheChatDescriptionTo(String? senderName, String? content) =>
       '$senderName changed the chat description to $content';
 
   @override
-  String changedTheChatNameTo(String senderName, String content) =>
+  String changedTheChatNameTo(String? senderName, String? content) =>
       '$senderName changed the chat name to $content';
 
   @override
-  String changedTheChatPermissions(String senderName) =>
+  String changedTheChatPermissions(String? senderName) =>
       '$senderName changed the chat permissions';
 
   @override
-  String changedTheDisplaynameTo(String targetName, String newDisplayname) =>
+  String changedTheDisplaynameTo(String? targetName, String newDisplayname) =>
       '$targetName changed the displayname to $newDisplayname';
 
   @override
-  String changedTheGuestAccessRules(String senderName) =>
+  String changedTheGuestAccessRules(String? senderName) =>
       '$senderName changed the guest access rules';
 
   @override
   String changedTheGuestAccessRulesTo(
-          String senderName, String localizedString) =>
+          String? senderName, String? localizedString) =>
       '$senderName changed the guest access rules to $localizedString';
 
   @override
-  String changedTheHistoryVisibility(String senderName) =>
+  String changedTheHistoryVisibility(String? senderName) =>
       '$senderName changed the history visibility';
 
   @override
   String changedTheHistoryVisibilityTo(
-          String senderName, String localizedString) =>
+          String? senderName, String? localizedString) =>
       '$senderName changed the history visibility to $localizedString';
 
   @override
-  String changedTheJoinRules(String senderName) =>
+  String changedTheJoinRules(String? senderName) =>
       '$senderName changed the join rules';
 
   @override
-  String changedTheJoinRulesTo(String senderName, String localizedString) =>
+  String changedTheJoinRulesTo(String? senderName, String? localizedString) =>
       '$senderName changed the join rules to $localizedString';
 
   @override
-  String changedTheProfileAvatar(String targetName) =>
+  String changedTheProfileAvatar(String? targetName) =>
       '$targetName changed the profile avatar';
 
   @override
-  String changedTheRoomAliases(String senderName) =>
+  String changedTheRoomAliases(String? senderName) =>
       '$senderName changed the room aliases';
 
   @override
-  String changedTheRoomInvitationLink(String senderName) =>
+  String changedTheRoomInvitationLink(String? senderName) =>
       '$senderName changed the room invitation link';
 
   @override
@@ -97,11 +97,11 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
       'The secure channel has been corrupted';
 
   @override
-  String couldNotDecryptMessage(String errorText) =>
+  String couldNotDecryptMessage(String? errorText) =>
       'Could not decrypt message: $errorText';
 
   @override
-  String createdTheChat(String senderName) => '$senderName created the chat';
+  String createdTheChat(String? senderName) => '$senderName created the chat';
 
   @override
   String get emptyChat => 'Empty chat';
@@ -116,7 +116,7 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
   String get fromTheInvitation => 'From the invitation';
 
   @override
-  String groupWith(String displayname) => 'Group with $displayname';
+  String groupWith(String? displayname) => 'Group with $displayname';
 
   @override
   String get guestsAreForbidden => 'Guests are forbidden';
@@ -125,25 +125,25 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
   String get guestsCanJoin => 'Guests can join';
 
   @override
-  String hasWithdrawnTheInvitationFor(String senderName, String targetName) =>
+  String hasWithdrawnTheInvitationFor(String? senderName, String? targetName) =>
       '$senderName has withdrawn the invitation for $targetName';
 
   @override
-  String invitedUser(String senderName, String targetName) =>
+  String invitedUser(String? senderName, String? targetName) =>
       '$senderName has invited $targetName';
 
   @override
   String get invitedUsersOnly => 'Invited users only';
 
   @override
-  String joinedTheChat(String targetName) => '$targetName joined the chat';
+  String joinedTheChat(String? targetName) => '$targetName joined the chat';
 
   @override
-  String kicked(String senderName, String targetName) =>
+  String kicked(String? senderName, String? targetName) =>
       '$senderName kicked $targetName';
 
   @override
-  String kickedAndBanned(String senderName, String targetName) =>
+  String kickedAndBanned(String? senderName, String? targetName) =>
       '$senderName banned $targetName';
 
   @override
@@ -153,39 +153,39 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
   String get noPermission => 'No permission';
 
   @override
-  String redactedAnEvent(String senderName) => '$senderName redacted an event';
+  String redactedAnEvent(String? senderName) => '$senderName redacted an event';
 
   @override
-  String rejectedTheInvitation(String targetName) =>
+  String rejectedTheInvitation(String? targetName) =>
       '$targetName rejected the invitation';
 
   @override
-  String removedBy(String calcDisplayname) => 'Removed by $calcDisplayname';
+  String removedBy(String? calcDisplayname) => 'Removed by $calcDisplayname';
 
   @override
   String get roomHasBeenUpgraded => 'Room has been upgraded';
 
   @override
-  String sentAFile(String senderName) => '$senderName sent a file';
+  String sentAFile(String? senderName) => '$senderName sent a file';
 
   @override
-  String sentAPicture(String senderName) => '$senderName sent a picture';
+  String sentAPicture(String? senderName) => '$senderName sent a picture';
 
   @override
-  String sentASticker(String senderName) => '$senderName sent a sticker';
+  String sentASticker(String? senderName) => '$senderName sent a sticker';
 
   @override
-  String sentAVideo(String senderName) => '$senderName sent a video';
+  String sentAVideo(String? senderName) => '$senderName sent a video';
 
   @override
-  String sentAnAudio(String senderName) => '$senderName sent an audio';
+  String sentAnAudio(String? senderName) => '$senderName sent an audio';
 
   @override
-  String sharedTheLocation(String senderName) =>
+  String sharedTheLocation(String? senderName) =>
       '$senderName shared the location';
 
   @override
-  String unbannedUser(String senderName, String targetName) =>
+  String unbannedUser(String? senderName, String? targetName) =>
       '$senderName unbanned $targetName';
 
   @override
@@ -195,7 +195,7 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
   String unknownEvent(String typeKey) => 'Unknown event $typeKey';
 
   @override
-  String userLeftTheChat(String targetName) => '$targetName left the chat';
+  String userLeftTheChat(String? targetName) => '$targetName left the chat';
 
   @override
   String get visibleForAllParticipants => 'Visible for all participants';
@@ -207,22 +207,22 @@ class MatrixDefaultLocalizations extends MatrixLocalizations {
   String get you => 'You';
 
   @override
-  String answeredTheCall(String senderName) {
+  String answeredTheCall(String? senderName) {
     return 'answeredTheCall';
   }
 
   @override
-  String endedTheCall(String senderName) {
+  String endedTheCall(String? senderName) {
     return 'endedTheCall';
   }
 
   @override
-  String sentCallInformations(String senderName) {
+  String sentCallInformations(String? senderName) {
     return 'sentCallInformations';
   }
 
   @override
-  String startedACall(String senderName) {
+  String startedACall(String? senderName) {
     return 'startedACall';
   }
 }

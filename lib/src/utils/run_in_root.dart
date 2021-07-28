@@ -20,7 +20,7 @@ import 'dart:async';
 
 import '../../matrix.dart';
 
-Future<T> runInRoot<T>(FutureOr<T> Function() fn) async {
+Future<T?> runInRoot<T>(FutureOr<T>? Function() fn) async {
   return await Zone.root.run(() async {
     try {
       return await fn();

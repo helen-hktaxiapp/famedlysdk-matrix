@@ -36,7 +36,7 @@ class SpoilerSyntax extends TagSyntax {
 
   @override
   Node close(InlineParser parser, Delimiter opener, Delimiter closer,
-      {List<Node> Function() getChildren}) {
+      {required List<Node> Function() getChildren}) {
     var reason = '';
     final children = getChildren();
     if (children.isNotEmpty) {
@@ -64,21 +64,21 @@ class EmoteSyntax extends InlineSyntax {
   bool onMatch(InlineParser parser, Match match) {
     final pack = match[1] ?? '';
     final emote = match[2];
-    String mxc;
+    String? mxc;
     if (pack.isEmpty) {
       // search all packs
       for (final emotePack in emotePacks.values) {
-        mxc = emotePack[emote];
+        mxc = emotePack[emote!];
         if (mxc != null) {
           break;
         }
       }
     } else {
-      mxc = emotePacks[pack] != null ? emotePacks[pack][emote] : null;
+      mxc = emotePacks[pack] != null ? emotePacks[pack]![emote!] : null;
     }
     if (mxc == null) {
       // emote not found. Insert the whole thing as plain text
-      parser.addNode(Text(match[0]));
+      parser.addNode(Text(match[0]!));
       return true;
     }
     final element = Element.empty('img');
@@ -99,8 +99,8 @@ class InlineLatexSyntax extends TagSyntax {
   @override
   bool onMatch(InlineParser parser, Match match) {
     final element =
-        Element('span', [Element.text('code', htmlEscape.convert(match[1]))]);
-    element.attributes['data-mx-maths'] = htmlAttrEscape.convert(match[1]);
+        Element('span', [Element.text('code', htmlEscape.convert(match[1]!))]);
+    element.attributes['data-mx-maths'] = htmlAttrEscape.convert(match[1]!);
     parser.addNode(element);
     return true;
   }
@@ -114,12 +114,12 @@ class BlockLatexSyntax extends BlockSyntax {
   final endPattern = RegExp(r'^(.*)\$\$\s*$');
 
   @override
-  List<String> parseChildLines(BlockParser parser) {
-    final childLines = <String>[];
+  List<String?> parseChildLines(BlockParser parser) {
+    final childLines = <String?>[];
     var first = true;
     while (!parser.isDone) {
       final match = endPattern.firstMatch(parser.current);
-      if (match == null || (first && match.group(1).trim().isEmpty)) {
+      if (match == null || (first && match.group(1)!.trim().isEmpty)) {
         childLines.add(parser.current);
         parser.advance();
       } else {
@@ -154,10 +154,10 @@ class PillSyntax extends InlineSyntax {
   bool onMatch(InlineParser parser, Match match) {
     if (match.start > 0 &&
         !RegExp(r'[\s.!?:;\(]').hasMatch(match.input[match.start - 1])) {
-      parser.addNode(Text(match[0]));
+      parser.addNode(Text(match[0]!));
       return true;
     }
-    final identifier = match[1];
+    final identifier = match[1]!;
     final element = Element.text('a', htmlEscape.convert(identifier));
     element.attributes['href'] =
         htmlAttrEscape.convert('https://matrix.to/#/$identifier');
@@ -167,7 +167,7 @@ class PillSyntax extends InlineSyntax {
 }
 
 class MentionSyntax extends InlineSyntax {
-  final Map<String, String> mentionMap;
+  final Map<String?, String?> mentionMap;
   MentionSyntax(this.mentionMap) : super(r'(@(?:\[[^\]:]+\]|\w+)(?:#\w+)?)');
 
   @override
@@ -175,11 +175,11 @@ class MentionSyntax extends InlineSyntax {
     if ((match.start > 0 &&
             !RegExp(r'[\s.!?:;\(]').hasMatch(match.input[match.start - 1])) ||
         !mentionMap.containsKey(match[1])) {
-      parser.addNode(Text(match[0]));
+      parser.addNode(Text(match[0]!));
       return true;
     }
     final identifier = mentionMap[match[1]];
-    final element = Element.text('a', htmlEscape.convert(match[1]));
+    final element = Element.text('a', htmlEscape.convert(match[1]!));
     element.attributes['href'] =
         htmlAttrEscape.convert('https://matrix.to/#/$identifier');
     parser.addNode(element);
@@ -188,8 +188,8 @@ class MentionSyntax extends InlineSyntax {
 }
 
 String markdown(String text,
-    {Map<String, Map<String, String>> emotePacks,
-    Map<String, String> mentionMap}) {
+    {Map<String, Map<String, String>>? emotePacks,
+    Map<String?, String?>? mentionMap}) {
   var ret = markdownToHtml(
     text,
     extensionSet: ExtensionSet.commonMark,

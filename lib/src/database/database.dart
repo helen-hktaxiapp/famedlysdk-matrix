@@ -65,6 +65,10 @@ extension MigratorExtension on Migrator {
       }
     }
   }
+
+  Future? removeUserCrossSigningKey (int? clientId, String userId, String publicKey){
+    return null;
+  }
 }
 
 @UseMoor(
@@ -213,7 +217,7 @@ class Database extends _$Database implements DatabaseApi {
       );
 
   @override
-  Future<Map<String, dynamic>> getClient(String name) async {
+  Future<Map<String, dynamic>?> getClient(String name) async {
     final res = await dbGetClient(name).get();
     if (res.isEmpty) return null;
     await markPendingEventsAsError(res.single.clientId);
@@ -221,7 +225,7 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<Map<String, sdk.DeviceKeysList>> getUserDeviceKeys(
+  Future<Map<String?, sdk.DeviceKeysList>> getUserDeviceKeys(
       sdk.Client client) async {
     final deviceKeys = await getAllUserDeviceKeys(client.id).get();
     if (deviceKeys.isEmpty) {
@@ -229,7 +233,7 @@ class Database extends _$Database implements DatabaseApi {
     }
     final deviceKeysKeys = await getAllUserDeviceKeysKeys(client.id).get();
     final crossSigningKeys = await getAllUserCrossSigningKeys(client.id).get();
-    final res = <String, sdk.DeviceKeysList>{};
+    final res = <String?, sdk.DeviceKeysList>{};
     for (final entry in deviceKeys) {
       res[entry.userId] = sdk.DeviceKeysList.fromDbJson(
           entry.toJson(),
@@ -247,9 +251,9 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<OutboundGroupSession> getOutboundGroupSession(
-      int clientId, String roomId, String userId) async {
-    final res = await dbGetOutboundGroupSession(clientId, roomId).get();
+  Future<OutboundGroupSession?> getOutboundGroupSession(
+      int? clientId, String? roomId, String? userId) async {
+    final res = await dbGetOutboundGroupSession(clientId!, roomId!).get();
     if (res.isEmpty) {
       return null;
     }
@@ -258,9 +262,9 @@ class Database extends _$Database implements DatabaseApi {
 
   @override
   Future<List<StoredInboundGroupSession>> getAllInboundGroupSessions(
-    int clientId,
+    int? clientId,
   ) async {
-    final res = await dbGetAllInboundGroupSessions(clientId).get();
+    final res = await dbGetAllInboundGroupSessions(clientId!).get();
     if (res.isEmpty) {
       return [];
     }
@@ -270,13 +274,13 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<StoredInboundGroupSession> getInboundGroupSession(
-    int clientId,
+  Future<StoredInboundGroupSession?> getInboundGroupSession(
+    int? clientId,
     String roomId,
     String sessionId,
   ) async {
     final res =
-        await dbGetInboundGroupSessionKey(clientId, roomId, sessionId).get();
+        await dbGetInboundGroupSessionKey(clientId!, roomId, sessionId).get();
     if (res.isEmpty) {
       return null;
     }
@@ -284,8 +288,8 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<SSSSCache> getSSSSCache(int clientId, String type) async {
-    final res = await dbGetSSSSCache(clientId, type).get();
+  Future<SSSSCache?> getSSSSCache(int? clientId, String? type) async {
+    final res = await dbGetSSSSCache(clientId!, type!).get();
     if (res.isEmpty) {
       return null;
     }
@@ -300,14 +304,14 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<List<sdk.Room>> getRoomList(sdk.Client client) async {
+  Future<List<sdk.Room?>> getRoomList(sdk.Client client) async {
     final res = await select(rooms).get();
     final resStates = await getImportantRoomStates(
-            client.id, client.importantStateEvents.toList())
+            client.id, client.importantStateEvents!.toList())
         .get();
     final resAccountData = await getAllRoomAccountData(client.id).get();
-    final roomList = <sdk.Room>[];
-    final allMembersToPostload = <String, Set<String>>{};
+    final roomList = <sdk.Room?>[];
+    final Map<String?, Set<String?>> allMembersToPostload = <String?, Set<String>>{};
     for (final r in res) {
       final room = await getRoomFromTableRow(
         r,
@@ -318,10 +322,10 @@ class Database extends _$Database implements DatabaseApi {
       roomList.add(room);
       // let's see if we need any m.room.member events
       // We always need the member event for ourself
-      final membersToPostload = <String>{client.userID};
+      final membersToPostload = <String?>{client.userID};
       // the lastEvent message preview might have an author we need to fetch, if it is a group chat
       if (room.getState(api.EventTypes.Message) != null && !room.isDirectChat) {
-        membersToPostload.add(room.getState(api.EventTypes.Message).senderId);
+        membersToPostload.add(room.getState(api.EventTypes.Message)!.senderId);
       }
       // if the room has no name and no canonical alias, its name is calculated
       // based on the heroes of the room
@@ -331,7 +335,7 @@ class Database extends _$Database implements DatabaseApi {
         // we don't have a name and no canonical alias, so we'll need to
         // post-load the heroes
         membersToPostload
-            .addAll(room.summary.mHeroes.where((h) => h.isNotEmpty));
+            .addAll(room.summary.mHeroes!.where((h) => h.isNotEmpty));
       }
       // save it for loading later
       allMembersToPostload[room.id] = membersToPostload;
@@ -361,7 +365,7 @@ class Database extends _$Database implements DatabaseApi {
                 // this is where the magic happens. Here we build a query with the form
                 // OR room_id = '!roomId1' AND state_key IN ('@member') OR room_id = '!roomId2' AND state_key IN ('@member')
                 // subqueries holds our query fragment
-                Expression<bool> subqueries;
+                Expression<bool?>? subqueries;
                 // here we iterate over our chunk....we musn't forget to progress our iterator!
                 // we must check for if our chunk is done *before* progressing the
                 // iterator, else we might progress it twice around chunk edges, missing on rooms
@@ -380,12 +384,12 @@ class Database extends _$Database implements DatabaseApi {
                   }
                 }
                 // combinde the basequery with the subquery together, giving our final query
-                return basequery & subqueries;
+                return basequery & subqueries!;
               }))
             .get();
         // now that we got all the entries from the database, set them as room states
         for (final dbMember in membersRes) {
-          final room = roomList.firstWhere((r) => r.id == dbMember.roomId);
+          final room = roomList.firstWhere((r) => r!.id == dbMember.roomId)!;
           final event = getEventFromDb(dbMember, room);
           room.setState(event);
         }
@@ -395,11 +399,11 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<Map<String, api.BasicEvent>> getAccountData(int clientId) async {
-    final newAccountData = <String, api.BasicEvent>{};
-    final rawAccountData = await getAllAccountData(clientId).get();
+  Future<Map<String?, api.BasicEvent>> getAccountData(int? clientId) async {
+    final newAccountData = <String?, api.BasicEvent>{};
+    final rawAccountData = await getAllAccountData(clientId!).get();
     for (final d in rawAccountData) {
-      var content = sdk.Event.getMapFromPayload(d.content);
+      var content = sdk.Event.getMapFromPayload(d.content)!;
       // there was a bug where it stored the entire event, not just the content
       // in the databse. This is the temporary fix for those affected by the bug
       if (content['content'] is Map && content['type'] is String) {
@@ -409,7 +413,7 @@ class Database extends _$Database implements DatabaseApi {
       }
       newAccountData[d.type] = api.BasicEvent(
         content: content,
-        type: d.type,
+        type: d.type!,
       );
     }
     return newAccountData;
@@ -419,36 +423,36 @@ class Database extends _$Database implements DatabaseApi {
   /// [transaction].
   final Set<String> _ensuredRooms = {};
   @override
-  Future<void> storeRoomUpdate(int clientId, sdk.RoomUpdate roomUpdate,
-      [sdk.Room oldRoom]) async {
+  Future<void> storeRoomUpdate(int? clientId, sdk.RoomUpdate roomUpdate,
+      [sdk.Room? oldRoom]) async {
     final setKey = '$clientId;${roomUpdate.id}';
     if (roomUpdate.membership != api.Membership.leave) {
       if (!_ensuredRooms.contains(setKey)) {
-        await ensureRoomExists(clientId, roomUpdate.id,
+        await ensureRoomExists(clientId!, roomUpdate.id!,
             roomUpdate.membership.toString().split('.').last);
         _ensuredRooms.add(setKey);
       }
     } else {
       _ensuredRooms.remove(setKey);
-      await removeRoom(clientId, roomUpdate.id);
+      await removeRoom(clientId!, roomUpdate.id!);
       return;
     }
 
     var doUpdate = oldRoom == null;
     if (!doUpdate) {
-      doUpdate = roomUpdate.highlight_count != oldRoom.highlightCount ||
+      doUpdate = roomUpdate.highlight_count != oldRoom!.highlightCount ||
           roomUpdate.notification_count != oldRoom.notificationCount ||
           roomUpdate.membership.toString().split('.').last !=
               oldRoom.membership.toString().split('.').last ||
           (roomUpdate.summary?.mJoinedMemberCount != null &&
-              roomUpdate.summary.mJoinedMemberCount !=
+              roomUpdate.summary!.mJoinedMemberCount !=
                   oldRoom.summary.mInvitedMemberCount) ||
           (roomUpdate.summary?.mInvitedMemberCount != null &&
-              roomUpdate.summary.mJoinedMemberCount !=
+              roomUpdate.summary!.mJoinedMemberCount !=
                   oldRoom.summary.mJoinedMemberCount) ||
           (roomUpdate.summary?.mHeroes != null &&
-              roomUpdate.summary.mHeroes.join(',') !=
-                  oldRoom.summary.mHeroes.join(','));
+              roomUpdate.summary!.mHeroes!.join(',') !=
+                  oldRoom.summary.mHeroes!.join(','));
     }
 
     if (doUpdate) {
@@ -456,25 +460,25 @@ class Database extends _$Database implements DatabaseApi {
             ..where((r) =>
                 r.roomId.equals(roomUpdate.id) & r.clientId.equals(clientId)))
           .write(RoomsCompanion(
-        highlightCount: Value(roomUpdate.highlight_count),
-        notificationCount: Value(roomUpdate.notification_count),
+        highlightCount: Value(roomUpdate.highlight_count as int),
+        notificationCount: Value(roomUpdate.notification_count as int),
         membership: Value(roomUpdate.membership.toString().split('.').last),
         joinedMemberCount: roomUpdate.summary?.mJoinedMemberCount != null
-            ? Value(roomUpdate.summary.mJoinedMemberCount)
+            ? Value(roomUpdate.summary!.mJoinedMemberCount as int)
             : Value.absent(),
         invitedMemberCount: roomUpdate.summary?.mInvitedMemberCount != null
-            ? Value(roomUpdate.summary.mInvitedMemberCount)
+            ? Value(roomUpdate.summary!.mInvitedMemberCount as int)
             : Value.absent(),
         heroes: roomUpdate.summary?.mHeroes != null
-            ? Value(roomUpdate.summary.mHeroes.join(','))
+            ? Value(roomUpdate.summary!.mHeroes!.join(','))
             : Value.absent(),
       ));
     }
 
     // Is the timeline limited? Then all previous messages should be
     // removed from the database!
-    if (roomUpdate.limitedTimeline) {
-      await removeSuccessfulRoomEvents(clientId, roomUpdate.id);
+    if (roomUpdate.limitedTimeline!) {
+      await removeSuccessfulRoomEvents(clientId!, roomUpdate.id!);
       await updateRoomSortOrder(0.0, 0.0, clientId, roomUpdate.id);
     }
     if (roomUpdate.prev_batch != null) {
@@ -486,26 +490,26 @@ class Database extends _$Database implements DatabaseApi {
   /// [transaction].
   @override
   Future<void> storeEventUpdate(
-      int clientId, sdk.EventUpdate eventUpdate) async {
+      int? clientId, sdk.EventUpdate eventUpdate) async {
     if (eventUpdate.type == sdk.EventUpdateType.ephemeral) return;
-    final eventContent = eventUpdate.content;
+    final eventContent = eventUpdate.content!;
     final type = eventUpdate.type;
     final chatId = eventUpdate.roomID;
 
     // Get the state_key for state events
-    String stateKey;
+    String? stateKey;
     if (eventContent['state_key'] is String) {
       stateKey = eventContent['state_key'];
     }
 
-    if (eventUpdate.content['type'] == api.EventTypes.Redaction) {
+    if (eventUpdate.content!['type'] == api.EventTypes.Redaction) {
       await redactMessage(clientId, eventUpdate);
     }
 
     if (type == sdk.EventUpdateType.timeline ||
         type == sdk.EventUpdateType.history) {
       // calculate the status
-      var status = 2;
+      int? status = 2;
       if (eventContent['unsigned'] is Map<String, dynamic> &&
           eventContent['unsigned'][messageSendingStatusKey] is num) {
         status = eventContent['unsigned'][messageSendingStatusKey];
@@ -516,28 +520,28 @@ class Database extends _$Database implements DatabaseApi {
           eventContent['unsigned']['transaction_id'] is String);
       if (!storeNewEvent) {
         final allOldEvents =
-            await getEvent(clientId, eventContent['event_id'], chatId).get();
+            await getEvent(clientId!, eventContent['event_id'], chatId!).get();
         if (allOldEvents.isNotEmpty) {
           // we were likely unable to change transaction_id -> event_id.....because the event ID already exists!
           // So, we try to fetch the old event
           // the transaction id event will automatically be deleted further down
           final oldEvent = allOldEvents.first;
           // do we update the status? We should allow 0 -> -1 updates and status increases
-          if (status > oldEvent.status ||
+          if (status! > oldEvent.status! ||
               (oldEvent.status == 0 && status == -1)) {
             // update the status
             await updateEventStatusOnly(
-                status, clientId, eventContent['event_id'], chatId);
+                status, clientId!, eventContent['event_id'], chatId!);
           }
         } else {
           // status changed and we have an old transaction id --> update event id and stuffs
           try {
             final updated = await updateEventStatus(
-                status,
+                status!,
                 eventContent['event_id'],
-                clientId,
+                clientId!,
                 eventContent['unsigned']['transaction_id'],
-                chatId);
+                chatId!);
             if (updated == 0) {
               storeNewEvent = true;
             }
@@ -550,19 +554,19 @@ class Database extends _$Database implements DatabaseApi {
         }
       }
       if (storeNewEvent) {
-        DbEvent oldEvent;
+        DbEvent? oldEvent;
         if (type == sdk.EventUpdateType.history) {
           final allOldEvents =
-              await getEvent(clientId, eventContent['event_id'], chatId).get();
+              await getEvent(clientId!, eventContent['event_id'], chatId!).get();
           if (allOldEvents.isNotEmpty) {
             oldEvent = allOldEvents.first;
           }
         }
         await storeEvent(
-          clientId,
+          clientId!,
           eventContent['event_id'],
-          chatId,
-          oldEvent?.sortOrder ?? eventUpdate.sortOrder,
+          chatId!,
+          oldEvent?.sortOrder ?? eventUpdate.sortOrder!,
           eventContent['origin_server_ts'] ??
               DateTime.now().millisecondsSinceEpoch,
           eventContent['sender'],
@@ -571,17 +575,17 @@ class Database extends _$Database implements DatabaseApi {
           json.encode(eventContent['content']),
           json.encode(eventContent['prevContent']),
           eventContent['state_key'],
-          status,
+          status!,
         );
       }
 
       // is there a transaction id? Then delete the event with this id.
       if (status != -1 &&
           status != 0 &&
-          eventUpdate.content['unsigned'] is Map &&
-          eventUpdate.content['unsigned']['transaction_id'] is String) {
+          eventUpdate.content!['unsigned'] is Map &&
+          eventUpdate.content!['unsigned']['transaction_id'] is String) {
         await removeEvent(clientId,
-            eventUpdate.content['unsigned']['transaction_id'], chatId);
+            eventUpdate.content!['unsigned']['transaction_id'], chatId);
       }
     }
 
@@ -593,12 +597,12 @@ class Database extends _$Database implements DatabaseApi {
               api.EventTypes.Message,
               api.EventTypes.Sticker,
               api.EventTypes.Encrypted
-            ].contains(eventUpdate.content['type']))) {
+            ].contains(eventUpdate.content!['type']))) {
       final now = DateTime.now();
       await storeRoomState(
-        clientId,
+        clientId!,
         eventContent['event_id'] ?? now.millisecondsSinceEpoch.toString(),
-        chatId,
+        chatId!,
         eventUpdate.sortOrder ?? 0.0,
         eventContent['origin_server_ts'] ?? now.millisecondsSinceEpoch,
         eventContent['sender'],
@@ -610,47 +614,47 @@ class Database extends _$Database implements DatabaseApi {
       );
     } else if (type == sdk.EventUpdateType.accountData) {
       await storeRoomAccountData(
-        clientId,
+        clientId!,
         eventContent['type'],
-        chatId,
+        chatId!,
         json.encode(eventContent['content']),
       );
     }
   }
 
   @override
-  Future<sdk.Event> getEventById(
-      int clientId, String eventId, sdk.Room room) async {
-    final event = await getEvent(clientId, eventId, room.id).get();
+  Future<sdk.Event?> getEventById(
+      int? clientId, String eventId, sdk.Room room) async {
+    final event = await getEvent(clientId!, eventId, room.id!).get();
     if (event.isEmpty) {
       return null;
     }
     return getEventFromDb(event.single, room);
   }
 
-  Future<bool> redactMessage(int clientId, sdk.EventUpdate eventUpdate) async {
+  Future<bool> redactMessage(int? clientId, sdk.EventUpdate eventUpdate) async {
     final events = await getEvent(
-            clientId, eventUpdate.content['redacts'], eventUpdate.roomID)
+            clientId!, eventUpdate.content!['redacts'], eventUpdate.roomID!)
         .get();
     var success = false;
     for (final dbEvent in events) {
       final event = getEventFromDb(dbEvent, null);
-      event.setRedactionEvent(sdk.Event.fromJson(eventUpdate.content, null));
+      event.setRedactionEvent(sdk.Event.fromJson(eventUpdate.content!, null));
       final changes1 = await updateEvent(
         json.encode(event.unsigned ?? ''),
-        json.encode(event.content ?? ''),
+        json.encode(event.content),
         json.encode(event.prevContent ?? ''),
         clientId,
         event.eventId,
-        eventUpdate.roomID,
+        eventUpdate.roomID!,
       );
       final changes2 = await updateEvent(
         json.encode(event.unsigned ?? ''),
-        json.encode(event.content ?? ''),
+        json.encode(event.content),
         json.encode(event.prevContent ?? ''),
         clientId,
         event.eventId,
-        eventUpdate.roomID,
+        eventUpdate.roomID!,
       );
       if (changes1 == 1 && changes2 == 1) success = true;
     }
@@ -658,7 +662,7 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<void> forgetRoom(int clientId, String roomId) async {
+  Future<void> forgetRoom(int? clientId, String? roomId) async {
     final setKey = '$clientId;$roomId';
     _ensuredRooms.remove(setKey);
     await (delete(rooms)
@@ -676,7 +680,7 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<void> clearCache(int clientId) async {
+  Future<void> clearCache(int? clientId) async {
     await (delete(presences)..where((r) => r.clientId.equals(clientId))).go();
     await (delete(roomAccountData)..where((r) => r.clientId.equals(clientId)))
         .go();
@@ -692,7 +696,7 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<void> clear(int clientId) async {
+  Future<void> clear(int? clientId) async {
     await clearCache(clientId);
     await (delete(inboundGroupSessions)
           ..where((r) => r.clientId.equals(clientId)))
@@ -713,8 +717,8 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<sdk.User> getUser(int clientId, String userId, sdk.Room room) async {
-    final res = await dbGetUser(clientId, userId, room.id).get();
+  Future<sdk.User?> getUser(int? clientId, String? userId, sdk.Room room) async {
+    final res = await dbGetUser(clientId!, userId!, room.id!).get();
     if (res.isEmpty) {
       return null;
     }
@@ -722,19 +726,19 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<List<sdk.User>> getUsers(int clientId, sdk.Room room) async {
-    final res = await dbGetUsers(clientId, room.id).get();
+  Future<List<sdk.User>> getUsers(int? clientId, sdk.Room room) async {
+    final res = await dbGetUsers(clientId!, room.id!).get();
     return res.map((r) => getEventFromDb(r, room).asUser).toList();
   }
 
   @override
-  Future<List<sdk.Event>> getEventList(int clientId, sdk.Room room) async {
-    final res = await dbGetEventList(clientId, room.id).get();
+  Future<List<sdk.Event>> getEventList(int? clientId, sdk.Room room) async {
+    final res = await dbGetEventList(clientId!, room.id!).get();
     return res.map((r) => getEventFromDb(r, room)).toList();
   }
 
   @override
-  Future<Uint8List> getFile(String mxcUri) async {
+  Future<Uint8List?> getFile(String mxcUri) async {
     final res = await dbGetFile(mxcUri).get();
     if (res.isEmpty) return null;
     return res.single.bytes;
@@ -742,13 +746,13 @@ class Database extends _$Database implements DatabaseApi {
 
   @override
   Future<List<sdk.Event>> getUnimportantRoomEventStatesForRoom(
-    int client_id,
+    int? client_id,
     List<String> events,
     Room room,
   ) async {
     final entries = await getUnimportantRoomStatesForRoom(
-      client_id,
-      room.id,
+      client_id!,
+      room.id!,
       events,
     ).get();
     return entries.map((dbEvent) => getEventFromDb(dbEvent, room)).toList();
@@ -756,50 +760,50 @@ class Database extends _$Database implements DatabaseApi {
 
   @override
   Future<List<OlmSession>> getOlmSessions(
-    int client_id,
-    String identity_key,
-    String userId,
+    int? client_id,
+    String? identity_key,
+    String? userId,
   ) async {
-    final rows = await dbGetOlmSessions(client_id, identity_key).get();
+    final rows = await dbGetOlmSessions(client_id!, identity_key!).get();
     return rows
-        .map((row) => OlmSession.fromJson(row.toJson(), userId))
+        .map((row) => OlmSession.fromJson(row.toJson(), userId!))
         .toList();
   }
 
   @override
   Future<List<OlmSession>> getOlmSessionsForDevices(
-    int client_id,
-    List<String> identity_keys,
-    String userId,
+    int? client_id,
+    List<String?> identity_keys,
+    String? userId,
   ) async {
     final rows =
-        await dbGetOlmSessionsForDevices(client_id, identity_keys).get();
+        await dbGetOlmSessionsForDevices(client_id!, identity_keys).get();
     return rows
-        .map((row) => OlmSession.fromJson(row.toJson(), userId))
+        .map((row) => OlmSession.fromJson(row.toJson(), userId!))
         .toList();
   }
 
   @override
-  Future<List<QueuedToDeviceEvent>> getToDeviceEventQueue(int client_id) async {
-    final rows = await getToDeviceQueue(client_id).get();
+  Future<List<QueuedToDeviceEvent>> getToDeviceEventQueue(int? client_id) async {
+    final rows = await getToDeviceQueue(client_id!).get();
     return rows
         .map((row) => QueuedToDeviceEvent(
               id: row.id,
               type: row.type,
               txnId: row.txnId,
               content:
-                  (json.decode(row.content) as Map<String, dynamic>).copy(),
+                  (json.decode(row.content!) as Map<String, dynamic>).copy(),
             ))
         .toList();
   }
 
   @override
   Future<List<String>> getLastSentMessageUserDeviceKey(
-    int client_id,
+    int? client_id,
     String user_id,
-    String device_id,
+    String? device_id,
   ) =>
-      dbGetLastSentMessageUserDeviceKey(client_id, user_id, device_id).get();
+      dbGetLastSentMessageUserDeviceKey(client_id!, user_id, device_id!).get();
 
   @override
   Future<List<StoredInboundGroupSession>>
@@ -812,11 +816,11 @@ class Database extends _$Database implements DatabaseApi {
 }
 
 /// Get an event from either DbRoomState or DbEvent
-sdk.Event getEventFromDb(dynamic dbEntry, sdk.Room room) {
+sdk.Event getEventFromDb(dynamic dbEntry, sdk.Room? room) {
   if (!(dbEntry is DbRoomState || dbEntry is DbEvent)) {
     throw ('Unknown db type');
   }
-  final content = sdk.Event.getMapFromPayload(dbEntry.content);
+  final content = sdk.Event.getMapFromPayload(dbEntry.content)!;
   final unsigned = sdk.Event.getMapFromPayload(dbEntry.unsigned);
   final prevContent = sdk.Event.getMapFromPayload(dbEntry.prevContent);
   return sdk.Event(
@@ -843,7 +847,7 @@ sdk.Event getEventFromDb(dynamic dbEntry, sdk.Room room) {
 Future<Room> getRoomFromTableRow(
   // either Map<String, dynamic> or DbRoom
   DbRoom row,
-  Client matrix, {
+  Client? matrix, {
   dynamic states, // DbRoomState, as iterator and optionally as future
   dynamic
       roomAccountData, // DbRoomAccountData, as iterator and optionally as future
@@ -851,7 +855,7 @@ Future<Room> getRoomFromTableRow(
   final newRoom = Room(
     id: row.roomId,
     membership: sdk.Membership.values
-        .firstWhere((e) => e.toString() == 'Membership.' + row.membership),
+        .firstWhere((e) => e.toString() == 'Membership.' + row.membership!),
     notificationCount: row.notificationCount,
     highlightCount: row.highlightCount,
     // TODO: do proper things
@@ -875,10 +879,10 @@ Future<Room> getRoomFromTableRow(
     }
   }
 
-  final newRoomAccountData = <String, sdk.BasicRoomEvent>{};
+  final newRoomAccountData = <String?, sdk.BasicRoomEvent>{};
   if (roomAccountData != null) {
     for (final singleAccountData in await roomAccountData) {
-      final content = sdk.Event.getMapFromPayload(singleAccountData.content);
+      final content = sdk.Event.getMapFromPayload(singleAccountData.content)!;
       final newData = sdk.BasicRoomEvent(
         content: content,
         type: singleAccountData.type,

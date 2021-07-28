@@ -47,72 +47,72 @@ void main() {
       expect('@user:domain:8448'.domain, 'domain:8448');
     });
     test('parseIdentifierIntoParts', () {
-      var res = '#alias:beep'.parseIdentifierIntoParts();
+      var res = '#alias:beep'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, null);
       expect(res.queryString, null);
-      res = 'blha'.parseIdentifierIntoParts();
+      res = 'blha'.parseIdentifierIntoParts()!;
       expect(res, null);
-      res = '#alias:beep/\$event'.parseIdentifierIntoParts();
+      res = '#alias:beep/\$event'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, '\$event');
       expect(res.queryString, null);
-      res = '#alias:beep?blubb'.parseIdentifierIntoParts();
+      res = '#alias:beep?blubb'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, null);
       expect(res.queryString, 'blubb');
-      res = '#alias:beep/\$event?blubb'.parseIdentifierIntoParts();
+      res = '#alias:beep/\$event?blubb'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, '\$event');
       expect(res.queryString, 'blubb');
-      res = '#/\$?:beep/\$event?blubb?b'.parseIdentifierIntoParts();
+      res = '#/\$?:beep/\$event?blubb?b'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#/\$?:beep');
       expect(res.secondaryIdentifier, '\$event');
       expect(res.queryString, 'blubb?b');
 
-      res = 'https://matrix.to/#/#alias:beep'.parseIdentifierIntoParts();
+      res = 'https://matrix.to/#/#alias:beep'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, null);
       expect(res.queryString, null);
-      res = 'https://matrix.to/#/%23alias%3abeep'.parseIdentifierIntoParts();
+      res = 'https://matrix.to/#/%23alias%3abeep'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, null);
       expect(res.queryString, null);
       res = 'https://matrix.to/#/%23alias%3abeep?boop%F0%9F%A7%A1%F0%9F%A6%8A'
-          .parseIdentifierIntoParts();
+          .parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#alias:beep');
       expect(res.secondaryIdentifier, null);
       expect(res.queryString, 'boop%F0%9F%A7%A1%F0%9F%A6%8A');
 
       res = 'https://matrix.to/#/#alias:beep?via=fox.com&via=fox.org'
-          .parseIdentifierIntoParts();
+          .parseIdentifierIntoParts()!;
       expect(res.via, <String>{'fox.com', 'fox.org'});
 
-      res = 'matrix:u/her:example.org'.parseIdentifierIntoParts();
+      res = 'matrix:u/her:example.org'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '@her:example.org');
       expect(res.secondaryIdentifier, null);
-      res = 'matrix:u/bad'.parseIdentifierIntoParts();
+      res = 'matrix:u/bad'.parseIdentifierIntoParts()!;
       expect(res, null);
-      res = 'matrix:roomid/rid:example.org'.parseIdentifierIntoParts();
+      res = 'matrix:roomid/rid:example.org'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '!rid:example.org');
       expect(res.secondaryIdentifier, null);
       expect(res.action, null);
-      res = 'matrix:r/us:example.org?action=chat'.parseIdentifierIntoParts();
+      res = 'matrix:r/us:example.org?action=chat'.parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#us:example.org');
       expect(res.secondaryIdentifier, null);
       expect(res.action, 'chat');
       res = 'matrix:r/us:example.org/e/lol823y4bcp3qo4'
-          .parseIdentifierIntoParts();
+          .parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '#us:example.org');
       expect(res.secondaryIdentifier, '\$lol823y4bcp3qo4');
       res = 'matrix:roomid/rid:example.org?via=fox.com&via=fox.org'
-          .parseIdentifierIntoParts();
+          .parseIdentifierIntoParts()!;
       expect(res.primaryIdentifier, '!rid:example.org');
       expect(res.secondaryIdentifier, null);
       expect(res.via, <String>{'fox.com', 'fox.org'});
-      res = 'matrix:beep/boop:example.org'.parseIdentifierIntoParts();
+      res = 'matrix:beep/boop:example.org'.parseIdentifierIntoParts()!;
       expect(res, null);
-      res = 'matrix:boop'.parseIdentifierIntoParts();
+      res = 'matrix:boop'.parseIdentifierIntoParts()!;
       expect(res, null);
     });
   });

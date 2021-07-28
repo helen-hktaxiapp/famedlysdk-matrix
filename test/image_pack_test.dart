@@ -22,45 +22,45 @@ import 'fake_client.dart';
 
 void main() {
   group('Image Pack', () {
-    Client client;
-    Room room;
-    Room room2;
+    Client? client;
+    Room? room;
+    Room? room2;
     var sortOrder = 0.0;
 
     test('setupClient', () async {
       client = await getClient();
       room = Room(id: '!1234:fakeServer.notExisting', client: client);
       room2 = Room(id: '!abcd:fakeServer.notExisting', client: client);
-      room.setState(Event(
+      room!.setState(Event(
         type: 'm.room.power_levels',
         content: {},
         room: room,
         stateKey: '',
       ));
-      room.setState(Event(
+      room!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client.userID,
+        stateKey: client!.userID,
       ));
-      room2.setState(Event(
+      room2!.setState(Event(
         type: 'm.room.power_levels',
         content: {},
         room: room,
         stateKey: '',
       ));
-      room2.setState(Event(
+      room2!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client.userID,
+        stateKey: client!.userID,
       ));
-      client.rooms.add(room);
-      client.rooms.add(room2);
+      client!.rooms.add(room);
+      client!.rooms.add(room2);
     });
 
     test('Single room', () async {
-      room.setState(Event(
+      room!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -71,16 +71,16 @@ void main() {
         stateKey: '',
         sortOrder: sortOrder++,
       ));
-      final packs = room.getImagePacks();
+      final packs = room!.getImagePacks();
       expect(packs.length, 1);
-      expect(packs['room'].images.length, 1);
-      expect(packs['room'].images['room_plain'].url.toString(),
+      expect(packs['room']!.images.length, 1);
+      expect(packs['room']!.images['room_plain']!.url.toString(),
           'mxc://room_plain');
-      var packsFlat = room.getImagePacksFlat();
+      var packsFlat = room!.getImagePacksFlat();
       expect(packsFlat, {
         'room': {'room_plain': 'mxc://room_plain'}
       });
-      room.setState(Event(
+      room!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -98,15 +98,15 @@ void main() {
         stateKey: '',
         sortOrder: sortOrder++,
       ));
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote'}
       });
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.sticker);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.sticker);
       expect(packsFlat, {
         'room': {'sticker': 'mxc://sticker'}
       });
-      room.setState(Event(
+      room!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -121,14 +121,14 @@ void main() {
         stateKey: '',
         sortOrder: sortOrder++,
       ));
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote', 'sticker': 'mxc://sticker'}
       });
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.sticker);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.sticker);
       expect(packsFlat, {});
 
-      room.setState(Event(
+      room!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -142,7 +142,7 @@ void main() {
         stateKey: 'fox',
         sortOrder: sortOrder++,
       ));
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote', 'sticker': 'mxc://sticker'},
         'fox': {'fox': 'mxc://fox'},
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('user pack', () async {
-      client.accountData['im.ponies.user_emotes'] = BasicEvent.fromJson({
+      client!.accountData['im.ponies.user_emotes'] = BasicEvent.fromJson({
         'type': 'im.ponies.user_emotes',
         'content': {
           'images': {
@@ -160,7 +160,7 @@ void main() {
           },
         },
       });
-      final packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      final packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote', 'sticker': 'mxc://sticker'},
         'fox': {'fox': 'mxc://fox'},
@@ -169,7 +169,7 @@ void main() {
     });
 
     test('other rooms', () async {
-      room2.setState(Event(
+      room2!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -183,7 +183,7 @@ void main() {
         stateKey: '',
         sortOrder: sortOrder++,
       ));
-      client.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
+      client!.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
         'type': 'im.ponies.emote_rooms',
         'content': {
           'rooms': {
@@ -191,7 +191,7 @@ void main() {
           },
         },
       });
-      var packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      var packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote', 'sticker': 'mxc://sticker'},
         'fox': {'fox': 'mxc://fox'},
@@ -200,7 +200,7 @@ void main() {
           'other_room_emote': 'mxc://other_room_emote'
         },
       });
-      room2.setState(Event(
+      room2!.setState(Event(
         type: 'im.ponies.room_emotes',
         content: {
           'images': {
@@ -214,7 +214,7 @@ void main() {
         stateKey: 'fox',
         sortOrder: sortOrder++,
       ));
-      client.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
+      client!.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
         'type': 'im.ponies.emote_rooms',
         'content': {
           'rooms': {
@@ -222,7 +222,7 @@ void main() {
           },
         },
       });
-      packsFlat = room.getImagePacksFlat(ImagePackUsage.emoticon);
+      packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
         'room': {'emote': 'mxc://emote', 'sticker': 'mxc://sticker'},
         'fox': {'fox': 'mxc://fox'},
@@ -237,7 +237,7 @@ void main() {
     });
 
     test('dispose client', () async {
-      await client.dispose(closeDatabase: true);
+      await client!.dispose(closeDatabase: true);
     });
   });
 }

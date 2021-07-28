@@ -34,8 +34,8 @@ import 'fake_client.dart';
 import 'fake_matrix_api.dart';
 
 void main() {
-  Client matrix;
-  Room room;
+  Client? matrix;
+  Room? room;
 
   /// All Tests related to the Event
   group('Room', () {
@@ -101,74 +101,74 @@ void main() {
         roomAccountData: roomAccountData,
       );
 
-      expect(room.id, id);
-      expect(room.membership, membership);
-      expect(room.notificationCount, notificationCount);
-      expect(room.highlightCount, highlightCount);
-      expect(room.summary.mJoinedMemberCount, notificationCount);
-      expect(room.summary.mInvitedMemberCount, notificationCount);
-      expect(room.summary.mHeroes, heroes);
-      expect(room.displayname, 'Alice, Bob, Charley');
-      expect(room.getState('m.room.join_rules').content['join_rule'], 'public');
-      expect(room.roomAccountData['com.test.foo'].content['foo'], 'bar');
+      expect(room!.id, id);
+      expect(room!.membership, membership);
+      expect(room!.notificationCount, notificationCount);
+      expect(room!.highlightCount, highlightCount);
+      expect(room!.summary.mJoinedMemberCount, notificationCount);
+      expect(room!.summary.mInvitedMemberCount, notificationCount);
+      expect(room!.summary.mHeroes, heroes);
+      expect(room!.displayname, 'Alice, Bob, Charley');
+      expect(room!.getState('m.room.join_rules')!.content['join_rule'], 'public');
+      expect(room!.roomAccountData['com.test.foo']!.content['foo'], 'bar');
 
-      room.setState(
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.canonical_alias',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {'alias': '#testalias:example.com'},
             stateKey: ''),
       );
-      expect(room.displayname, 'testalias');
-      expect(room.canonicalAlias, '#testalias:example.com');
+      expect(room!.displayname, 'testalias');
+      expect(room!.canonicalAlias, '#testalias:example.com');
 
-      room.setState(
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.name',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {'name': 'testname'},
             stateKey: ''),
       );
-      expect(room.displayname, 'testname');
+      expect(room!.displayname, 'testname');
 
-      expect(room.topic, '');
-      room.setState(
+      expect(room!.topic, '');
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.topic',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {'topic': 'testtopic'},
             stateKey: ''),
       );
-      expect(room.topic, 'testtopic');
+      expect(room!.topic, 'testtopic');
 
-      expect(room.avatar, null);
-      room.setState(
+      expect(room!.avatar, null);
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.avatar',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {'url': 'mxc://testurl'},
             stateKey: ''),
       );
-      expect(room.avatar.toString(), 'mxc://testurl');
+      expect(room!.avatar.toString(), 'mxc://testurl');
 
-      expect(room.pinnedEventIds, <String>[]);
-      room.setState(
+      expect(room!.pinnedEventIds, <String>[]);
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.pinned_events',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {
@@ -176,29 +176,29 @@ void main() {
             },
             stateKey: ''),
       );
-      expect(room.pinnedEventIds.first, '1234');
-      room.setState(
+      expect(room!.pinnedEventIds!.first, '1234');
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.message',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '12345',
             originServerTs: DateTime.now(),
             content: {'msgtype': 'm.text', 'body': 'test'},
             stateKey: ''),
       );
-      expect(room.lastEvent.eventId, '12345');
-      expect(room.lastEvent.body, 'test');
-      expect(room.timeCreated, room.lastEvent.originServerTs);
+      expect(room!.lastEvent!.eventId, '12345');
+      expect(room!.lastEvent!.body, 'test');
+      expect(room!.timeCreated, room!.lastEvent!.originServerTs);
     });
 
     test('multiple last event with same sort order', () {
-      room.setState(
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.encrypted',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '12345',
             originServerTs: DateTime.now(),
@@ -206,12 +206,12 @@ void main() {
             stateKey: '',
             sortOrder: 42.0),
       );
-      expect(room.lastEvent.type, 'm.room.encrypted');
-      room.setState(
+      expect(room!.lastEvent!.type, 'm.room.encrypted');
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.messge',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '12345',
             originServerTs: DateTime.now(),
@@ -219,57 +219,57 @@ void main() {
             stateKey: '',
             sortOrder: 42.0),
       );
-      expect(room.lastEvent.type, 'm.room.encrypted');
+      expect(room!.lastEvent!.type, 'm.room.encrypted');
     });
 
     test('sendReadMarker', () async {
-      await room.setReadMarker('§1234:fakeServer.notExisting');
+      await room!.setReadMarker('§1234:fakeServer.notExisting');
     });
 
     test('requestParticipants', () async {
-      final participants = await room.requestParticipants();
+      final participants = await room!.requestParticipants();
       expect(participants.length, 1);
       final user = participants[0];
       expect(user.id, '@alice:example.org');
       expect(user.displayName, 'Alice Margatroid');
       expect(user.membership, Membership.join);
       expect(user.avatarUrl.toString(), 'mxc://example.org/SEsfnsuifSDFSSEF');
-      expect(user.room.id, '!localpart:server.abc');
+      expect(user.room!.id, '!localpart:server.abc');
     });
 
     test('getEventByID', () async {
-      final event = await room.getEventById('1234');
+      final event = await (room!.getEventById('1234') as FutureOr<Event>);
       expect(event.eventId, '143273582443PhrSn:example.org');
     });
 
     test('setName', () async {
-      final eventId = await room.setName('Testname');
+      final eventId = await room!.setName('Testname');
       expect(eventId, '42');
     });
 
     test('setDescription', () async {
-      final eventId = await room.setDescription('Testname');
+      final eventId = await room!.setDescription('Testname');
       expect(eventId, '42');
     });
 
     test('kick', () async {
-      await room.kick('Testname');
+      await room!.kick('Testname');
     });
 
     test('ban', () async {
-      await room.ban('Testname');
+      await room!.ban('Testname');
     });
 
     test('unban', () async {
-      await room.unban('Testname');
+      await room!.unban('Testname');
     });
 
     test('PowerLevels', () async {
-      room.setState(
+      room!.setState(
         Event(
             senderId: '@test:example.com',
             type: 'm.room.power_levels',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '123',
             content: {
@@ -286,28 +286,28 @@ void main() {
             },
             stateKey: ''),
       );
-      expect(room.ownPowerLevel, 100);
-      expect(room.getPowerLevelByUserId(matrix.userID), room.ownPowerLevel);
-      expect(room.getPowerLevelByUserId('@nouser:example.com'), 10);
-      expect(room.ownPowerLevel, 100);
-      expect(room.canBan, true);
-      expect(room.canInvite, true);
-      expect(room.canKick, true);
-      expect(room.canRedact, true);
-      expect(room.canSendDefaultMessages, true);
-      expect(room.canSendDefaultStates, true);
-      expect(room.canChangePowerLevel, true);
-      expect(room.canSendEvent('m.room.name'), true);
-      expect(room.canSendEvent('m.room.power_levels'), true);
-      expect(room.canSendEvent('m.room.member'), true);
-      expect(room.powerLevels,
-          room.getState('m.room.power_levels').content['users']);
+      expect(room!.ownPowerLevel, 100);
+      expect(room!.getPowerLevelByUserId(matrix!.userID), room!.ownPowerLevel);
+      expect(room!.getPowerLevelByUserId('@nouser:example.com'), 10);
+      expect(room!.ownPowerLevel, 100);
+      expect(room!.canBan, true);
+      expect(room!.canInvite, true);
+      expect(room!.canKick, true);
+      expect(room!.canRedact, true);
+      expect(room!.canSendDefaultMessages, true);
+      expect(room!.canSendDefaultStates, true);
+      expect(room!.canChangePowerLevel, true);
+      expect(room!.canSendEvent('m.room.name'), true);
+      expect(room!.canSendEvent('m.room.power_levels'), true);
+      expect(room!.canSendEvent('m.room.member'), true);
+      expect(room!.powerLevels,
+          room!.getState('m.room.power_levels')!.content['users']);
 
-      room.setState(
+      room!.setState(
         Event(
           senderId: '@test:example.com',
           type: 'm.room.power_levels',
-          roomId: room.id,
+          roomId: room!.id,
           room: room,
           eventId: '123abc',
           content: {
@@ -326,70 +326,70 @@ void main() {
           sortOrder: 1,
         ),
       );
-      expect(room.ownPowerLevel, 0);
-      expect(room.canBan, false);
-      expect(room.canInvite, false);
-      expect(room.canKick, false);
-      expect(room.canRedact, false);
-      expect(room.canSendDefaultMessages, true);
-      expect(room.canSendDefaultStates, false);
-      expect(room.canChangePowerLevel, false);
-      expect(room.canSendEvent('m.room.name'), true);
-      expect(room.canSendEvent('m.room.power_levels'), false);
-      expect(room.canSendEvent('m.room.member'), false);
-      expect(room.canSendEvent('m.room.message'), true);
-      final resp = await room.setPower('@test:fakeServer.notExisting', 90);
+      expect(room!.ownPowerLevel, 0);
+      expect(room!.canBan, false);
+      expect(room!.canInvite, false);
+      expect(room!.canKick, false);
+      expect(room!.canRedact, false);
+      expect(room!.canSendDefaultMessages, true);
+      expect(room!.canSendDefaultStates, false);
+      expect(room!.canChangePowerLevel, false);
+      expect(room!.canSendEvent('m.room.name'), true);
+      expect(room!.canSendEvent('m.room.power_levels'), false);
+      expect(room!.canSendEvent('m.room.member'), false);
+      expect(room!.canSendEvent('m.room.message'), true);
+      final resp = await room!.setPower('@test:fakeServer.notExisting', 90);
       expect(resp, '42');
     });
 
     test('invite', () async {
-      await room.invite('Testname');
+      await room!.invite('Testname');
     });
 
     test('getParticipants', () async {
-      var userList = room.getParticipants();
+      var userList = room!.getParticipants();
       expect(userList.length, 4);
       // add new user
-      room.setState(Event(
+      room!.setState(Event(
           senderId: '@alice:test.abc',
           type: 'm.room.member',
-          roomId: room.id,
+          roomId: room!.id,
           room: room,
           eventId: '12345',
           originServerTs: DateTime.now(),
           content: {'displayname': 'alice'},
           stateKey: '@alice:test.abc'));
-      userList = room.getParticipants();
+      userList = room!.getParticipants();
       expect(userList.length, 5);
       expect(userList[4].displayName, 'alice');
     });
 
     test('addToDirectChat', () async {
-      await room.addToDirectChat('Testname');
+      await room!.addToDirectChat('Testname');
     });
 
     test('getTimeline', () async {
-      final timeline = await room.getTimeline();
+      final timeline = await room!.getTimeline();
       expect(timeline.events.length, 0);
     });
 
     test('getUserByMXID', () async {
-      User user;
+      User? user;
       try {
-        user = await room.requestUser('@getme:example.com');
+        user = await room!.requestUser('@getme:example.com');
       } catch (_) {}
-      expect(user.stateKey, '@getme:example.com');
+      expect(user!.stateKey, '@getme:example.com');
       expect(user.calcDisplayname(), 'Getme');
     });
 
     test('setAvatar', () async {
       final testFile = MatrixFile(bytes: Uint8List(0), name: 'file.jpeg');
-      final dynamic resp = await room.setAvatar(testFile);
+      final dynamic resp = await room!.setAvatar(testFile);
       expect(resp, 'YUwRidLecu:example.com');
     });
 
     test('sendEvent', () async {
-      final dynamic resp = await room.sendEvent(
+      final dynamic resp = await room!.sendEvent(
           {'msgtype': 'm.text', 'body': 'hello world'},
           txid: 'testtxid');
       expect(resp.startsWith('\$event'), true);
@@ -398,7 +398,7 @@ void main() {
     test('sendEvent', () async {
       FakeMatrixApi.calledEndpoints.clear();
       final dynamic resp =
-          await room.sendTextEvent('Hello world', txid: 'testtxid');
+          await room!.sendTextEvent('Hello world', txid: 'testtxid');
       expect(resp.startsWith('\$event'), true);
       final entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.room.message/'));
@@ -411,7 +411,7 @@ void main() {
 
     test('send edit', () async {
       FakeMatrixApi.calledEndpoints.clear();
-      final dynamic resp = await room.sendTextEvent('Hello world',
+      final dynamic resp = await room!.sendTextEvent('Hello world',
           txid: 'testtxid', editEventId: '\$otherEvent');
       expect(resp.startsWith('\$event'), true);
       final entry = FakeMatrixApi.calledEndpoints.entries
@@ -442,8 +442,8 @@ void main() {
         'sender': '@alice:example.org',
       }, room);
       FakeMatrixApi.calledEndpoints.clear();
-      var resp = await room.sendTextEvent('Hello world',
-          txid: 'testtxid', inReplyTo: event);
+      var resp = await (room!.sendTextEvent('Hello world',
+          txid: 'testtxid', inReplyTo: event) as FutureOr<String>);
       expect(resp.startsWith('\$event'), true);
       var entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.room.message/'));
@@ -471,8 +471,8 @@ void main() {
         'sender': '@alice:example.org',
       }, room);
       FakeMatrixApi.calledEndpoints.clear();
-      resp = await room.sendTextEvent('Hello world\nfox',
-          txid: 'testtxid', inReplyTo: event);
+      resp = await (room!.sendTextEvent('Hello world\nfox',
+          txid: 'testtxid', inReplyTo: event) as FutureOr<String>);
       expect(resp.startsWith('\$event'), true);
       entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.room.message/'));
@@ -503,8 +503,8 @@ void main() {
         'sender': '@alice:example.org',
       }, room);
       FakeMatrixApi.calledEndpoints.clear();
-      resp = await room.sendTextEvent('Hello world',
-          txid: 'testtxid', inReplyTo: event);
+      resp = await (room!.sendTextEvent('Hello world',
+          txid: 'testtxid', inReplyTo: event) as FutureOr<String>);
       expect(resp.startsWith('\$event'), true);
       entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.room.message/'));
@@ -532,8 +532,8 @@ void main() {
         'sender': '@alice:example.org',
       }, room);
       FakeMatrixApi.calledEndpoints.clear();
-      resp = await room.sendTextEvent('Hello world',
-          txid: 'testtxid', inReplyTo: event);
+      resp = await (room!.sendTextEvent('Hello world',
+          txid: 'testtxid', inReplyTo: event) as FutureOr<String>);
       expect(resp.startsWith('\$event'), true);
       entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.room.message/'));
@@ -555,7 +555,7 @@ void main() {
     test('send reaction', () async {
       FakeMatrixApi.calledEndpoints.clear();
       final dynamic resp =
-          await room.sendReaction('\$otherEvent', '🦊', txid: 'testtxid');
+          await room!.sendReaction('\$otherEvent', '🦊', txid: 'testtxid');
       expect(resp.startsWith('\$event'), true);
       final entry = FakeMatrixApi.calledEndpoints.entries
           .firstWhere((p) => p.key.contains('/send/m.reaction/'));
@@ -575,7 +575,7 @@ void main() {
       final body = 'Middle of the ocean';
       final geoUri = 'geo:0.0,0.0';
       final dynamic resp =
-          await room.sendLocation(body, geoUri, txid: 'testtxid');
+          await room!.sendLocation(body, geoUri, txid: 'testtxid');
       expect(resp.startsWith('\$event'), true);
 
       final entry = FakeMatrixApi.calledEndpoints.entries
@@ -598,34 +598,34 @@ void main() {
 
     test('sendFileEvent', () async {
       final testFile = MatrixFile(bytes: Uint8List(0), name: 'file.jpeg');
-      final dynamic resp = await room.sendFileEvent(testFile, txid: 'testtxid');
+      final dynamic resp = await room!.sendFileEvent(testFile, txid: 'testtxid');
       expect(resp, 'mxc://example.com/AQwafuaFswefuhsfAFAgsw');
     });
 
     test('pushRuleState', () async {
-      expect(room.pushRuleState, PushRuleState.mentionsOnly);
-      matrix.accountData['m.push_rules'].content['global']['override']
-          .add(matrix.accountData['m.push_rules'].content['global']['room'][0]);
-      expect(room.pushRuleState, PushRuleState.dontNotify);
+      expect(room!.pushRuleState, PushRuleState.mentionsOnly);
+      matrix!.accountData['m.push_rules']!.content['global']['override']
+          .add(matrix!.accountData['m.push_rules']!.content['global']['room'][0]);
+      expect(room!.pushRuleState, PushRuleState.dontNotify);
     });
 
     test('Test call methods', () async {
-      await room.inviteToCall('1234', 1234, 'sdp', txid: '1234');
-      await room.answerCall('1234', 'sdp', txid: '1234');
-      await room.hangupCall('1234', txid: '1234');
-      await room.sendCallCandidates('1234', [], txid: '1234');
+      await room!.inviteToCall('1234', 1234, 'sdp', txid: '1234');
+      await room!.answerCall('1234', 'sdp', txid: '1234');
+      await room!.hangupCall('1234', txid: '1234');
+      await room!.sendCallCandidates('1234', [], txid: '1234');
     });
 
     test('enableEncryption', () async {
-      await room.enableEncryption();
+      await room!.enableEncryption();
     });
 
     test('Enable encryption', () async {
-      room.setState(
+      room!.setState(
         Event(
             senderId: '@alice:test.abc',
             type: 'm.room.encryption',
-            roomId: room.id,
+            roomId: room!.id,
             room: room,
             eventId: '12345',
             originServerTs: DateTime.now(),
@@ -636,22 +636,22 @@ void main() {
             },
             stateKey: ''),
       );
-      expect(room.encrypted, true);
-      expect(room.encryptionAlgorithm, AlgorithmTypes.megolmV1AesSha2);
+      expect(room!.encrypted, true);
+      expect(room!.encryptionAlgorithm, AlgorithmTypes.megolmV1AesSha2);
     });
 
     test('setPushRuleState', () async {
-      await room.setPushRuleState(PushRuleState.notify);
-      await room.setPushRuleState(PushRuleState.dontNotify);
-      await room.setPushRuleState(PushRuleState.mentionsOnly);
-      await room.setPushRuleState(PushRuleState.notify);
+      await room!.setPushRuleState(PushRuleState.notify);
+      await room!.setPushRuleState(PushRuleState.dontNotify);
+      await room!.setPushRuleState(PushRuleState.mentionsOnly);
+      await room!.setPushRuleState(PushRuleState.notify);
     });
 
     test('Test tag methods', () async {
-      await room.addTag(TagType.favourite, order: 0.1);
-      await room.removeTag(TagType.favourite);
-      expect(room.isFavourite, false);
-      room.roomAccountData['m.tag'] = BasicRoomEvent.fromJson({
+      await room!.addTag(TagType.favourite, order: 0.1);
+      await room!.removeTag(TagType.favourite);
+      expect(room!.isFavourite, false);
+      room!.roomAccountData['m.tag'] = BasicRoomEvent.fromJson({
         'content': {
           'tags': {
             'm.favourite': {'order': 0.1},
@@ -660,28 +660,28 @@ void main() {
         },
         'type': 'm.tag'
       });
-      expect(room.tags.length, 1);
-      expect(room.tags[TagType.favourite].order, 0.1);
-      expect(room.isFavourite, true);
-      await room.setFavourite(false);
+      expect(room!.tags.length, 1);
+      expect(room!.tags[TagType.favourite]!.order, 0.1);
+      expect(room!.isFavourite, true);
+      await room!.setFavourite(false);
     });
 
     test('Test marked unread room', () async {
-      await room.setUnread(true);
-      await room.setUnread(false);
-      expect(room.isUnread, false);
-      room.roomAccountData['com.famedly.marked_unread'] =
+      await room!.setUnread(true);
+      await room!.setUnread(false);
+      expect(room!.isUnread, false);
+      room!.roomAccountData['com.famedly.marked_unread'] =
           BasicRoomEvent.fromJson({
         'content': {'unread': true},
         'type': 'com.famedly.marked_unread'
       });
-      expect(room.isUnread, true);
+      expect(room!.isUnread, true);
     });
 
     test('joinRules', () async {
-      expect(room.canChangeJoinRules, false);
-      expect(room.joinRules, JoinRules.public);
-      room.setState(Event.fromJson({
+      expect(room!.canChangeJoinRules, false);
+      expect(room!.joinRules, JoinRules.public);
+      room!.setState(Event.fromJson({
         'content': {'join_rule': 'invite'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -691,14 +691,14 @@ void main() {
         'type': 'm.room.join_rules',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.joinRules, JoinRules.invite);
-      await room.setJoinRules(JoinRules.invite);
+      expect(room!.joinRules, JoinRules.invite);
+      await room!.setJoinRules(JoinRules.invite);
     });
 
     test('guestAccess', () async {
-      expect(room.canChangeGuestAccess, false);
-      expect(room.guestAccess, GuestAccess.forbidden);
-      room.setState(Event.fromJson({
+      expect(room!.canChangeGuestAccess, false);
+      expect(room!.guestAccess, GuestAccess.forbidden);
+      room!.setState(Event.fromJson({
         'content': {'guest_access': 'can_join'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -708,14 +708,14 @@ void main() {
         'type': 'm.room.guest_access',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.guestAccess, GuestAccess.canJoin);
-      await room.setGuestAccess(GuestAccess.canJoin);
+      expect(room!.guestAccess, GuestAccess.canJoin);
+      await room!.setGuestAccess(GuestAccess.canJoin);
     });
 
     test('historyVisibility', () async {
-      expect(room.canChangeHistoryVisibility, false);
-      expect(room.historyVisibility, null);
-      room.setState(Event.fromJson({
+      expect(room!.canChangeHistoryVisibility, false);
+      expect(room!.historyVisibility, null);
+      room!.setState(Event.fromJson({
         'content': {'history_visibility': 'shared'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -725,13 +725,13 @@ void main() {
         'type': 'm.room.history_visibility',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.historyVisibility, HistoryVisibility.shared);
-      await room.setHistoryVisibility(HistoryVisibility.joined);
+      expect(room!.historyVisibility, HistoryVisibility.shared);
+      await room!.setHistoryVisibility(HistoryVisibility.joined);
     });
 
     test('setState', () async {
       // not set non-state-events
-      room.setState(Event.fromJson({
+      room!.setState(Event.fromJson({
         'content': {'history_visibility': 'shared'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -740,10 +740,10 @@ void main() {
         'type': 'm.custom',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.getState('m.custom') != null, false);
+      expect(room!.getState('m.custom') != null, false);
 
       // set state events
-      room.setState(Event.fromJson({
+      room!.setState(Event.fromJson({
         'content': {'history_visibility': 'shared'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -753,10 +753,10 @@ void main() {
         'type': 'm.custom',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.getState('m.custom') != null, true);
+      expect(room!.getState('m.custom') != null, true);
 
       // sets messages as state events
-      room.setState(Event.fromJson({
+      room!.setState(Event.fromJson({
         'content': {'history_visibility': 'shared'},
         'event_id': '\$143273582443PhrSn:example.org',
         'origin_server_ts': 1432735824653,
@@ -765,12 +765,12 @@ void main() {
         'type': 'm.room.message',
         'unsigned': {'age': 1234}
       }, room, 1432735824653.0));
-      expect(room.getState('m.room.message') != null, true);
+      expect(room!.getState('m.room.message') != null, true);
     });
 
     test('Spaces', () async {
-      expect(room.isSpace, false);
-      room.states['m.room.create'] = {
+      expect(room!.isSpace, false);
+      room!.states['m.room.create'] = {
         '': Event.fromJson({
           'content': {'type': 'm.space'},
           'event_id': '\$143273582443PhrSn:example.org',
@@ -782,10 +782,10 @@ void main() {
           'state_key': '',
         }, room, 1432735824653.0),
       };
-      expect(room.isSpace, true);
+      expect(room!.isSpace, true);
 
-      expect(room.spaceParents.isEmpty, true);
-      room.states[EventTypes.spaceParent] = {
+      expect(room!.spaceParents.isEmpty, true);
+      room!.states[EventTypes.spaceParent] = {
         '!1234:example.invalid': Event.fromJson({
           'content': {
             'via': ['example.invalid']
@@ -799,10 +799,10 @@ void main() {
           'state_key': '!1234:example.invalid',
         }, room, 1432735824653.0),
       };
-      expect(room.spaceParents.length, 1);
+      expect(room!.spaceParents.length, 1);
 
-      expect(room.spaceChildren.isEmpty, true);
-      room.states[EventTypes.spaceChild] = {
+      expect(room!.spaceChildren.isEmpty, true);
+      room!.states[EventTypes.spaceChild] = {
         '!b:example.invalid': Event.fromJson({
           'content': {
             'via': ['example.invalid'],
@@ -855,12 +855,12 @@ void main() {
           'state_key': '!a:example.invalid',
         }, room, 1432735824653.0),
       };
-      expect(room.spaceChildren.length, 4);
+      expect(room!.spaceChildren.length, 4);
 
-      expect(room.spaceChildren[0].roomId, '!a:example.invalid');
-      expect(room.spaceChildren[1].roomId, '!b:example.invalid');
-      expect(room.spaceChildren[2].roomId, '!c:example.invalid');
-      expect(room.spaceChildren[3].roomId, '!noorder:example.invalid');
+      expect(room!.spaceChildren[0].roomId, '!a:example.invalid');
+      expect(room!.spaceChildren[1].roomId, '!b:example.invalid');
+      expect(room!.spaceChildren[2].roomId, '!c:example.invalid');
+      expect(room!.spaceChildren[3].roomId, '!noorder:example.invalid');
 
       // TODO: Implement a more generic fake api
       /*await room.setSpaceChild(
@@ -873,7 +873,7 @@ void main() {
     });
 
     test('logout', () async {
-      await matrix.logout();
+      await matrix!.logout();
     });
   });
 }

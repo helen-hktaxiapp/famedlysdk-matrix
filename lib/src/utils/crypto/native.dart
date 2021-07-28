@@ -85,7 +85,7 @@ class _AesCtr extends Cipher {
 }
 
 FutureOr<Uint8List> pbkdf2(
-    Uint8List passphrase, Uint8List salt, Hash hash, int iterations, int bits) {
+    Uint8List passphrase, Uint8List salt, Hash hash, int? iterations, int bits) {
   final outLen = bits ~/ 8;
   final mem = malloc.call<Uint8>(passphrase.length + salt.length + outLen);
   final saltMem = mem.elementAt(passphrase.length);

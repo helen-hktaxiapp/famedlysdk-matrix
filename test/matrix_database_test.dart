@@ -25,11 +25,11 @@ import 'fake_database.dart';
 void main() {
   group('Databse', () {
     Logs().level = Level.error;
-    var clientId = -1;
+    int? clientId = -1;
     final room = Room(id: '!room:blubb');
     test('setupDatabase', () async {
       final database = await getDatabase(null);
-      clientId = await database.insertClient(
+      clientId = await (database.insertClient(
           'testclient',
           'https://example.org',
           'blubb',
@@ -37,7 +37,7 @@ void main() {
           null,
           null,
           null,
-          null);
+          null) as FutureOr<int?>);
     });
     test('storeEventUpdate', () async {
       final database = await getDatabase(null);
@@ -55,7 +55,7 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      var event = await database.getEventById(clientId, '\$event-1', room);
+      var event = await (database.getEventById(clientId, '\$event-1', room) as FutureOr<Event>);
       expect(event.eventId, '\$event-1');
 
       // insert a transaction id
@@ -73,7 +73,7 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, 'transaction-1', room);
+      event = await (database.getEventById(clientId, 'transaction-1', room) as FutureOr<Event>);
       expect(event.eventId, 'transaction-1');
       update = EventUpdate(
         type: EventUpdateType.timeline,
@@ -92,9 +92,9 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, 'transaction-1', room);
+      event = await (database.getEventById(clientId, 'transaction-1', room) as FutureOr<Event>);
       expect(event, null);
-      event = await database.getEventById(clientId, '\$event-2', room);
+      event = await (database.getEventById(clientId, '\$event-2', room) as FutureOr<Event>);
 
       // insert a transaction id if the event id for it already exists
       update = EventUpdate(
@@ -111,7 +111,7 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, '\$event-3', room);
+      event = await (database.getEventById(clientId, '\$event-3', room) as FutureOr<Event>);
       expect(event.eventId, '\$event-3');
       update = EventUpdate(
         type: EventUpdateType.timeline,
@@ -130,10 +130,10 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, '\$event-3', room);
+      event = await (database.getEventById(clientId, '\$event-3', room) as FutureOr<Event>);
       expect(event.eventId, '\$event-3');
       expect(event.status, 1);
-      event = await database.getEventById(clientId, 'transaction-2', room);
+      event = await (database.getEventById(clientId, 'transaction-2', room) as FutureOr<Event>);
       expect(event, null);
 
       // insert transaction id and not update status
@@ -151,7 +151,7 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, '\$event-4', room);
+      event = await (database.getEventById(clientId, '\$event-4', room) as FutureOr<Event>);
       expect(event.eventId, '\$event-4');
       update = EventUpdate(
         type: EventUpdateType.timeline,
@@ -170,10 +170,10 @@ void main() {
         sortOrder: 0.0,
       );
       await database.storeEventUpdate(clientId, update);
-      event = await database.getEventById(clientId, '\$event-4', room);
+      event = await (database.getEventById(clientId, '\$event-4', room) as FutureOr<Event>);
       expect(event.eventId, '\$event-4');
       expect(event.status, 2);
-      event = await database.getEventById(clientId, 'transaction-3', room);
+      event = await (database.getEventById(clientId, 'transaction-3', room) as FutureOr<Event>);
       expect(event, null);
     });
   });

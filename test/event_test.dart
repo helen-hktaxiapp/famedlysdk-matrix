@@ -248,10 +248,10 @@ void main() {
         final event = Event.fromJson(redactJsonObj, room);
         event.setRedactionEvent(redactedBecause);
         expect(event.redacted, true);
-        expect(event.redactedBecause.toJson(), redactedBecause.toJson());
+        expect(event.redactedBecause!.toJson(), redactedBecause.toJson());
         expect(event.content.isEmpty, true);
         redactionEventJson.remove('redacts');
-        expect(event.unsigned['redacted_because'], redactionEventJson);
+        expect(event.unsigned!['redacted_because'], redactionEventJson);
       }
     });
 
@@ -277,7 +277,7 @@ void main() {
           jsonObj, Room(id: '!1234:example.com', client: matrix));
       final resp1 = await event.sendAgain();
       event.status = -1;
-      final resp2 = await event.sendAgain(txid: '1234');
+      final resp2 = await (event.sendAgain(txid: '1234') as FutureOr<String>);
       expect(resp1, null);
       expect(resp2.startsWith('\$event'), true);
 
@@ -294,7 +294,7 @@ void main() {
 
       final event = Event.fromJson(
           jsonObj, Room(id: '!1234:example.com', client: matrix));
-      String exception;
+      String? exception;
       try {
         await event.requestKey();
       } catch (e) {
@@ -1233,7 +1233,7 @@ void main() {
           getThumbnail: true, downloadCallback: downloadCallback);
       expect(buffer.bytes, THUMB_BUFF_DEC);
 
-      await room.client.dispose(closeDatabase: true);
+      await room.client!.dispose(closeDatabase: true);
     });
     test('downloadAndDecryptAttachment store', () async {
       final FILE_BUFF = Uint8List.fromList([0]);
@@ -1264,16 +1264,16 @@ void main() {
       var buffer = await event.downloadAndDecryptAttachment(
           downloadCallback: downloadCallback);
       expect(await event.isAttachmentInLocalStore(),
-          event.room.client.database.supportsFileStoring);
+          event.room!.client!.database!.supportsFileStoring);
       expect(buffer.bytes, FILE_BUFF);
       expect(serverHits, 1);
       buffer = await event.downloadAndDecryptAttachment(
           downloadCallback: downloadCallback);
       expect(buffer.bytes, FILE_BUFF);
       expect(
-          serverHits, event.room.client.database.supportsFileStoring ? 1 : 2);
+          serverHits, event.room!.client!.database!.supportsFileStoring ? 1 : 2);
 
-      await room.client.dispose(closeDatabase: true);
+      await room.client!.dispose(closeDatabase: true);
     });
     test('emote detection', () async {
       var event = Event.fromJson({

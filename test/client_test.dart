@@ -125,37 +125,37 @@ void main() {
       expect(matrix.accountData.length, 9);
       expect(matrix.getDirectChatFromUserId('@bob:example.com'),
           '!726s6s6q:example.com');
-      expect(matrix.rooms[1].directChatMatrixID, '@bob:example.com');
-      expect(matrix.directChats, matrix.accountData['m.direct'].content);
+      expect(matrix.rooms[1]!.directChatMatrixID, '@bob:example.com');
+      expect(matrix.directChats, matrix.accountData['m.direct']!.content);
       expect(matrix.presences.length, 1);
-      expect(matrix.rooms[1].ephemerals.length, 2);
-      expect(matrix.rooms[1].typingUsers.length, 1);
-      expect(matrix.rooms[1].typingUsers[0].id, '@alice:example.com');
-      expect(matrix.rooms[1].roomAccountData.length, 3);
-      expect(matrix.rooms[1].encrypted, true);
-      expect(matrix.rooms[1].encryptionAlgorithm,
+      expect(matrix.rooms[1]!.ephemerals.length, 2);
+      expect(matrix.rooms[1]!.typingUsers.length, 1);
+      expect(matrix.rooms[1]!.typingUsers[0].id, '@alice:example.com');
+      expect(matrix.rooms[1]!.roomAccountData.length, 3);
+      expect(matrix.rooms[1]!.encrypted, true);
+      expect(matrix.rooms[1]!.encryptionAlgorithm,
           Client.supportedGroupEncryptionAlgorithms.first);
       expect(
-          matrix.rooms[1].roomAccountData['m.receipt']
+          matrix.rooms[1]!.roomAccountData['m.receipt']!
               .content['@alice:example.com']['ts'],
           1436451550453);
       expect(
-          matrix.rooms[1].roomAccountData['m.receipt']
+          matrix.rooms[1]!.roomAccountData['m.receipt']!
               .content['@alice:example.com']['event_id'],
           '7365636s6r6432:example.com');
       expect(matrix.rooms.length, 2);
-      expect(matrix.rooms[1].canonicalAlias,
-          "#famedlyContactDiscovery:${matrix.userID.split(":")[1]}");
-      expect(matrix.presences['@alice:example.com'].presence.presence,
+      expect(matrix.rooms[1]!.canonicalAlias,
+          "#famedlyContactDiscovery:${matrix.userID!.split(":")[1]}");
+      expect(matrix.presences['@alice:example.com']!.presence.presence,
           PresenceType.online);
       expect(presenceCounter, 1);
       expect(accountDataCounter, 9);
       await Future.delayed(Duration(milliseconds: 50));
       expect(matrix.userDeviceKeys.length, 4);
-      expect(matrix.userDeviceKeys['@alice:example.com'].outdated, false);
-      expect(matrix.userDeviceKeys['@alice:example.com'].deviceKeys.length, 2);
+      expect(matrix.userDeviceKeys['@alice:example.com']!.outdated, false);
+      expect(matrix.userDeviceKeys['@alice:example.com']!.deviceKeys.length, 2);
       expect(
-          matrix.userDeviceKeys['@alice:example.com'].deviceKeys['JLAFKJWSCS']
+          matrix.userDeviceKeys['@alice:example.com']!.deviceKeys['JLAFKJWSCS']!
               .verified,
           false);
 
@@ -171,7 +171,7 @@ void main() {
       }));
       await Future.delayed(Duration(milliseconds: 50));
       expect(matrix.userDeviceKeys.length, 3);
-      expect(matrix.userDeviceKeys['@alice:example.com'].outdated, true);
+      expect(matrix.userDeviceKeys['@alice:example.com']!.outdated, true);
 
       await matrix.handleSync(SyncUpdate.fromJson({
         'rooms': {
@@ -197,7 +197,7 @@ void main() {
 
       expect(
           matrix.getRoomByAlias(
-              "#famedlyContactDiscovery:${matrix.userID.split(":")[1]}"),
+              "#famedlyContactDiscovery:${matrix.userID!.split(":")[1]}"),
           null);
     });
 
@@ -245,56 +245,56 @@ void main() {
 
       expect(eventUpdateList.length, 14);
 
-      expect(eventUpdateList[0].content['type'], 'm.room.member');
+      expect(eventUpdateList[0].content!['type'], 'm.room.member');
       expect(eventUpdateList[0].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[0].type, EventUpdateType.state);
 
-      expect(eventUpdateList[1].content['type'], 'm.room.canonical_alias');
+      expect(eventUpdateList[1].content!['type'], 'm.room.canonical_alias');
       expect(eventUpdateList[1].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[1].type, EventUpdateType.state);
 
-      expect(eventUpdateList[2].content['type'], 'm.room.encryption');
+      expect(eventUpdateList[2].content!['type'], 'm.room.encryption');
       expect(eventUpdateList[2].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[2].type, EventUpdateType.state);
 
-      expect(eventUpdateList[3].content['type'], 'm.room.pinned_events');
+      expect(eventUpdateList[3].content!['type'], 'm.room.pinned_events');
       expect(eventUpdateList[3].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[3].type, EventUpdateType.state);
 
-      expect(eventUpdateList[4].content['type'], 'm.room.member');
+      expect(eventUpdateList[4].content!['type'], 'm.room.member');
       expect(eventUpdateList[4].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[4].type, EventUpdateType.timeline);
 
-      expect(eventUpdateList[5].content['type'], 'm.room.message');
+      expect(eventUpdateList[5].content!['type'], 'm.room.message');
       expect(eventUpdateList[5].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[5].type, EventUpdateType.timeline);
 
-      expect(eventUpdateList[6].content['type'], 'm.typing');
+      expect(eventUpdateList[6].content!['type'], 'm.typing');
       expect(eventUpdateList[6].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[6].type, EventUpdateType.ephemeral);
 
-      expect(eventUpdateList[7].content['type'], 'm.receipt');
+      expect(eventUpdateList[7].content!['type'], 'm.receipt');
       expect(eventUpdateList[7].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[7].type, EventUpdateType.ephemeral);
 
-      expect(eventUpdateList[8].content['type'], 'm.receipt');
+      expect(eventUpdateList[8].content!['type'], 'm.receipt');
       expect(eventUpdateList[8].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[8].type, EventUpdateType.accountData);
 
-      expect(eventUpdateList[9].content['type'], 'm.tag');
+      expect(eventUpdateList[9].content!['type'], 'm.tag');
       expect(eventUpdateList[9].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[9].type, EventUpdateType.accountData);
 
-      expect(eventUpdateList[10].content['type'],
+      expect(eventUpdateList[10].content!['type'],
           'org.example.custom.room.config');
       expect(eventUpdateList[10].roomID, '!726s6s6q:example.com');
       expect(eventUpdateList[10].type, EventUpdateType.accountData);
 
-      expect(eventUpdateList[11].content['type'], 'm.room.name');
+      expect(eventUpdateList[11].content!['type'], 'm.room.name');
       expect(eventUpdateList[11].roomID, '!696r7674:example.com');
       expect(eventUpdateList[11].type, EventUpdateType.inviteState);
 
-      expect(eventUpdateList[12].content['type'], 'm.room.member');
+      expect(eventUpdateList[12].content!['type'], 'm.room.member');
       expect(eventUpdateList[12].roomID, '!696r7674:example.com');
       expect(eventUpdateList[12].type, EventUpdateType.inviteState);
     });
@@ -357,7 +357,7 @@ void main() {
       expect(archive[0].id, '!5345234234:example.com');
       expect(archive[0].membership, Membership.leave);
       expect(archive[0].name, 'The room name');
-      expect(archive[0].lastEvent.body, 'This is an example text message');
+      expect(archive[0].lastEvent!.body, 'This is an example text message');
       expect(archive[0].roomAccountData.length, 1);
       expect(archive[1].id, '!5345234235:example.com');
       expect(archive[1].membership, Membership.leave);
@@ -381,7 +381,7 @@ void main() {
       }
       FakeMatrixApi.calledEndpoints.clear();
       await matrix.sendToDeviceEncrypted(
-          matrix.userDeviceKeys['@alice:example.com'].deviceKeys.values
+          matrix.userDeviceKeys['@alice:example.com']!.deviceKeys.values
               .toList(),
           'm.message',
           {
@@ -399,7 +399,7 @@ void main() {
       }
       FakeMatrixApi.calledEndpoints.clear();
       await matrix.sendToDeviceEncryptedChunked(
-          matrix.userDeviceKeys['@alice:example.com'].deviceKeys.values
+          matrix.userDeviceKeys['@alice:example.com']!.deviceKeys.values
               .toList(),
           'm.message',
           {
@@ -499,12 +499,12 @@ void main() {
       await client.sendToDevice('raccoon', 'raccoon_txnid', raccoonContent);
       expect(
           json.decode(FakeMatrixApi
-                  .calledEndpoints['/client/r0/sendToDevice/foxies/floof_txnid']
+                  .calledEndpoints['/client/r0/sendToDevice/foxies/floof_txnid']!
               [0])['messages'],
           foxContent);
       expect(
           json.decode(FakeMatrixApi.calledEndpoints[
-              '/client/r0/sendToDevice/raccoon/raccoon_txnid'][0])['messages'],
+              '/client/r0/sendToDevice/raccoon/raccoon_txnid']![0])['messages'],
           raccoonContent);
       FakeMatrixApi.calledEndpoints.clear();
       await client.sendToDevice('bunny', 'bunny_txnid', bunnyContent);
@@ -518,7 +518,7 @@ void main() {
           null);
       expect(
           json.decode(FakeMatrixApi
-                  .calledEndpoints['/client/r0/sendToDevice/bunny/bunny_txnid']
+                  .calledEndpoints['/client/r0/sendToDevice/bunny/bunny_txnid']!
               [0])['messages'],
           bunnyContent);
       await client.dispose(closeDatabase: true);
@@ -562,16 +562,16 @@ void main() {
       await client.sendToDevice('bunny', 'bunny_txnid', bunnyContent);
       expect(
           json.decode(FakeMatrixApi
-                  .calledEndpoints['/client/r0/sendToDevice/foxies/floof_txnid']
+                  .calledEndpoints['/client/r0/sendToDevice/foxies/floof_txnid']!
               [0])['messages'],
           foxContent);
       expect(
           json.decode(FakeMatrixApi.calledEndpoints[
-              '/client/r0/sendToDevice/raccoon/raccoon_txnid'][0])['messages'],
+              '/client/r0/sendToDevice/raccoon/raccoon_txnid']![0])['messages'],
           raccoonContent);
       expect(
           json.decode(FakeMatrixApi
-                  .calledEndpoints['/client/r0/sendToDevice/bunny/bunny_txnid']
+                  .calledEndpoints['/client/r0/sendToDevice/bunny/bunny_txnid']!
               [0])['messages'],
           bunnyContent);
       await client.dispose(closeDatabase: true);
@@ -614,10 +614,10 @@ void main() {
       expect(client2.deviceID, client1.deviceID);
       expect(client2.deviceName, client1.deviceName);
       if (client2.encryptionEnabled) {
-        expect(client2.encryption.fingerprintKey,
-            client1.encryption.fingerprintKey);
-        expect(client2.encryption.identityKey, client1.encryption.identityKey);
-        expect(client2.rooms[1].id, client1.rooms[1].id);
+        expect(client2.encryption!.fingerprintKey,
+            client1.encryption!.fingerprintKey);
+        expect(client2.encryption!.identityKey, client1.encryption!.identityKey);
+        expect(client2.rooms[1]!.id, client1.rooms[1]!.id);
       }
 
       await client1.logout();
@@ -645,8 +645,8 @@ void main() {
       final response =
           await client.uploadContent(Uint8List(0), filename: 'file.jpeg');
       expect(response, 'mxc://example.com/AQwafuaFswefuhsfAFAgsw');
-      expect(await client.database.getFile(response) != null,
-          client.database.supportsFileStoring);
+      expect(await client.database!.getFile(response) != null,
+          client.database!.supportsFileStoring);
       await client.dispose(closeDatabase: true);
     });
 

@@ -22,9 +22,9 @@ import '../client.dart';
 
 extension MxcUriExtension on Uri {
   /// Returns a download Link to this content.
-  Uri getDownloadLink(Client matrix) => isScheme('mxc')
-      ? matrix.homeserver != null
-          ? matrix.homeserver.resolve('_matrix/media/r0/download/$host$path')
+  Uri getDownloadLink(Client? matrix) => isScheme('mxc')
+      ? matrix!.homeserver != null
+          ? matrix.homeserver!.resolve('_matrix/media/r0/download/$host$path')
           : Uri()
       : this;
 
@@ -33,20 +33,20 @@ extension MxcUriExtension on Uri {
   /// `ThumbnailMethod.scale` and defaults to `ThumbnailMethod.scale`.
   /// If `animated` (default false) is set to true, an animated thumbnail is requested
   /// as per MSC2705. Thumbnails only animate if the media repository supports that.
-  Uri getThumbnail(Client matrix,
-      {num width,
-      num height,
+  Uri getThumbnail(Client? matrix,
+      {num? width,
+      num? height,
       ThumbnailMethod method = ThumbnailMethod.crop,
       bool animated = false}) {
     if (!isScheme('mxc')) return this;
-    if (matrix.homeserver == null) {
+    if (matrix!.homeserver == null) {
       return Uri();
     }
     return Uri(
-      scheme: matrix.homeserver.scheme,
-      host: matrix.homeserver.host,
+      scheme: matrix.homeserver!.scheme,
+      host: matrix.homeserver!.host,
       path: '/_matrix/media/r0/thumbnail/$host$path',
-      port: matrix.homeserver.port,
+      port: matrix.homeserver!.port,
       queryParameters: {
         if (width != null) 'width': width.round().toString(),
         if (height != null) 'height': height.round().toString(),

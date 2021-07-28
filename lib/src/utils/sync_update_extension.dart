@@ -40,5 +40,5 @@ extension SyncUpdateFilters on SyncUpdate {
   }
 
   /// Returns if this sync update has presence updates
-  bool get hasPresenceUpdate => presence != null && presence.isNotEmpty;
+  bool get hasPresenceUpdate => presence != null && presence!.isNotEmpty;
 }

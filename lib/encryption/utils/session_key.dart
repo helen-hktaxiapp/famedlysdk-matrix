@@ -23,42 +23,42 @@ import '../../matrix.dart';
 
 class SessionKey {
   /// The raw json content of the key
-  Map<String, dynamic> content;
+  Map<String, dynamic>? content;
 
   /// Map of stringified-index to event id, so that we can detect replay attacks
-  Map<String, String> indexes;
+  Map<String, String>? indexes;
 
   /// Map of userId to map of deviceId to index, that we know that device receivied, e.g. sending it ourself.
   /// Used for automatically answering key requests
-  Map<String, Map<String, int>> allowedAtIndex;
+  Map<String, Map<String?, int>>? allowedAtIndex;
 
   /// Underlying olm [InboundGroupSession] object
-  olm.InboundGroupSession inboundGroupSession;
+  olm.InboundGroupSession? inboundGroupSession;
 
   /// Key for libolm pickle / unpickle
-  final String key;
+  final String? key;
 
   /// Forwarding keychain
   List<String> get forwardingCurve25519KeyChain =>
-      (content['forwarding_curve25519_key_chain'] != null
-          ? List<String>.from(content['forwarding_curve25519_key_chain'])
+      (content!['forwarding_curve25519_key_chain'] != null
+          ? List<String>.from(content!['forwarding_curve25519_key_chain'])
           : null) ??
       <String>[];
 
   /// Claimed keys of the original sender
-  Map<String, String> senderClaimedKeys;
+  Map<String, String?>? senderClaimedKeys;
 
   /// Sender curve25519 key
-  String senderKey;
+  String? senderKey;
 
   /// Is this session valid?
   bool get isValid => inboundGroupSession != null;
 
   /// roomId for this session
-  String roomId;
+  String? roomId;
 
   /// Id of this session
-  String sessionId;
+  String? sessionId;
 
   SessionKey(
       {this.content,
@@ -68,12 +68,12 @@ class SessionKey {
       this.allowedAtIndex,
       this.roomId,
       this.sessionId,
-      String senderKey,
-      Map<String, String> senderClaimedKeys}) {
+      String? senderKey,
+      Map<String, String?>? senderClaimedKeys}) {
     _setSenderKey(senderKey);
     _setSenderClaimedKeys(senderClaimedKeys);
     indexes ??= <String, String>{};
-    allowedAtIndex ??= <String, Map<String, int>>{};
+    allowedAtIndex ??= <String, Map<String?, int>>{};
   }
 
   SessionKey.fromDb(StoredInboundGroupSession dbEntry, String key) : key = key {
@@ -82,7 +82,7 @@ class SessionKey {
     final parsedAllowedAtIndex =
         Event.getMapFromPayload(dbEntry.allowedAtIndex);
     final parsedSenderClaimedKeys =
-        Event.getMapFromPayload(dbEntry.senderClaimedKeys);
+        Event.getMapFromPayload(dbEntry.senderClaimedKeys)!;
     content = parsedContent;
     // we need to try...catch as the map used to be <String, int> and that will throw an error.
     try {
@@ -98,7 +98,7 @@ class SessionKey {
               .map((k, v) => MapEntry(k, Map<String, int>.from(v))))
           : <String, Map<String, int>>{};
     } catch (e) {
-      allowedAtIndex = <String, Map<String, int>>{};
+      allowedAtIndex = <String, Map<String?, int>>{};
     }
     roomId = dbEntry.roomId;
     sessionId = dbEntry.sessionId;
@@ -107,25 +107,25 @@ class SessionKey {
 
     inboundGroupSession = olm.InboundGroupSession();
     try {
-      inboundGroupSession.unpickle(key, dbEntry.pickle);
+      inboundGroupSession!.unpickle(key, dbEntry.pickle!);
     } catch (e, s) {
       dispose();
       Logs().e('[LibOlm] Unable to unpickle inboundGroupSession', e, s);
     }
   }
 
-  void _setSenderKey(String key) {
-    senderKey = key ?? content['sender_key'] ?? '';
+  void _setSenderKey(String? key) {
+    senderKey = key ?? content!['sender_key'] ?? '';
   }
 
-  void _setSenderClaimedKeys(Map<String, String> keys) {
+  void _setSenderClaimedKeys(Map<String, String?>? keys) {
     senderClaimedKeys = (keys != null && keys.isNotEmpty)
         ? keys
-        : (content['sender_claimed_keys'] is Map
-            ? Map<String, String>.from(content['sender_claimed_keys'])
-            : (content['sender_claimed_ed25519_key'] is String
-                ? <String, String>{
-                    'ed25519': content['sender_claimed_ed25519_key']
+        : (content!['sender_claimed_keys'] is Map
+            ? Map<String, String>.from(content!['sender_claimed_keys'])
+            : (content!['sender_claimed_ed25519_key'] is String
+                ? <String, String?>{
+                    'ed25519': content!['sender_claimed_ed25519_key']
                   }
                 : <String, String>{}));
   }

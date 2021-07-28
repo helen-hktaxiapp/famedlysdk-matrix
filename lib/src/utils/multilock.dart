@@ -22,7 +22,7 @@ class MultiLock<T> {
         if (_completers[key] != null) {
           futures.add(() async {
             while (_completers[key] != null) {
-              await _completers[key].future;
+              await _completers[key]!.future;
             }
           }());
         }
@@ -42,7 +42,7 @@ class MultiLock<T> {
     // we just have to simply unlock all the completers
     for (final key in uniqueKeys) {
       if (_completers[key] != null) {
-        final completer = _completers[key];
+        final completer = _completers[key]!;
         _completers.remove(key);
         completer.complete();
       }

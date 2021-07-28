@@ -21,9 +21,10 @@ import '../../matrix.dart';
 import '../event.dart';
 import '../room.dart';
 import 'matrix_localizations.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 
 abstract class EventLocalizations {
-  static String _localizedBodyNormalMessage(
+  static String? _localizedBodyNormalMessage(
       Event event, MatrixLocalizations i18n) {
     switch (event.messageType) {
       case MessageTypes.Image:
@@ -41,16 +42,16 @@ abstract class EventLocalizations {
       case MessageTypes.Emote:
         return '* ${event.body}';
       case MessageTypes.BadEncrypted:
-        String errorText;
+        String? errorText;
         switch (event.body) {
           case DecryptException.channelCorrupted:
-            errorText = i18n.channelCorruptedDecryptError + '.';
+            errorText = i18n.channelCorruptedDecryptError! + '.';
             break;
           case DecryptException.notEnabled:
-            errorText = i18n.encryptionNotEnabled + '.';
+            errorText = i18n.encryptionNotEnabled! + '.';
             break;
           case DecryptException.unknownAlgorithm:
-            errorText = i18n.unknownEncryptionAlgorithm + '.';
+            errorText = i18n.unknownEncryptionAlgorithm! + '.';
             break;
           case DecryptException.unknownSession:
             errorText = i18n.noPermission + '.';
@@ -71,7 +72,7 @@ abstract class EventLocalizations {
   // This map holds how to localize event types, and thus which event types exist.
   // If an event exists but it does not have a localized body, set its callback to null
   static final Map<String,
-          String Function(Event event, MatrixLocalizations i18n)>
+          String? Function(Event event, MatrixLocalizations i18n)?>
       localizationsMap = {
     EventTypes.Sticker: (event, i18n) =>
         i18n.sentASticker(event.sender.calcDisplayname()),
@@ -85,11 +86,10 @@ abstract class EventLocalizations {
         i18n.createdTheChat(event.sender.calcDisplayname()),
     EventTypes.RoomTombstone: (event, i18n) => i18n.roomHasBeenUpgraded,
     EventTypes.RoomJoinRules: (event, i18n) {
-      final joinRules = JoinRules.values.firstWhere(
+      final joinRules = JoinRules.values.firstWhereOrNull(
           (r) =>
               r.toString().replaceAll('JoinRules.', '') ==
-              event.content['join_rule'],
-          orElse: () => null);
+              event.content['join_rule']);
       if (joinRules == null) {
         return i18n.changedTheJoinRules(event.sender.calcDisplayname());
       } else {
@@ -98,12 +98,12 @@ abstract class EventLocalizations {
       }
     },
     EventTypes.RoomMember: (event, i18n) {
-      var text = 'Failed to parse member event';
+      String? text = 'Failed to parse member event';
       final targetName = event.stateKeyUser.calcDisplayname();
       // Has the membership changed?
       final newMembership = event.content['membership'] ?? '';
       final oldMembership = event.prevContent != null
-          ? event.prevContent['membership'] ?? ''
+          ? event.prevContent!['membership'] ?? ''
           : '';
       if (newMembership != oldMembership) {
         if (oldMembership == 'invite' && newMembership == 'join') {
@@ -142,12 +142,12 @@ abstract class EventLocalizations {
       } else if (newMembership == 'join') {
         final newAvatar = event.content['avatar_url'] ?? '';
         final oldAvatar = event.prevContent != null
-            ? event.prevContent['avatar_url'] ?? ''
+            ? event.prevContent!['avatar_url'] ?? ''
             : '';
 
         final newDisplayname = event.content['displayname'] ?? '';
         final oldDisplayname = event.prevContent != null
-            ? event.prevContent['displayname'] ?? ''
+            ? event.prevContent!['displayname'] ?? ''
             : '';
 
         // Has the user avatar changed?
@@ -170,11 +170,10 @@ abstract class EventLocalizations {
     EventTypes.RoomAvatar: (event, i18n) =>
         i18n.changedTheChatAvatar(event.sender.calcDisplayname()),
     EventTypes.GuestAccess: (event, i18n) {
-      final guestAccess = GuestAccess.values.firstWhere(
+      final guestAccess = GuestAccess.values.firstWhereOrNull(
           (r) =>
               r.toString().replaceAll('GuestAccess.', '') ==
-              event.content['guest_access'],
-          orElse: () => null);
+              event.content['guest_access']);
       if (guestAccess == null) {
         return i18n.changedTheGuestAccessRules(event.sender.calcDisplayname());
       } else {
@@ -183,11 +182,10 @@ abstract class EventLocalizations {
       }
     },
     EventTypes.HistoryVisibility: (event, i18n) {
-      final historyVisibility = HistoryVisibility.values.firstWhere(
+      final historyVisibility = HistoryVisibility.values.firstWhereOrNull(
           (r) =>
               r.toString().replaceAll('HistoryVisibility.', '') ==
-              event.content['history_visibility'],
-          orElse: () => null);
+              event.content['history_visibility']);
       if (historyVisibility == null) {
         return i18n.changedTheHistoryVisibility(event.sender.calcDisplayname());
       } else {
@@ -199,7 +197,7 @@ abstract class EventLocalizations {
     EventTypes.Encryption: (event, i18n) {
       var localizedBody =
           i18n.activatedEndToEndEncryption(event.sender.calcDisplayname());
-      if (!event.room.client.encryptionEnabled) {
+      if (!event.room!.client!.encryptionEnabled) {
         localizedBody += '. ' + i18n.needPantalaimonWarning;
       }
       return localizedBody;

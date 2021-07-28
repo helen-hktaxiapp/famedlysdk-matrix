@@ -17,11 +17,11 @@
  */
 
 class SSSSCache {
-  final int clientId;
-  final String type;
-  final String keyId;
-  final String ciphertext;
-  final String content;
+  final int? clientId;
+  final String? type;
+  final String? keyId;
+  final String? ciphertext;
+  final String? content;
 
   const SSSSCache(
       {this.clientId, this.type, this.keyId, this.ciphertext, this.content});
