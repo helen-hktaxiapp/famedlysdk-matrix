@@ -909,7 +909,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
   }
 
   @override
-  Future<void> storeRoomUpdate(int? clientId, RoomUpdate roomUpdate, [_]) async {
+  Future<void> storeRoomUpdate(int? clientId, RoomUpdate roomUpdate, [Room? oldRoom]) async {
     // Leave room if membership is leave
     if ({Membership.leave, Membership.ban}.contains(roomUpdate.membership)) {
       await forgetRoom(clientId, roomUpdate.id);

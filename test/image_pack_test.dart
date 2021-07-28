@@ -35,25 +35,25 @@ void main() {
         type: 'm.room.power_levels',
         content: {},
         room: room,
-        stateKey: '',
+        stateKey: '', eventId: '', senderId: '',
       ));
       room!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client!.userID,
+        stateKey: client!.userID, eventId: '', senderId: '',
       ));
       room2!.setState(Event(
         type: 'm.room.power_levels',
         content: {},
         room: room,
-        stateKey: '',
+        stateKey: '', eventId: '', senderId: '',
       ));
       room2!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client!.userID,
+        stateKey: client!.userID, eventId: '', senderId: '',
       ));
       client!.rooms.add(room);
       client!.rooms.add(room2);
@@ -69,7 +69,7 @@ void main() {
         },
         room: room,
         stateKey: '',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       final packs = room!.getImagePacks();
       expect(packs.length, 1);
@@ -96,7 +96,7 @@ void main() {
         },
         room: room,
         stateKey: '',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
@@ -119,7 +119,7 @@ void main() {
         },
         room: room,
         stateKey: '',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
@@ -140,7 +140,7 @@ void main() {
         },
         room: room,
         stateKey: 'fox',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       packsFlat = room!.getImagePacksFlat(ImagePackUsage.emoticon);
       expect(packsFlat, {
@@ -181,7 +181,7 @@ void main() {
         },
         room: room2,
         stateKey: '',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       client!.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
         'type': 'im.ponies.emote_rooms',
@@ -212,7 +212,7 @@ void main() {
         },
         room: room2,
         stateKey: 'fox',
-        sortOrder: sortOrder++,
+        sortOrder: sortOrder++, eventId: '', senderId: '',
       ));
       client!.accountData['im.ponies.emote_rooms'] = BasicEvent.fromJson({
         'type': 'im.ponies.emote_rooms',

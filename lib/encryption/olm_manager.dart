@@ -232,7 +232,7 @@ class OlmManager {
       // in case the app gets killed during upload or the upload fails due to bad network
       // we can still re-try later
       if (updateDatabase) {
-        await client!.database?.updateClientKeys(pickledOlmAccount, client!.id);
+        await client!.database?.updateClientKeys(pickledOlmAccount!, client!.id);
       }
       final response = await client!.uploadKeys(
         deviceKeys: uploadDeviceKeys
@@ -244,7 +244,7 @@ class OlmManager {
       // mark the OTKs as published and save that to datbase
       _olmAccount!.mark_keys_as_published();
       if (updateDatabase) {
-        await client!.database?.updateClientKeys(pickledOlmAccount, client!.id);
+        await client!.database?.updateClientKeys(pickledOlmAccount!, client!.id);
       }
       return (uploadedOneTimeKeysCount != null &&
               response['signed_curve25519'] == uploadedOneTimeKeysCount) ||
@@ -302,8 +302,8 @@ class OlmManager {
     }
     await client!.database!.storeOlmSession(
         client!.id,
-        session.identityKey,
-        session.sessionId,
+        session.identityKey!,
+        session.sessionId!,
         session.pickledSession,
         session.lastReceived!.millisecondsSinceEpoch);
   }
@@ -340,7 +340,7 @@ class OlmManager {
                 device.lastActive!.millisecondsSinceEpoch,
                 client!.id,
                 device.userId,
-                device.deviceId);
+                device.deviceId!);
           }
         });
     if (existingSessions != null) {
@@ -375,7 +375,7 @@ class OlmManager {
       try {
         newSession.create_inbound_from(_olmAccount!, senderKey, body);
         _olmAccount!.remove_one_time_keys(newSession);
-        client!.database?.updateClientKeys(pickledOlmAccount, client!.id);
+        client!.database?.updateClientKeys(pickledOlmAccount!, client!.id);
         plaintext = newSession.decrypt(type, body);
         runInRoot(() => storeOlmSession(OlmSession(
               key: client!.userID,
@@ -417,19 +417,19 @@ class OlmManager {
       return [];
     }
     final olmSessions = await client!.database!
-        .getOlmSessions(client!.id, senderKey, client!.userID);
+        .getOlmSessions(client!.id, senderKey!, client!.userID!);
     return olmSessions.where((sess) => sess.isValid).toList();
   }
 
   Future<void> getOlmSessionsForDevicesFromDatabase(
-      List<String?> senderKeys) async {
+      List<String> senderKeys) async {
     if (client!.database == null) {
       return;
     }
     final rows = await client!.database!.getOlmSessionsForDevices(
       client!.id,
       senderKeys,
-      client!.userID,
+      client!.userID!,
     );
     final res = <String?, List<OlmSession>>{};
     for (final sess in rows) {
@@ -590,7 +590,7 @@ class OlmManager {
           }),
           client!.id,
           device.userId,
-          device.deviceId));
+          device.deviceId!));
     }
     final encryptedBody = <String, dynamic>{
       'algorithm': AlgorithmTypes.olmV1Curve25519AesSha2,
@@ -653,7 +653,7 @@ class OlmManager {
           '[OlmManager] Device ${device.userId}:${device.deviceId} generated a new olm session, replaying last sent message...');
       final lastSentMessageRes = await client!.database!
           .getLastSentMessageUserDeviceKey(
-              client!.id, device.userId, device.deviceId);
+              client!.id, device.userId, device.deviceId!);
       if (lastSentMessageRes.isEmpty ||
           (lastSentMessageRes.first?.isEmpty ?? true)) {
         return;

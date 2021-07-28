@@ -13,36 +13,36 @@ class DbClient extends DataClass implements Insertable<DbClient> {
   final String homeserverUrl;
   final String token;
   final String userId;
-  final String deviceId;
-  final String deviceName;
-  final String prevBatch;
-  final String syncFilterId;
-  final String olmAccount;
+  final String? deviceId;
+  final String? deviceName;
+  final String? prevBatch;
+  final String? syncFilterId;
+  final String? olmAccount;
   DbClient(
-      {@required this.clientId,
-      @required this.name,
-      @required this.homeserverUrl,
-      @required this.token,
-      @required this.userId,
+      {required this.clientId,
+      required this.name,
+      required this.homeserverUrl,
+      required this.token,
+      required this.userId,
       this.deviceId,
       this.deviceName,
       this.prevBatch,
       this.syncFilterId,
       this.olmAccount});
   factory DbClient.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbClient(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       name: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}name']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
       homeserverUrl: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}homeserver_url']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}homeserver_url'])!,
       token: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}token']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}token'])!,
       userId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}user_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
       deviceId: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}device_id']),
       deviceName: const StringType()
@@ -58,52 +58,36 @@ class DbClient extends DataClass implements Insertable<DbClient> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
-    }
-    if (!nullToAbsent || homeserverUrl != null) {
-      map['homeserver_url'] = Variable<String>(homeserverUrl);
-    }
-    if (!nullToAbsent || token != null) {
-      map['token'] = Variable<String>(token);
-    }
-    if (!nullToAbsent || userId != null) {
-      map['user_id'] = Variable<String>(userId);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['name'] = Variable<String>(name);
+    map['homeserver_url'] = Variable<String>(homeserverUrl);
+    map['token'] = Variable<String>(token);
+    map['user_id'] = Variable<String>(userId);
     if (!nullToAbsent || deviceId != null) {
-      map['device_id'] = Variable<String>(deviceId);
+      map['device_id'] = Variable<String?>(deviceId);
     }
     if (!nullToAbsent || deviceName != null) {
-      map['device_name'] = Variable<String>(deviceName);
+      map['device_name'] = Variable<String?>(deviceName);
     }
     if (!nullToAbsent || prevBatch != null) {
-      map['prev_batch'] = Variable<String>(prevBatch);
+      map['prev_batch'] = Variable<String?>(prevBatch);
     }
     if (!nullToAbsent || syncFilterId != null) {
-      map['sync_filter_id'] = Variable<String>(syncFilterId);
+      map['sync_filter_id'] = Variable<String?>(syncFilterId);
     }
     if (!nullToAbsent || olmAccount != null) {
-      map['olm_account'] = Variable<String>(olmAccount);
+      map['olm_account'] = Variable<String?>(olmAccount);
     }
     return map;
   }
 
   ClientsCompanion toCompanion(bool nullToAbsent) {
     return ClientsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      homeserverUrl: homeserverUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(homeserverUrl),
-      token:
-          token == null && nullToAbsent ? const Value.absent() : Value(token),
-      userId:
-          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
+      clientId: Value(clientId),
+      name: Value(name),
+      homeserverUrl: Value(homeserverUrl),
+      token: Value(token),
+      userId: Value(userId),
       deviceId: deviceId == null && nullToAbsent
           ? const Value.absent()
           : Value(deviceId),
@@ -123,7 +107,7 @@ class DbClient extends DataClass implements Insertable<DbClient> {
   }
 
   factory DbClient.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbClient(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -131,15 +115,15 @@ class DbClient extends DataClass implements Insertable<DbClient> {
       homeserverUrl: serializer.fromJson<String>(json['homeserver_url']),
       token: serializer.fromJson<String>(json['token']),
       userId: serializer.fromJson<String>(json['user_id']),
-      deviceId: serializer.fromJson<String>(json['device_id']),
-      deviceName: serializer.fromJson<String>(json['device_name']),
-      prevBatch: serializer.fromJson<String>(json['prev_batch']),
-      syncFilterId: serializer.fromJson<String>(json['sync_filter_id']),
-      olmAccount: serializer.fromJson<String>(json['olm_account']),
+      deviceId: serializer.fromJson<String?>(json['device_id']),
+      deviceName: serializer.fromJson<String?>(json['device_name']),
+      prevBatch: serializer.fromJson<String?>(json['prev_batch']),
+      syncFilterId: serializer.fromJson<String?>(json['sync_filter_id']),
+      olmAccount: serializer.fromJson<String?>(json['olm_account']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -147,25 +131,25 @@ class DbClient extends DataClass implements Insertable<DbClient> {
       'homeserver_url': serializer.toJson<String>(homeserverUrl),
       'token': serializer.toJson<String>(token),
       'user_id': serializer.toJson<String>(userId),
-      'device_id': serializer.toJson<String>(deviceId),
-      'device_name': serializer.toJson<String>(deviceName),
-      'prev_batch': serializer.toJson<String>(prevBatch),
-      'sync_filter_id': serializer.toJson<String>(syncFilterId),
-      'olm_account': serializer.toJson<String>(olmAccount),
+      'device_id': serializer.toJson<String?>(deviceId),
+      'device_name': serializer.toJson<String?>(deviceName),
+      'prev_batch': serializer.toJson<String?>(prevBatch),
+      'sync_filter_id': serializer.toJson<String?>(syncFilterId),
+      'olm_account': serializer.toJson<String?>(olmAccount),
     };
   }
 
   DbClient copyWith(
-          {int clientId,
-          String name,
-          String homeserverUrl,
-          String token,
-          String userId,
-          String deviceId,
-          String deviceName,
-          String prevBatch,
-          String syncFilterId,
-          String olmAccount}) =>
+          {int? clientId,
+          String? name,
+          String? homeserverUrl,
+          String? token,
+          String? userId,
+          String? deviceId,
+          String? deviceName,
+          String? prevBatch,
+          String? syncFilterId,
+          String? olmAccount}) =>
       DbClient(
         clientId: clientId ?? this.clientId,
         name: name ?? this.name,
@@ -236,11 +220,11 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
   final Value<String> homeserverUrl;
   final Value<String> token;
   final Value<String> userId;
-  final Value<String> deviceId;
-  final Value<String> deviceName;
-  final Value<String> prevBatch;
-  final Value<String> syncFilterId;
-  final Value<String> olmAccount;
+  final Value<String?> deviceId;
+  final Value<String?> deviceName;
+  final Value<String?> prevBatch;
+  final Value<String?> syncFilterId;
+  final Value<String?> olmAccount;
   const ClientsCompanion({
     this.clientId = const Value.absent(),
     this.name = const Value.absent(),
@@ -255,10 +239,10 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
   });
   ClientsCompanion.insert({
     this.clientId = const Value.absent(),
-    @required String name,
-    @required String homeserverUrl,
-    @required String token,
-    @required String userId,
+    required String name,
+    required String homeserverUrl,
+    required String token,
+    required String userId,
     this.deviceId = const Value.absent(),
     this.deviceName = const Value.absent(),
     this.prevBatch = const Value.absent(),
@@ -269,16 +253,16 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
         token = Value(token),
         userId = Value(userId);
   static Insertable<DbClient> custom({
-    Expression<int> clientId,
-    Expression<String> name,
-    Expression<String> homeserverUrl,
-    Expression<String> token,
-    Expression<String> userId,
-    Expression<String> deviceId,
-    Expression<String> deviceName,
-    Expression<String> prevBatch,
-    Expression<String> syncFilterId,
-    Expression<String> olmAccount,
+    Expression<int>? clientId,
+    Expression<String>? name,
+    Expression<String>? homeserverUrl,
+    Expression<String>? token,
+    Expression<String>? userId,
+    Expression<String?>? deviceId,
+    Expression<String?>? deviceName,
+    Expression<String?>? prevBatch,
+    Expression<String?>? syncFilterId,
+    Expression<String?>? olmAccount,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -295,16 +279,16 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
   }
 
   ClientsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> name,
-      Value<String> homeserverUrl,
-      Value<String> token,
-      Value<String> userId,
-      Value<String> deviceId,
-      Value<String> deviceName,
-      Value<String> prevBatch,
-      Value<String> syncFilterId,
-      Value<String> olmAccount}) {
+      {Value<int>? clientId,
+      Value<String>? name,
+      Value<String>? homeserverUrl,
+      Value<String>? token,
+      Value<String>? userId,
+      Value<String?>? deviceId,
+      Value<String?>? deviceName,
+      Value<String?>? prevBatch,
+      Value<String?>? syncFilterId,
+      Value<String?>? olmAccount}) {
     return ClientsCompanion(
       clientId: clientId ?? this.clientId,
       name: name ?? this.name,
@@ -338,19 +322,19 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
       map['user_id'] = Variable<String>(userId.value);
     }
     if (deviceId.present) {
-      map['device_id'] = Variable<String>(deviceId.value);
+      map['device_id'] = Variable<String?>(deviceId.value);
     }
     if (deviceName.present) {
-      map['device_name'] = Variable<String>(deviceName.value);
+      map['device_name'] = Variable<String?>(deviceName.value);
     }
     if (prevBatch.present) {
-      map['prev_batch'] = Variable<String>(prevBatch.value);
+      map['prev_batch'] = Variable<String?>(prevBatch.value);
     }
     if (syncFilterId.present) {
-      map['sync_filter_id'] = Variable<String>(syncFilterId.value);
+      map['sync_filter_id'] = Variable<String?>(syncFilterId.value);
     }
     if (olmAccount.present) {
-      map['olm_account'] = Variable<String>(olmAccount.value);
+      map['olm_account'] = Variable<String?>(olmAccount.value);
     }
     return map;
   }
@@ -375,11 +359,10 @@ class ClientsCompanion extends UpdateCompanion<DbClient> {
 
 class Clients extends Table with TableInfo<Clients, DbClient> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   Clients(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         declaredAsPrimaryKey: true,
@@ -388,8 +371,7 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
   }
 
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
-  GeneratedTextColumn get name => _name ??= _constructName();
+  late final GeneratedTextColumn name = _constructName();
   GeneratedTextColumn _constructName() {
     return GeneratedTextColumn('name', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -397,49 +379,42 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
 
   final VerificationMeta _homeserverUrlMeta =
       const VerificationMeta('homeserverUrl');
-  GeneratedTextColumn _homeserverUrl;
-  GeneratedTextColumn get homeserverUrl =>
-      _homeserverUrl ??= _constructHomeserverUrl();
+  late final GeneratedTextColumn homeserverUrl = _constructHomeserverUrl();
   GeneratedTextColumn _constructHomeserverUrl() {
     return GeneratedTextColumn('homeserver_url', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _tokenMeta = const VerificationMeta('token');
-  GeneratedTextColumn _token;
-  GeneratedTextColumn get token => _token ??= _constructToken();
+  late final GeneratedTextColumn token = _constructToken();
   GeneratedTextColumn _constructToken() {
     return GeneratedTextColumn('token', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  GeneratedTextColumn _userId;
-  GeneratedTextColumn get userId => _userId ??= _constructUserId();
+  late final GeneratedTextColumn userId = _constructUserId();
   GeneratedTextColumn _constructUserId() {
     return GeneratedTextColumn('user_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _deviceIdMeta = const VerificationMeta('deviceId');
-  GeneratedTextColumn _deviceId;
-  GeneratedTextColumn get deviceId => _deviceId ??= _constructDeviceId();
+  late final GeneratedTextColumn deviceId = _constructDeviceId();
   GeneratedTextColumn _constructDeviceId() {
     return GeneratedTextColumn('device_id', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _deviceNameMeta = const VerificationMeta('deviceName');
-  GeneratedTextColumn _deviceName;
-  GeneratedTextColumn get deviceName => _deviceName ??= _constructDeviceName();
+  late final GeneratedTextColumn deviceName = _constructDeviceName();
   GeneratedTextColumn _constructDeviceName() {
     return GeneratedTextColumn('device_name', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _prevBatchMeta = const VerificationMeta('prevBatch');
-  GeneratedTextColumn _prevBatch;
-  GeneratedTextColumn get prevBatch => _prevBatch ??= _constructPrevBatch();
+  late final GeneratedTextColumn prevBatch = _constructPrevBatch();
   GeneratedTextColumn _constructPrevBatch() {
     return GeneratedTextColumn('prev_batch', $tableName, true,
         $customConstraints: '');
@@ -447,17 +422,14 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
 
   final VerificationMeta _syncFilterIdMeta =
       const VerificationMeta('syncFilterId');
-  GeneratedTextColumn _syncFilterId;
-  GeneratedTextColumn get syncFilterId =>
-      _syncFilterId ??= _constructSyncFilterId();
+  late final GeneratedTextColumn syncFilterId = _constructSyncFilterId();
   GeneratedTextColumn _constructSyncFilterId() {
     return GeneratedTextColumn('sync_filter_id', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _olmAccountMeta = const VerificationMeta('olmAccount');
-  GeneratedTextColumn _olmAccount;
-  GeneratedTextColumn get olmAccount => _olmAccount ??= _constructOlmAccount();
+  late final GeneratedTextColumn olmAccount = _constructOlmAccount();
   GeneratedTextColumn _constructOlmAccount() {
     return GeneratedTextColumn('olm_account', $tableName, true,
         $customConstraints: '');
@@ -489,11 +461,11 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     }
     if (data.containsKey('name')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
@@ -501,47 +473,47 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
       context.handle(
           _homeserverUrlMeta,
           homeserverUrl.isAcceptableOrUnknown(
-              data['homeserver_url'], _homeserverUrlMeta));
+              data['homeserver_url']!, _homeserverUrlMeta));
     } else if (isInserting) {
       context.missing(_homeserverUrlMeta);
     }
     if (data.containsKey('token')) {
       context.handle(
-          _tokenMeta, token.isAcceptableOrUnknown(data['token'], _tokenMeta));
+          _tokenMeta, token.isAcceptableOrUnknown(data['token']!, _tokenMeta));
     } else if (isInserting) {
       context.missing(_tokenMeta);
     }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id'], _userIdMeta));
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
     if (data.containsKey('device_id')) {
       context.handle(_deviceIdMeta,
-          deviceId.isAcceptableOrUnknown(data['device_id'], _deviceIdMeta));
+          deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta));
     }
     if (data.containsKey('device_name')) {
       context.handle(
           _deviceNameMeta,
           deviceName.isAcceptableOrUnknown(
-              data['device_name'], _deviceNameMeta));
+              data['device_name']!, _deviceNameMeta));
     }
     if (data.containsKey('prev_batch')) {
       context.handle(_prevBatchMeta,
-          prevBatch.isAcceptableOrUnknown(data['prev_batch'], _prevBatchMeta));
+          prevBatch.isAcceptableOrUnknown(data['prev_batch']!, _prevBatchMeta));
     }
     if (data.containsKey('sync_filter_id')) {
       context.handle(
           _syncFilterIdMeta,
           syncFilterId.isAcceptableOrUnknown(
-              data['sync_filter_id'], _syncFilterIdMeta));
+              data['sync_filter_id']!, _syncFilterIdMeta));
     }
     if (data.containsKey('olm_account')) {
       context.handle(
           _olmAccountMeta,
           olmAccount.isAcceptableOrUnknown(
-              data['olm_account'], _olmAccountMeta));
+              data['olm_account']!, _olmAccountMeta));
     }
     return context;
   }
@@ -549,7 +521,7 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
   @override
   Set<GeneratedColumn> get $primaryKey => {clientId};
   @override
-  DbClient map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbClient map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbClient.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -568,18 +540,18 @@ class Clients extends Table with TableInfo<Clients, DbClient> {
 class DbUserDeviceKey extends DataClass implements Insertable<DbUserDeviceKey> {
   final int clientId;
   final String userId;
-  final bool outdated;
+  final bool? outdated;
   DbUserDeviceKey(
-      {@required this.clientId, @required this.userId, this.outdated});
+      {required this.clientId, required this.userId, this.outdated});
   factory DbUserDeviceKey.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbUserDeviceKey(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       userId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}user_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
       outdated: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}outdated']),
     );
@@ -587,25 +559,18 @@ class DbUserDeviceKey extends DataClass implements Insertable<DbUserDeviceKey> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || userId != null) {
-      map['user_id'] = Variable<String>(userId);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['user_id'] = Variable<String>(userId);
     if (!nullToAbsent || outdated != null) {
-      map['outdated'] = Variable<bool>(outdated);
+      map['outdated'] = Variable<bool?>(outdated);
     }
     return map;
   }
 
   UserDeviceKeysCompanion toCompanion(bool nullToAbsent) {
     return UserDeviceKeysCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      userId:
-          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
+      clientId: Value(clientId),
+      userId: Value(userId),
       outdated: outdated == null && nullToAbsent
           ? const Value.absent()
           : Value(outdated),
@@ -613,25 +578,25 @@ class DbUserDeviceKey extends DataClass implements Insertable<DbUserDeviceKey> {
   }
 
   factory DbUserDeviceKey.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbUserDeviceKey(
       clientId: serializer.fromJson<int>(json['client_id']),
       userId: serializer.fromJson<String>(json['user_id']),
-      outdated: serializer.fromJson<bool>(json['outdated']),
+      outdated: serializer.fromJson<bool?>(json['outdated']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'user_id': serializer.toJson<String>(userId),
-      'outdated': serializer.toJson<bool>(outdated),
+      'outdated': serializer.toJson<bool?>(outdated),
     };
   }
 
-  DbUserDeviceKey copyWith({int clientId, String userId, bool outdated}) =>
+  DbUserDeviceKey copyWith({int? clientId, String? userId, bool? outdated}) =>
       DbUserDeviceKey(
         clientId: clientId ?? this.clientId,
         userId: userId ?? this.userId,
@@ -662,22 +627,22 @@ class DbUserDeviceKey extends DataClass implements Insertable<DbUserDeviceKey> {
 class UserDeviceKeysCompanion extends UpdateCompanion<DbUserDeviceKey> {
   final Value<int> clientId;
   final Value<String> userId;
-  final Value<bool> outdated;
+  final Value<bool?> outdated;
   const UserDeviceKeysCompanion({
     this.clientId = const Value.absent(),
     this.userId = const Value.absent(),
     this.outdated = const Value.absent(),
   });
   UserDeviceKeysCompanion.insert({
-    @required int clientId,
-    @required String userId,
+    required int clientId,
+    required String userId,
     this.outdated = const Value.absent(),
   })  : clientId = Value(clientId),
         userId = Value(userId);
   static Insertable<DbUserDeviceKey> custom({
-    Expression<int> clientId,
-    Expression<String> userId,
-    Expression<bool> outdated,
+    Expression<int>? clientId,
+    Expression<String>? userId,
+    Expression<bool?>? outdated,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -687,7 +652,7 @@ class UserDeviceKeysCompanion extends UpdateCompanion<DbUserDeviceKey> {
   }
 
   UserDeviceKeysCompanion copyWith(
-      {Value<int> clientId, Value<String> userId, Value<bool> outdated}) {
+      {Value<int>? clientId, Value<String>? userId, Value<bool?>? outdated}) {
     return UserDeviceKeysCompanion(
       clientId: clientId ?? this.clientId,
       userId: userId ?? this.userId,
@@ -705,7 +670,7 @@ class UserDeviceKeysCompanion extends UpdateCompanion<DbUserDeviceKey> {
       map['user_id'] = Variable<String>(userId.value);
     }
     if (outdated.present) {
-      map['outdated'] = Variable<bool>(outdated.value);
+      map['outdated'] = Variable<bool?>(outdated.value);
     }
     return map;
   }
@@ -724,27 +689,24 @@ class UserDeviceKeysCompanion extends UpdateCompanion<DbUserDeviceKey> {
 class UserDeviceKeys extends Table
     with TableInfo<UserDeviceKeys, DbUserDeviceKey> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   UserDeviceKeys(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  GeneratedTextColumn _userId;
-  GeneratedTextColumn get userId => _userId ??= _constructUserId();
+  late final GeneratedTextColumn userId = _constructUserId();
   GeneratedTextColumn _constructUserId() {
     return GeneratedTextColumn('user_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _outdatedMeta = const VerificationMeta('outdated');
-  GeneratedBoolColumn _outdated;
-  GeneratedBoolColumn get outdated => _outdated ??= _constructOutdated();
+  late final GeneratedBoolColumn outdated = _constructOutdated();
   GeneratedBoolColumn _constructOutdated() {
     return GeneratedBoolColumn('outdated', $tableName, true,
         $customConstraints: 'DEFAULT true',
@@ -766,19 +728,19 @@ class UserDeviceKeys extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id'], _userIdMeta));
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
     if (data.containsKey('outdated')) {
       context.handle(_outdatedMeta,
-          outdated.isAcceptableOrUnknown(data['outdated'], _outdatedMeta));
+          outdated.isAcceptableOrUnknown(data['outdated']!, _outdatedMeta));
     }
     return context;
   }
@@ -786,7 +748,7 @@ class UserDeviceKeys extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbUserDeviceKey map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbUserDeviceKey map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbUserDeviceKey.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -808,32 +770,32 @@ class DbUserDeviceKeysKey extends DataClass
   final String userId;
   final String deviceId;
   final String content;
-  final bool verified;
-  final bool blocked;
-  final int lastActive;
-  final String lastSentMessage;
+  final bool? verified;
+  final bool? blocked;
+  final int? lastActive;
+  final String? lastSentMessage;
   DbUserDeviceKeysKey(
-      {@required this.clientId,
-      @required this.userId,
-      @required this.deviceId,
-      @required this.content,
+      {required this.clientId,
+      required this.userId,
+      required this.deviceId,
+      required this.content,
       this.verified,
       this.blocked,
       this.lastActive,
       this.lastSentMessage});
   factory DbUserDeviceKeysKey.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbUserDeviceKeysKey(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       userId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}user_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
       deviceId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}device_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}device_id'])!,
       content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
       verified: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}verified']),
       blocked: const BoolType()
@@ -847,46 +809,31 @@ class DbUserDeviceKeysKey extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || userId != null) {
-      map['user_id'] = Variable<String>(userId);
-    }
-    if (!nullToAbsent || deviceId != null) {
-      map['device_id'] = Variable<String>(deviceId);
-    }
-    if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['user_id'] = Variable<String>(userId);
+    map['device_id'] = Variable<String>(deviceId);
+    map['content'] = Variable<String>(content);
     if (!nullToAbsent || verified != null) {
-      map['verified'] = Variable<bool>(verified);
+      map['verified'] = Variable<bool?>(verified);
     }
     if (!nullToAbsent || blocked != null) {
-      map['blocked'] = Variable<bool>(blocked);
+      map['blocked'] = Variable<bool?>(blocked);
     }
     if (!nullToAbsent || lastActive != null) {
-      map['last_active'] = Variable<int>(lastActive);
+      map['last_active'] = Variable<int?>(lastActive);
     }
     if (!nullToAbsent || lastSentMessage != null) {
-      map['last_sent_message'] = Variable<String>(lastSentMessage);
+      map['last_sent_message'] = Variable<String?>(lastSentMessage);
     }
     return map;
   }
 
   UserDeviceKeysKeyCompanion toCompanion(bool nullToAbsent) {
     return UserDeviceKeysKeyCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      userId:
-          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
-      deviceId: deviceId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deviceId),
-      content: content == null && nullToAbsent
-          ? const Value.absent()
-          : Value(content),
+      clientId: Value(clientId),
+      userId: Value(userId),
+      deviceId: Value(deviceId),
+      content: Value(content),
       verified: verified == null && nullToAbsent
           ? const Value.absent()
           : Value(verified),
@@ -903,43 +850,43 @@ class DbUserDeviceKeysKey extends DataClass
   }
 
   factory DbUserDeviceKeysKey.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbUserDeviceKeysKey(
       clientId: serializer.fromJson<int>(json['client_id']),
       userId: serializer.fromJson<String>(json['user_id']),
       deviceId: serializer.fromJson<String>(json['device_id']),
       content: serializer.fromJson<String>(json['content']),
-      verified: serializer.fromJson<bool>(json['verified']),
-      blocked: serializer.fromJson<bool>(json['blocked']),
-      lastActive: serializer.fromJson<int>(json['last_active']),
-      lastSentMessage: serializer.fromJson<String>(json['last_sent_message']),
+      verified: serializer.fromJson<bool?>(json['verified']),
+      blocked: serializer.fromJson<bool?>(json['blocked']),
+      lastActive: serializer.fromJson<int?>(json['last_active']),
+      lastSentMessage: serializer.fromJson<String?>(json['last_sent_message']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'user_id': serializer.toJson<String>(userId),
       'device_id': serializer.toJson<String>(deviceId),
       'content': serializer.toJson<String>(content),
-      'verified': serializer.toJson<bool>(verified),
-      'blocked': serializer.toJson<bool>(blocked),
-      'last_active': serializer.toJson<int>(lastActive),
-      'last_sent_message': serializer.toJson<String>(lastSentMessage),
+      'verified': serializer.toJson<bool?>(verified),
+      'blocked': serializer.toJson<bool?>(blocked),
+      'last_active': serializer.toJson<int?>(lastActive),
+      'last_sent_message': serializer.toJson<String?>(lastSentMessage),
     };
   }
 
   DbUserDeviceKeysKey copyWith(
-          {int clientId,
-          String userId,
-          String deviceId,
-          String content,
-          bool verified,
-          bool blocked,
-          int lastActive,
-          String lastSentMessage}) =>
+          {int? clientId,
+          String? userId,
+          String? deviceId,
+          String? content,
+          bool? verified,
+          bool? blocked,
+          int? lastActive,
+          String? lastSentMessage}) =>
       DbUserDeviceKeysKey(
         clientId: clientId ?? this.clientId,
         userId: userId ?? this.userId,
@@ -999,10 +946,10 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
   final Value<String> userId;
   final Value<String> deviceId;
   final Value<String> content;
-  final Value<bool> verified;
-  final Value<bool> blocked;
-  final Value<int> lastActive;
-  final Value<String> lastSentMessage;
+  final Value<bool?> verified;
+  final Value<bool?> blocked;
+  final Value<int?> lastActive;
+  final Value<String?> lastSentMessage;
   const UserDeviceKeysKeyCompanion({
     this.clientId = const Value.absent(),
     this.userId = const Value.absent(),
@@ -1014,10 +961,10 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
     this.lastSentMessage = const Value.absent(),
   });
   UserDeviceKeysKeyCompanion.insert({
-    @required int clientId,
-    @required String userId,
-    @required String deviceId,
-    @required String content,
+    required int clientId,
+    required String userId,
+    required String deviceId,
+    required String content,
     this.verified = const Value.absent(),
     this.blocked = const Value.absent(),
     this.lastActive = const Value.absent(),
@@ -1027,14 +974,14 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
         deviceId = Value(deviceId),
         content = Value(content);
   static Insertable<DbUserDeviceKeysKey> custom({
-    Expression<int> clientId,
-    Expression<String> userId,
-    Expression<String> deviceId,
-    Expression<String> content,
-    Expression<bool> verified,
-    Expression<bool> blocked,
-    Expression<int> lastActive,
-    Expression<String> lastSentMessage,
+    Expression<int>? clientId,
+    Expression<String>? userId,
+    Expression<String>? deviceId,
+    Expression<String>? content,
+    Expression<bool?>? verified,
+    Expression<bool?>? blocked,
+    Expression<int?>? lastActive,
+    Expression<String?>? lastSentMessage,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -1049,14 +996,14 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
   }
 
   UserDeviceKeysKeyCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> userId,
-      Value<String> deviceId,
-      Value<String> content,
-      Value<bool> verified,
-      Value<bool> blocked,
-      Value<int> lastActive,
-      Value<String> lastSentMessage}) {
+      {Value<int>? clientId,
+      Value<String>? userId,
+      Value<String>? deviceId,
+      Value<String>? content,
+      Value<bool?>? verified,
+      Value<bool?>? blocked,
+      Value<int?>? lastActive,
+      Value<String?>? lastSentMessage}) {
     return UserDeviceKeysKeyCompanion(
       clientId: clientId ?? this.clientId,
       userId: userId ?? this.userId,
@@ -1085,16 +1032,16 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
       map['content'] = Variable<String>(content.value);
     }
     if (verified.present) {
-      map['verified'] = Variable<bool>(verified.value);
+      map['verified'] = Variable<bool?>(verified.value);
     }
     if (blocked.present) {
-      map['blocked'] = Variable<bool>(blocked.value);
+      map['blocked'] = Variable<bool?>(blocked.value);
     }
     if (lastActive.present) {
-      map['last_active'] = Variable<int>(lastActive.value);
+      map['last_active'] = Variable<int?>(lastActive.value);
     }
     if (lastSentMessage.present) {
-      map['last_sent_message'] = Variable<String>(lastSentMessage.value);
+      map['last_sent_message'] = Variable<String?>(lastSentMessage.value);
     }
     return map;
   }
@@ -1118,43 +1065,38 @@ class UserDeviceKeysKeyCompanion extends UpdateCompanion<DbUserDeviceKeysKey> {
 class UserDeviceKeysKey extends Table
     with TableInfo<UserDeviceKeysKey, DbUserDeviceKeysKey> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   UserDeviceKeysKey(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  GeneratedTextColumn _userId;
-  GeneratedTextColumn get userId => _userId ??= _constructUserId();
+  late final GeneratedTextColumn userId = _constructUserId();
   GeneratedTextColumn _constructUserId() {
     return GeneratedTextColumn('user_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _deviceIdMeta = const VerificationMeta('deviceId');
-  GeneratedTextColumn _deviceId;
-  GeneratedTextColumn get deviceId => _deviceId ??= _constructDeviceId();
+  late final GeneratedTextColumn deviceId = _constructDeviceId();
   GeneratedTextColumn _constructDeviceId() {
     return GeneratedTextColumn('device_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _verifiedMeta = const VerificationMeta('verified');
-  GeneratedBoolColumn _verified;
-  GeneratedBoolColumn get verified => _verified ??= _constructVerified();
+  late final GeneratedBoolColumn verified = _constructVerified();
   GeneratedBoolColumn _constructVerified() {
     return GeneratedBoolColumn('verified', $tableName, true,
         $customConstraints: 'DEFAULT false',
@@ -1162,8 +1104,7 @@ class UserDeviceKeysKey extends Table
   }
 
   final VerificationMeta _blockedMeta = const VerificationMeta('blocked');
-  GeneratedBoolColumn _blocked;
-  GeneratedBoolColumn get blocked => _blocked ??= _constructBlocked();
+  late final GeneratedBoolColumn blocked = _constructBlocked();
   GeneratedBoolColumn _constructBlocked() {
     return GeneratedBoolColumn('blocked', $tableName, true,
         $customConstraints: 'DEFAULT false',
@@ -1171,8 +1112,7 @@ class UserDeviceKeysKey extends Table
   }
 
   final VerificationMeta _lastActiveMeta = const VerificationMeta('lastActive');
-  GeneratedIntColumn _lastActive;
-  GeneratedIntColumn get lastActive => _lastActive ??= _constructLastActive();
+  late final GeneratedIntColumn lastActive = _constructLastActive();
   GeneratedIntColumn _constructLastActive() {
     return GeneratedIntColumn('last_active', $tableName, true,
         $customConstraints: '');
@@ -1180,9 +1120,7 @@ class UserDeviceKeysKey extends Table
 
   final VerificationMeta _lastSentMessageMeta =
       const VerificationMeta('lastSentMessage');
-  GeneratedTextColumn _lastSentMessage;
-  GeneratedTextColumn get lastSentMessage =>
-      _lastSentMessage ??= _constructLastSentMessage();
+  late final GeneratedTextColumn lastSentMessage = _constructLastSentMessage();
   GeneratedTextColumn _constructLastSentMessage() {
     return GeneratedTextColumn('last_sent_message', $tableName, true,
         $customConstraints: '');
@@ -1213,47 +1151,47 @@ class UserDeviceKeysKey extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id'], _userIdMeta));
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
     if (data.containsKey('device_id')) {
       context.handle(_deviceIdMeta,
-          deviceId.isAcceptableOrUnknown(data['device_id'], _deviceIdMeta));
+          deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta));
     } else if (isInserting) {
       context.missing(_deviceIdMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
     if (data.containsKey('verified')) {
       context.handle(_verifiedMeta,
-          verified.isAcceptableOrUnknown(data['verified'], _verifiedMeta));
+          verified.isAcceptableOrUnknown(data['verified']!, _verifiedMeta));
     }
     if (data.containsKey('blocked')) {
       context.handle(_blockedMeta,
-          blocked.isAcceptableOrUnknown(data['blocked'], _blockedMeta));
+          blocked.isAcceptableOrUnknown(data['blocked']!, _blockedMeta));
     }
     if (data.containsKey('last_active')) {
       context.handle(
           _lastActiveMeta,
           lastActive.isAcceptableOrUnknown(
-              data['last_active'], _lastActiveMeta));
+              data['last_active']!, _lastActiveMeta));
     }
     if (data.containsKey('last_sent_message')) {
       context.handle(
           _lastSentMessageMeta,
           lastSentMessage.isAcceptableOrUnknown(
-              data['last_sent_message'], _lastSentMessageMeta));
+              data['last_sent_message']!, _lastSentMessageMeta));
     }
     return context;
   }
@@ -1261,7 +1199,7 @@ class UserDeviceKeysKey extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbUserDeviceKeysKey map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbUserDeviceKeysKey map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbUserDeviceKeysKey.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -1284,28 +1222,28 @@ class DbUserCrossSigningKey extends DataClass
   final String userId;
   final String publicKey;
   final String content;
-  final bool verified;
-  final bool blocked;
+  final bool? verified;
+  final bool? blocked;
   DbUserCrossSigningKey(
-      {@required this.clientId,
-      @required this.userId,
-      @required this.publicKey,
-      @required this.content,
+      {required this.clientId,
+      required this.userId,
+      required this.publicKey,
+      required this.content,
       this.verified,
       this.blocked});
   factory DbUserCrossSigningKey.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbUserCrossSigningKey(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       userId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}user_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}user_id'])!,
       publicKey: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}public_key']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}public_key'])!,
       content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
       verified: const BoolType()
           .mapFromDatabaseResponse(data['${effectivePrefix}verified']),
       blocked: const BoolType()
@@ -1315,40 +1253,25 @@ class DbUserCrossSigningKey extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || userId != null) {
-      map['user_id'] = Variable<String>(userId);
-    }
-    if (!nullToAbsent || publicKey != null) {
-      map['public_key'] = Variable<String>(publicKey);
-    }
-    if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['user_id'] = Variable<String>(userId);
+    map['public_key'] = Variable<String>(publicKey);
+    map['content'] = Variable<String>(content);
     if (!nullToAbsent || verified != null) {
-      map['verified'] = Variable<bool>(verified);
+      map['verified'] = Variable<bool?>(verified);
     }
     if (!nullToAbsent || blocked != null) {
-      map['blocked'] = Variable<bool>(blocked);
+      map['blocked'] = Variable<bool?>(blocked);
     }
     return map;
   }
 
   UserCrossSigningKeysCompanion toCompanion(bool nullToAbsent) {
     return UserCrossSigningKeysCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      userId:
-          userId == null && nullToAbsent ? const Value.absent() : Value(userId),
-      publicKey: publicKey == null && nullToAbsent
-          ? const Value.absent()
-          : Value(publicKey),
-      content: content == null && nullToAbsent
-          ? const Value.absent()
-          : Value(content),
+      clientId: Value(clientId),
+      userId: Value(userId),
+      publicKey: Value(publicKey),
+      content: Value(content),
       verified: verified == null && nullToAbsent
           ? const Value.absent()
           : Value(verified),
@@ -1359,37 +1282,37 @@ class DbUserCrossSigningKey extends DataClass
   }
 
   factory DbUserCrossSigningKey.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbUserCrossSigningKey(
       clientId: serializer.fromJson<int>(json['client_id']),
       userId: serializer.fromJson<String>(json['user_id']),
       publicKey: serializer.fromJson<String>(json['public_key']),
       content: serializer.fromJson<String>(json['content']),
-      verified: serializer.fromJson<bool>(json['verified']),
-      blocked: serializer.fromJson<bool>(json['blocked']),
+      verified: serializer.fromJson<bool?>(json['verified']),
+      blocked: serializer.fromJson<bool?>(json['blocked']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'user_id': serializer.toJson<String>(userId),
       'public_key': serializer.toJson<String>(publicKey),
       'content': serializer.toJson<String>(content),
-      'verified': serializer.toJson<bool>(verified),
-      'blocked': serializer.toJson<bool>(blocked),
+      'verified': serializer.toJson<bool?>(verified),
+      'blocked': serializer.toJson<bool?>(blocked),
     };
   }
 
   DbUserCrossSigningKey copyWith(
-          {int clientId,
-          String userId,
-          String publicKey,
-          String content,
-          bool verified,
-          bool blocked}) =>
+          {int? clientId,
+          String? userId,
+          String? publicKey,
+          String? content,
+          bool? verified,
+          bool? blocked}) =>
       DbUserCrossSigningKey(
         clientId: clientId ?? this.clientId,
         userId: userId ?? this.userId,
@@ -1438,8 +1361,8 @@ class UserCrossSigningKeysCompanion
   final Value<String> userId;
   final Value<String> publicKey;
   final Value<String> content;
-  final Value<bool> verified;
-  final Value<bool> blocked;
+  final Value<bool?> verified;
+  final Value<bool?> blocked;
   const UserCrossSigningKeysCompanion({
     this.clientId = const Value.absent(),
     this.userId = const Value.absent(),
@@ -1449,10 +1372,10 @@ class UserCrossSigningKeysCompanion
     this.blocked = const Value.absent(),
   });
   UserCrossSigningKeysCompanion.insert({
-    @required int clientId,
-    @required String userId,
-    @required String publicKey,
-    @required String content,
+    required int clientId,
+    required String userId,
+    required String publicKey,
+    required String content,
     this.verified = const Value.absent(),
     this.blocked = const Value.absent(),
   })  : clientId = Value(clientId),
@@ -1460,12 +1383,12 @@ class UserCrossSigningKeysCompanion
         publicKey = Value(publicKey),
         content = Value(content);
   static Insertable<DbUserCrossSigningKey> custom({
-    Expression<int> clientId,
-    Expression<String> userId,
-    Expression<String> publicKey,
-    Expression<String> content,
-    Expression<bool> verified,
-    Expression<bool> blocked,
+    Expression<int>? clientId,
+    Expression<String>? userId,
+    Expression<String>? publicKey,
+    Expression<String>? content,
+    Expression<bool?>? verified,
+    Expression<bool?>? blocked,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -1478,12 +1401,12 @@ class UserCrossSigningKeysCompanion
   }
 
   UserCrossSigningKeysCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> userId,
-      Value<String> publicKey,
-      Value<String> content,
-      Value<bool> verified,
-      Value<bool> blocked}) {
+      {Value<int>? clientId,
+      Value<String>? userId,
+      Value<String>? publicKey,
+      Value<String>? content,
+      Value<bool?>? verified,
+      Value<bool?>? blocked}) {
     return UserCrossSigningKeysCompanion(
       clientId: clientId ?? this.clientId,
       userId: userId ?? this.userId,
@@ -1510,10 +1433,10 @@ class UserCrossSigningKeysCompanion
       map['content'] = Variable<String>(content.value);
     }
     if (verified.present) {
-      map['verified'] = Variable<bool>(verified.value);
+      map['verified'] = Variable<bool?>(verified.value);
     }
     if (blocked.present) {
-      map['blocked'] = Variable<bool>(blocked.value);
+      map['blocked'] = Variable<bool?>(blocked.value);
     }
     return map;
   }
@@ -1535,43 +1458,38 @@ class UserCrossSigningKeysCompanion
 class UserCrossSigningKeys extends Table
     with TableInfo<UserCrossSigningKeys, DbUserCrossSigningKey> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   UserCrossSigningKeys(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  GeneratedTextColumn _userId;
-  GeneratedTextColumn get userId => _userId ??= _constructUserId();
+  late final GeneratedTextColumn userId = _constructUserId();
   GeneratedTextColumn _constructUserId() {
     return GeneratedTextColumn('user_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _publicKeyMeta = const VerificationMeta('publicKey');
-  GeneratedTextColumn _publicKey;
-  GeneratedTextColumn get publicKey => _publicKey ??= _constructPublicKey();
+  late final GeneratedTextColumn publicKey = _constructPublicKey();
   GeneratedTextColumn _constructPublicKey() {
     return GeneratedTextColumn('public_key', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _verifiedMeta = const VerificationMeta('verified');
-  GeneratedBoolColumn _verified;
-  GeneratedBoolColumn get verified => _verified ??= _constructVerified();
+  late final GeneratedBoolColumn verified = _constructVerified();
   GeneratedBoolColumn _constructVerified() {
     return GeneratedBoolColumn('verified', $tableName, true,
         $customConstraints: 'DEFAULT false',
@@ -1579,8 +1497,7 @@ class UserCrossSigningKeys extends Table
   }
 
   final VerificationMeta _blockedMeta = const VerificationMeta('blocked');
-  GeneratedBoolColumn _blocked;
-  GeneratedBoolColumn get blocked => _blocked ??= _constructBlocked();
+  late final GeneratedBoolColumn blocked = _constructBlocked();
   GeneratedBoolColumn _constructBlocked() {
     return GeneratedBoolColumn('blocked', $tableName, true,
         $customConstraints: 'DEFAULT false',
@@ -1604,35 +1521,35 @@ class UserCrossSigningKeys extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('user_id')) {
       context.handle(_userIdMeta,
-          userId.isAcceptableOrUnknown(data['user_id'], _userIdMeta));
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
     } else if (isInserting) {
       context.missing(_userIdMeta);
     }
     if (data.containsKey('public_key')) {
       context.handle(_publicKeyMeta,
-          publicKey.isAcceptableOrUnknown(data['public_key'], _publicKeyMeta));
+          publicKey.isAcceptableOrUnknown(data['public_key']!, _publicKeyMeta));
     } else if (isInserting) {
       context.missing(_publicKeyMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
     if (data.containsKey('verified')) {
       context.handle(_verifiedMeta,
-          verified.isAcceptableOrUnknown(data['verified'], _verifiedMeta));
+          verified.isAcceptableOrUnknown(data['verified']!, _verifiedMeta));
     }
     if (data.containsKey('blocked')) {
       context.handle(_blockedMeta,
-          blocked.isAcceptableOrUnknown(data['blocked'], _blockedMeta));
+          blocked.isAcceptableOrUnknown(data['blocked']!, _blockedMeta));
     }
     return context;
   }
@@ -1640,7 +1557,7 @@ class UserCrossSigningKeys extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbUserCrossSigningKey map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbUserCrossSigningKey map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbUserCrossSigningKey.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -1662,26 +1579,26 @@ class DbOlmSessions extends DataClass implements Insertable<DbOlmSessions> {
   final String identityKey;
   final String sessionId;
   final String pickle;
-  final int lastReceived;
+  final int? lastReceived;
   DbOlmSessions(
-      {@required this.clientId,
-      @required this.identityKey,
-      @required this.sessionId,
-      @required this.pickle,
+      {required this.clientId,
+      required this.identityKey,
+      required this.sessionId,
+      required this.pickle,
       this.lastReceived});
   factory DbOlmSessions.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbOlmSessions(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       identityKey: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}identity_key']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}identity_key'])!,
       sessionId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}session_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}session_id'])!,
       pickle: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}pickle']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}pickle'])!,
       lastReceived: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}last_received']),
     );
@@ -1689,37 +1606,22 @@ class DbOlmSessions extends DataClass implements Insertable<DbOlmSessions> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || identityKey != null) {
-      map['identity_key'] = Variable<String>(identityKey);
-    }
-    if (!nullToAbsent || sessionId != null) {
-      map['session_id'] = Variable<String>(sessionId);
-    }
-    if (!nullToAbsent || pickle != null) {
-      map['pickle'] = Variable<String>(pickle);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['identity_key'] = Variable<String>(identityKey);
+    map['session_id'] = Variable<String>(sessionId);
+    map['pickle'] = Variable<String>(pickle);
     if (!nullToAbsent || lastReceived != null) {
-      map['last_received'] = Variable<int>(lastReceived);
+      map['last_received'] = Variable<int?>(lastReceived);
     }
     return map;
   }
 
   OlmSessionsCompanion toCompanion(bool nullToAbsent) {
     return OlmSessionsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      identityKey: identityKey == null && nullToAbsent
-          ? const Value.absent()
-          : Value(identityKey),
-      sessionId: sessionId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sessionId),
-      pickle:
-          pickle == null && nullToAbsent ? const Value.absent() : Value(pickle),
+      clientId: Value(clientId),
+      identityKey: Value(identityKey),
+      sessionId: Value(sessionId),
+      pickle: Value(pickle),
       lastReceived: lastReceived == null && nullToAbsent
           ? const Value.absent()
           : Value(lastReceived),
@@ -1727,34 +1629,34 @@ class DbOlmSessions extends DataClass implements Insertable<DbOlmSessions> {
   }
 
   factory DbOlmSessions.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbOlmSessions(
       clientId: serializer.fromJson<int>(json['client_id']),
       identityKey: serializer.fromJson<String>(json['identity_key']),
       sessionId: serializer.fromJson<String>(json['session_id']),
       pickle: serializer.fromJson<String>(json['pickle']),
-      lastReceived: serializer.fromJson<int>(json['last_received']),
+      lastReceived: serializer.fromJson<int?>(json['last_received']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'identity_key': serializer.toJson<String>(identityKey),
       'session_id': serializer.toJson<String>(sessionId),
       'pickle': serializer.toJson<String>(pickle),
-      'last_received': serializer.toJson<int>(lastReceived),
+      'last_received': serializer.toJson<int?>(lastReceived),
     };
   }
 
   DbOlmSessions copyWith(
-          {int clientId,
-          String identityKey,
-          String sessionId,
-          String pickle,
-          int lastReceived}) =>
+          {int? clientId,
+          String? identityKey,
+          String? sessionId,
+          String? pickle,
+          int? lastReceived}) =>
       DbOlmSessions(
         clientId: clientId ?? this.clientId,
         identityKey: identityKey ?? this.identityKey,
@@ -1797,7 +1699,7 @@ class OlmSessionsCompanion extends UpdateCompanion<DbOlmSessions> {
   final Value<String> identityKey;
   final Value<String> sessionId;
   final Value<String> pickle;
-  final Value<int> lastReceived;
+  final Value<int?> lastReceived;
   const OlmSessionsCompanion({
     this.clientId = const Value.absent(),
     this.identityKey = const Value.absent(),
@@ -1806,21 +1708,21 @@ class OlmSessionsCompanion extends UpdateCompanion<DbOlmSessions> {
     this.lastReceived = const Value.absent(),
   });
   OlmSessionsCompanion.insert({
-    @required int clientId,
-    @required String identityKey,
-    @required String sessionId,
-    @required String pickle,
+    required int clientId,
+    required String identityKey,
+    required String sessionId,
+    required String pickle,
     this.lastReceived = const Value.absent(),
   })  : clientId = Value(clientId),
         identityKey = Value(identityKey),
         sessionId = Value(sessionId),
         pickle = Value(pickle);
   static Insertable<DbOlmSessions> custom({
-    Expression<int> clientId,
-    Expression<String> identityKey,
-    Expression<String> sessionId,
-    Expression<String> pickle,
-    Expression<int> lastReceived,
+    Expression<int>? clientId,
+    Expression<String>? identityKey,
+    Expression<String>? sessionId,
+    Expression<String>? pickle,
+    Expression<int?>? lastReceived,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -1832,11 +1734,11 @@ class OlmSessionsCompanion extends UpdateCompanion<DbOlmSessions> {
   }
 
   OlmSessionsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> identityKey,
-      Value<String> sessionId,
-      Value<String> pickle,
-      Value<int> lastReceived}) {
+      {Value<int>? clientId,
+      Value<String>? identityKey,
+      Value<String>? sessionId,
+      Value<String>? pickle,
+      Value<int?>? lastReceived}) {
     return OlmSessionsCompanion(
       clientId: clientId ?? this.clientId,
       identityKey: identityKey ?? this.identityKey,
@@ -1862,7 +1764,7 @@ class OlmSessionsCompanion extends UpdateCompanion<DbOlmSessions> {
       map['pickle'] = Variable<String>(pickle.value);
     }
     if (lastReceived.present) {
-      map['last_received'] = Variable<int>(lastReceived.value);
+      map['last_received'] = Variable<int?>(lastReceived.value);
     }
     return map;
   }
@@ -1882,11 +1784,10 @@ class OlmSessionsCompanion extends UpdateCompanion<DbOlmSessions> {
 
 class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   OlmSessions(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
@@ -1894,25 +1795,21 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
 
   final VerificationMeta _identityKeyMeta =
       const VerificationMeta('identityKey');
-  GeneratedTextColumn _identityKey;
-  GeneratedTextColumn get identityKey =>
-      _identityKey ??= _constructIdentityKey();
+  late final GeneratedTextColumn identityKey = _constructIdentityKey();
   GeneratedTextColumn _constructIdentityKey() {
     return GeneratedTextColumn('identity_key', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _sessionIdMeta = const VerificationMeta('sessionId');
-  GeneratedTextColumn _sessionId;
-  GeneratedTextColumn get sessionId => _sessionId ??= _constructSessionId();
+  late final GeneratedTextColumn sessionId = _constructSessionId();
   GeneratedTextColumn _constructSessionId() {
     return GeneratedTextColumn('session_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _pickleMeta = const VerificationMeta('pickle');
-  GeneratedTextColumn _pickle;
-  GeneratedTextColumn get pickle => _pickle ??= _constructPickle();
+  late final GeneratedTextColumn pickle = _constructPickle();
   GeneratedTextColumn _constructPickle() {
     return GeneratedTextColumn('pickle', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -1920,9 +1817,7 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
 
   final VerificationMeta _lastReceivedMeta =
       const VerificationMeta('lastReceived');
-  GeneratedIntColumn _lastReceived;
-  GeneratedIntColumn get lastReceived =>
-      _lastReceived ??= _constructLastReceived();
+  late final GeneratedIntColumn lastReceived = _constructLastReceived();
   GeneratedIntColumn _constructLastReceived() {
     return GeneratedIntColumn('last_received', $tableName, true,
         $customConstraints: '');
@@ -1944,7 +1839,7 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
@@ -1952,19 +1847,19 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
       context.handle(
           _identityKeyMeta,
           identityKey.isAcceptableOrUnknown(
-              data['identity_key'], _identityKeyMeta));
+              data['identity_key']!, _identityKeyMeta));
     } else if (isInserting) {
       context.missing(_identityKeyMeta);
     }
     if (data.containsKey('session_id')) {
       context.handle(_sessionIdMeta,
-          sessionId.isAcceptableOrUnknown(data['session_id'], _sessionIdMeta));
+          sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta));
     } else if (isInserting) {
       context.missing(_sessionIdMeta);
     }
     if (data.containsKey('pickle')) {
       context.handle(_pickleMeta,
-          pickle.isAcceptableOrUnknown(data['pickle'], _pickleMeta));
+          pickle.isAcceptableOrUnknown(data['pickle']!, _pickleMeta));
     } else if (isInserting) {
       context.missing(_pickleMeta);
     }
@@ -1972,7 +1867,7 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
       context.handle(
           _lastReceivedMeta,
           lastReceived.isAcceptableOrUnknown(
-              data['last_received'], _lastReceivedMeta));
+              data['last_received']!, _lastReceivedMeta));
     }
     return context;
   }
@@ -1980,7 +1875,7 @@ class OlmSessions extends Table with TableInfo<OlmSessions, DbOlmSessions> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbOlmSessions map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbOlmSessions map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbOlmSessions.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -2006,78 +1901,56 @@ class DbOutboundGroupSession extends DataClass
   final int creationTime;
   final int sentMessages;
   DbOutboundGroupSession(
-      {@required this.clientId,
-      @required this.roomId,
-      @required this.pickle,
-      @required this.deviceIds,
-      @required this.creationTime,
-      @required this.sentMessages});
+      {required this.clientId,
+      required this.roomId,
+      required this.pickle,
+      required this.deviceIds,
+      required this.creationTime,
+      required this.sentMessages});
   factory DbOutboundGroupSession.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbOutboundGroupSession(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       pickle: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}pickle']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}pickle'])!,
       deviceIds: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}device_ids']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}device_ids'])!,
       creationTime: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}creation_time']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}creation_time'])!,
       sentMessages: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sent_messages']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sent_messages'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
-    if (!nullToAbsent || pickle != null) {
-      map['pickle'] = Variable<String>(pickle);
-    }
-    if (!nullToAbsent || deviceIds != null) {
-      map['device_ids'] = Variable<String>(deviceIds);
-    }
-    if (!nullToAbsent || creationTime != null) {
-      map['creation_time'] = Variable<int>(creationTime);
-    }
-    if (!nullToAbsent || sentMessages != null) {
-      map['sent_messages'] = Variable<int>(sentMessages);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['room_id'] = Variable<String>(roomId);
+    map['pickle'] = Variable<String>(pickle);
+    map['device_ids'] = Variable<String>(deviceIds);
+    map['creation_time'] = Variable<int>(creationTime);
+    map['sent_messages'] = Variable<int>(sentMessages);
     return map;
   }
 
   OutboundGroupSessionsCompanion toCompanion(bool nullToAbsent) {
     return OutboundGroupSessionsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
-      pickle:
-          pickle == null && nullToAbsent ? const Value.absent() : Value(pickle),
-      deviceIds: deviceIds == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deviceIds),
-      creationTime: creationTime == null && nullToAbsent
-          ? const Value.absent()
-          : Value(creationTime),
-      sentMessages: sentMessages == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sentMessages),
+      clientId: Value(clientId),
+      roomId: Value(roomId),
+      pickle: Value(pickle),
+      deviceIds: Value(deviceIds),
+      creationTime: Value(creationTime),
+      sentMessages: Value(sentMessages),
     );
   }
 
   factory DbOutboundGroupSession.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbOutboundGroupSession(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -2089,7 +1962,7 @@ class DbOutboundGroupSession extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -2102,12 +1975,12 @@ class DbOutboundGroupSession extends DataClass
   }
 
   DbOutboundGroupSession copyWith(
-          {int clientId,
-          String roomId,
-          String pickle,
-          String deviceIds,
-          int creationTime,
-          int sentMessages}) =>
+          {int? clientId,
+          String? roomId,
+          String? pickle,
+          String? deviceIds,
+          int? creationTime,
+          int? sentMessages}) =>
       DbOutboundGroupSession(
         clientId: clientId ?? this.clientId,
         roomId: roomId ?? this.roomId,
@@ -2167,11 +2040,11 @@ class OutboundGroupSessionsCompanion
     this.sentMessages = const Value.absent(),
   });
   OutboundGroupSessionsCompanion.insert({
-    @required int clientId,
-    @required String roomId,
-    @required String pickle,
-    @required String deviceIds,
-    @required int creationTime,
+    required int clientId,
+    required String roomId,
+    required String pickle,
+    required String deviceIds,
+    required int creationTime,
     this.sentMessages = const Value.absent(),
   })  : clientId = Value(clientId),
         roomId = Value(roomId),
@@ -2179,12 +2052,12 @@ class OutboundGroupSessionsCompanion
         deviceIds = Value(deviceIds),
         creationTime = Value(creationTime);
   static Insertable<DbOutboundGroupSession> custom({
-    Expression<int> clientId,
-    Expression<String> roomId,
-    Expression<String> pickle,
-    Expression<String> deviceIds,
-    Expression<int> creationTime,
-    Expression<int> sentMessages,
+    Expression<int>? clientId,
+    Expression<String>? roomId,
+    Expression<String>? pickle,
+    Expression<String>? deviceIds,
+    Expression<int>? creationTime,
+    Expression<int>? sentMessages,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -2197,12 +2070,12 @@ class OutboundGroupSessionsCompanion
   }
 
   OutboundGroupSessionsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> roomId,
-      Value<String> pickle,
-      Value<String> deviceIds,
-      Value<int> creationTime,
-      Value<int> sentMessages}) {
+      {Value<int>? clientId,
+      Value<String>? roomId,
+      Value<String>? pickle,
+      Value<String>? deviceIds,
+      Value<int>? creationTime,
+      Value<int>? sentMessages}) {
     return OutboundGroupSessionsCompanion(
       clientId: clientId ?? this.clientId,
       roomId: roomId ?? this.roomId,
@@ -2254,35 +2127,31 @@ class OutboundGroupSessionsCompanion
 class OutboundGroupSessions extends Table
     with TableInfo<OutboundGroupSessions, DbOutboundGroupSession> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   OutboundGroupSessions(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _pickleMeta = const VerificationMeta('pickle');
-  GeneratedTextColumn _pickle;
-  GeneratedTextColumn get pickle => _pickle ??= _constructPickle();
+  late final GeneratedTextColumn pickle = _constructPickle();
   GeneratedTextColumn _constructPickle() {
     return GeneratedTextColumn('pickle', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _deviceIdsMeta = const VerificationMeta('deviceIds');
-  GeneratedTextColumn _deviceIds;
-  GeneratedTextColumn get deviceIds => _deviceIds ??= _constructDeviceIds();
+  late final GeneratedTextColumn deviceIds = _constructDeviceIds();
   GeneratedTextColumn _constructDeviceIds() {
     return GeneratedTextColumn('device_ids', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -2290,9 +2159,7 @@ class OutboundGroupSessions extends Table
 
   final VerificationMeta _creationTimeMeta =
       const VerificationMeta('creationTime');
-  GeneratedIntColumn _creationTime;
-  GeneratedIntColumn get creationTime =>
-      _creationTime ??= _constructCreationTime();
+  late final GeneratedIntColumn creationTime = _constructCreationTime();
   GeneratedIntColumn _constructCreationTime() {
     return GeneratedIntColumn('creation_time', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -2300,9 +2167,7 @@ class OutboundGroupSessions extends Table
 
   final VerificationMeta _sentMessagesMeta =
       const VerificationMeta('sentMessages');
-  GeneratedIntColumn _sentMessages;
-  GeneratedIntColumn get sentMessages =>
-      _sentMessages ??= _constructSentMessages();
+  late final GeneratedIntColumn sentMessages = _constructSentMessages();
   GeneratedIntColumn _constructSentMessages() {
     return GeneratedIntColumn('sent_messages', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -2326,25 +2191,25 @@ class OutboundGroupSessions extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
     if (data.containsKey('pickle')) {
       context.handle(_pickleMeta,
-          pickle.isAcceptableOrUnknown(data['pickle'], _pickleMeta));
+          pickle.isAcceptableOrUnknown(data['pickle']!, _pickleMeta));
     } else if (isInserting) {
       context.missing(_pickleMeta);
     }
     if (data.containsKey('device_ids')) {
       context.handle(_deviceIdsMeta,
-          deviceIds.isAcceptableOrUnknown(data['device_ids'], _deviceIdsMeta));
+          deviceIds.isAcceptableOrUnknown(data['device_ids']!, _deviceIdsMeta));
     } else if (isInserting) {
       context.missing(_deviceIdsMeta);
     }
@@ -2352,7 +2217,7 @@ class OutboundGroupSessions extends Table
       context.handle(
           _creationTimeMeta,
           creationTime.isAcceptableOrUnknown(
-              data['creation_time'], _creationTimeMeta));
+              data['creation_time']!, _creationTimeMeta));
     } else if (isInserting) {
       context.missing(_creationTimeMeta);
     }
@@ -2360,7 +2225,7 @@ class OutboundGroupSessions extends Table
       context.handle(
           _sentMessagesMeta,
           sentMessages.isAcceptableOrUnknown(
-              data['sent_messages'], _sentMessagesMeta));
+              data['sent_messages']!, _sentMessagesMeta));
     }
     return context;
   }
@@ -2368,7 +2233,7 @@ class OutboundGroupSessions extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbOutboundGroupSession map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbOutboundGroupSession map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbOutboundGroupSession.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -2390,17 +2255,17 @@ class DbInboundGroupSession extends DataClass
   final String roomId;
   final String sessionId;
   final String pickle;
-  final String content;
-  final String indexes;
-  final String allowedAtIndex;
-  final bool uploaded;
-  final String senderKey;
-  final String senderClaimedKeys;
+  final String? content;
+  final String? indexes;
+  final String? allowedAtIndex;
+  final bool? uploaded;
+  final String? senderKey;
+  final String? senderClaimedKeys;
   DbInboundGroupSession(
-      {@required this.clientId,
-      @required this.roomId,
-      @required this.sessionId,
-      @required this.pickle,
+      {required this.clientId,
+      required this.roomId,
+      required this.sessionId,
+      required this.pickle,
       this.content,
       this.indexes,
       this.allowedAtIndex,
@@ -2409,17 +2274,17 @@ class DbInboundGroupSession extends DataClass
       this.senderClaimedKeys});
   factory DbInboundGroupSession.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbInboundGroupSession(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       sessionId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}session_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}session_id'])!,
       pickle: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}pickle']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}pickle'])!,
       content: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}content']),
       indexes: const StringType()
@@ -2437,51 +2302,37 @@ class DbInboundGroupSession extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
-    if (!nullToAbsent || sessionId != null) {
-      map['session_id'] = Variable<String>(sessionId);
-    }
-    if (!nullToAbsent || pickle != null) {
-      map['pickle'] = Variable<String>(pickle);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['room_id'] = Variable<String>(roomId);
+    map['session_id'] = Variable<String>(sessionId);
+    map['pickle'] = Variable<String>(pickle);
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     if (!nullToAbsent || indexes != null) {
-      map['indexes'] = Variable<String>(indexes);
+      map['indexes'] = Variable<String?>(indexes);
     }
     if (!nullToAbsent || allowedAtIndex != null) {
-      map['allowed_at_index'] = Variable<String>(allowedAtIndex);
+      map['allowed_at_index'] = Variable<String?>(allowedAtIndex);
     }
     if (!nullToAbsent || uploaded != null) {
-      map['uploaded'] = Variable<bool>(uploaded);
+      map['uploaded'] = Variable<bool?>(uploaded);
     }
     if (!nullToAbsent || senderKey != null) {
-      map['sender_key'] = Variable<String>(senderKey);
+      map['sender_key'] = Variable<String?>(senderKey);
     }
     if (!nullToAbsent || senderClaimedKeys != null) {
-      map['sender_claimed_keys'] = Variable<String>(senderClaimedKeys);
+      map['sender_claimed_keys'] = Variable<String?>(senderClaimedKeys);
     }
     return map;
   }
 
   InboundGroupSessionsCompanion toCompanion(bool nullToAbsent) {
     return InboundGroupSessionsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
-      sessionId: sessionId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sessionId),
-      pickle:
-          pickle == null && nullToAbsent ? const Value.absent() : Value(pickle),
+      clientId: Value(clientId),
+      roomId: Value(roomId),
+      sessionId: Value(sessionId),
+      pickle: Value(pickle),
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
@@ -2504,50 +2355,50 @@ class DbInboundGroupSession extends DataClass
   }
 
   factory DbInboundGroupSession.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbInboundGroupSession(
       clientId: serializer.fromJson<int>(json['client_id']),
       roomId: serializer.fromJson<String>(json['room_id']),
       sessionId: serializer.fromJson<String>(json['session_id']),
       pickle: serializer.fromJson<String>(json['pickle']),
-      content: serializer.fromJson<String>(json['content']),
-      indexes: serializer.fromJson<String>(json['indexes']),
-      allowedAtIndex: serializer.fromJson<String>(json['allowed_at_index']),
-      uploaded: serializer.fromJson<bool>(json['uploaded']),
-      senderKey: serializer.fromJson<String>(json['sender_key']),
+      content: serializer.fromJson<String?>(json['content']),
+      indexes: serializer.fromJson<String?>(json['indexes']),
+      allowedAtIndex: serializer.fromJson<String?>(json['allowed_at_index']),
+      uploaded: serializer.fromJson<bool?>(json['uploaded']),
+      senderKey: serializer.fromJson<String?>(json['sender_key']),
       senderClaimedKeys:
-          serializer.fromJson<String>(json['sender_claimed_keys']),
+          serializer.fromJson<String?>(json['sender_claimed_keys']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'room_id': serializer.toJson<String>(roomId),
       'session_id': serializer.toJson<String>(sessionId),
       'pickle': serializer.toJson<String>(pickle),
-      'content': serializer.toJson<String>(content),
-      'indexes': serializer.toJson<String>(indexes),
-      'allowed_at_index': serializer.toJson<String>(allowedAtIndex),
-      'uploaded': serializer.toJson<bool>(uploaded),
-      'sender_key': serializer.toJson<String>(senderKey),
-      'sender_claimed_keys': serializer.toJson<String>(senderClaimedKeys),
+      'content': serializer.toJson<String?>(content),
+      'indexes': serializer.toJson<String?>(indexes),
+      'allowed_at_index': serializer.toJson<String?>(allowedAtIndex),
+      'uploaded': serializer.toJson<bool?>(uploaded),
+      'sender_key': serializer.toJson<String?>(senderKey),
+      'sender_claimed_keys': serializer.toJson<String?>(senderClaimedKeys),
     };
   }
 
   DbInboundGroupSession copyWith(
-          {int clientId,
-          String roomId,
-          String sessionId,
-          String pickle,
-          String content,
-          String indexes,
-          String allowedAtIndex,
-          bool uploaded,
-          String senderKey,
-          String senderClaimedKeys}) =>
+          {int? clientId,
+          String? roomId,
+          String? sessionId,
+          String? pickle,
+          String? content,
+          String? indexes,
+          String? allowedAtIndex,
+          bool? uploaded,
+          String? senderKey,
+          String? senderClaimedKeys}) =>
       DbInboundGroupSession(
         clientId: clientId ?? this.clientId,
         roomId: roomId ?? this.roomId,
@@ -2618,12 +2469,12 @@ class InboundGroupSessionsCompanion
   final Value<String> roomId;
   final Value<String> sessionId;
   final Value<String> pickle;
-  final Value<String> content;
-  final Value<String> indexes;
-  final Value<String> allowedAtIndex;
-  final Value<bool> uploaded;
-  final Value<String> senderKey;
-  final Value<String> senderClaimedKeys;
+  final Value<String?> content;
+  final Value<String?> indexes;
+  final Value<String?> allowedAtIndex;
+  final Value<bool?> uploaded;
+  final Value<String?> senderKey;
+  final Value<String?> senderClaimedKeys;
   const InboundGroupSessionsCompanion({
     this.clientId = const Value.absent(),
     this.roomId = const Value.absent(),
@@ -2637,10 +2488,10 @@ class InboundGroupSessionsCompanion
     this.senderClaimedKeys = const Value.absent(),
   });
   InboundGroupSessionsCompanion.insert({
-    @required int clientId,
-    @required String roomId,
-    @required String sessionId,
-    @required String pickle,
+    required int clientId,
+    required String roomId,
+    required String sessionId,
+    required String pickle,
     this.content = const Value.absent(),
     this.indexes = const Value.absent(),
     this.allowedAtIndex = const Value.absent(),
@@ -2652,16 +2503,16 @@ class InboundGroupSessionsCompanion
         sessionId = Value(sessionId),
         pickle = Value(pickle);
   static Insertable<DbInboundGroupSession> custom({
-    Expression<int> clientId,
-    Expression<String> roomId,
-    Expression<String> sessionId,
-    Expression<String> pickle,
-    Expression<String> content,
-    Expression<String> indexes,
-    Expression<String> allowedAtIndex,
-    Expression<bool> uploaded,
-    Expression<String> senderKey,
-    Expression<String> senderClaimedKeys,
+    Expression<int>? clientId,
+    Expression<String>? roomId,
+    Expression<String>? sessionId,
+    Expression<String>? pickle,
+    Expression<String?>? content,
+    Expression<String?>? indexes,
+    Expression<String?>? allowedAtIndex,
+    Expression<bool?>? uploaded,
+    Expression<String?>? senderKey,
+    Expression<String?>? senderClaimedKeys,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -2678,16 +2529,16 @@ class InboundGroupSessionsCompanion
   }
 
   InboundGroupSessionsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> roomId,
-      Value<String> sessionId,
-      Value<String> pickle,
-      Value<String> content,
-      Value<String> indexes,
-      Value<String> allowedAtIndex,
-      Value<bool> uploaded,
-      Value<String> senderKey,
-      Value<String> senderClaimedKeys}) {
+      {Value<int>? clientId,
+      Value<String>? roomId,
+      Value<String>? sessionId,
+      Value<String>? pickle,
+      Value<String?>? content,
+      Value<String?>? indexes,
+      Value<String?>? allowedAtIndex,
+      Value<bool?>? uploaded,
+      Value<String?>? senderKey,
+      Value<String?>? senderClaimedKeys}) {
     return InboundGroupSessionsCompanion(
       clientId: clientId ?? this.clientId,
       roomId: roomId ?? this.roomId,
@@ -2718,22 +2569,22 @@ class InboundGroupSessionsCompanion
       map['pickle'] = Variable<String>(pickle.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     if (indexes.present) {
-      map['indexes'] = Variable<String>(indexes.value);
+      map['indexes'] = Variable<String?>(indexes.value);
     }
     if (allowedAtIndex.present) {
-      map['allowed_at_index'] = Variable<String>(allowedAtIndex.value);
+      map['allowed_at_index'] = Variable<String?>(allowedAtIndex.value);
     }
     if (uploaded.present) {
-      map['uploaded'] = Variable<bool>(uploaded.value);
+      map['uploaded'] = Variable<bool?>(uploaded.value);
     }
     if (senderKey.present) {
-      map['sender_key'] = Variable<String>(senderKey.value);
+      map['sender_key'] = Variable<String?>(senderKey.value);
     }
     if (senderClaimedKeys.present) {
-      map['sender_claimed_keys'] = Variable<String>(senderClaimedKeys.value);
+      map['sender_claimed_keys'] = Variable<String?>(senderClaimedKeys.value);
     }
     return map;
   }
@@ -2759,51 +2610,45 @@ class InboundGroupSessionsCompanion
 class InboundGroupSessions extends Table
     with TableInfo<InboundGroupSessions, DbInboundGroupSession> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   InboundGroupSessions(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _sessionIdMeta = const VerificationMeta('sessionId');
-  GeneratedTextColumn _sessionId;
-  GeneratedTextColumn get sessionId => _sessionId ??= _constructSessionId();
+  late final GeneratedTextColumn sessionId = _constructSessionId();
   GeneratedTextColumn _constructSessionId() {
     return GeneratedTextColumn('session_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _pickleMeta = const VerificationMeta('pickle');
-  GeneratedTextColumn _pickle;
-  GeneratedTextColumn get pickle => _pickle ??= _constructPickle();
+  late final GeneratedTextColumn pickle = _constructPickle();
   GeneratedTextColumn _constructPickle() {
     return GeneratedTextColumn('pickle', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _indexesMeta = const VerificationMeta('indexes');
-  GeneratedTextColumn _indexes;
-  GeneratedTextColumn get indexes => _indexes ??= _constructIndexes();
+  late final GeneratedTextColumn indexes = _constructIndexes();
   GeneratedTextColumn _constructIndexes() {
     return GeneratedTextColumn('indexes', $tableName, true,
         $customConstraints: '');
@@ -2811,17 +2656,14 @@ class InboundGroupSessions extends Table
 
   final VerificationMeta _allowedAtIndexMeta =
       const VerificationMeta('allowedAtIndex');
-  GeneratedTextColumn _allowedAtIndex;
-  GeneratedTextColumn get allowedAtIndex =>
-      _allowedAtIndex ??= _constructAllowedAtIndex();
+  late final GeneratedTextColumn allowedAtIndex = _constructAllowedAtIndex();
   GeneratedTextColumn _constructAllowedAtIndex() {
     return GeneratedTextColumn('allowed_at_index', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _uploadedMeta = const VerificationMeta('uploaded');
-  GeneratedBoolColumn _uploaded;
-  GeneratedBoolColumn get uploaded => _uploaded ??= _constructUploaded();
+  late final GeneratedBoolColumn uploaded = _constructUploaded();
   GeneratedBoolColumn _constructUploaded() {
     return GeneratedBoolColumn('uploaded', $tableName, true,
         $customConstraints: 'DEFAULT false',
@@ -2829,8 +2671,7 @@ class InboundGroupSessions extends Table
   }
 
   final VerificationMeta _senderKeyMeta = const VerificationMeta('senderKey');
-  GeneratedTextColumn _senderKey;
-  GeneratedTextColumn get senderKey => _senderKey ??= _constructSenderKey();
+  late final GeneratedTextColumn senderKey = _constructSenderKey();
   GeneratedTextColumn _constructSenderKey() {
     return GeneratedTextColumn('sender_key', $tableName, true,
         $customConstraints: '');
@@ -2838,9 +2679,8 @@ class InboundGroupSessions extends Table
 
   final VerificationMeta _senderClaimedKeysMeta =
       const VerificationMeta('senderClaimedKeys');
-  GeneratedTextColumn _senderClaimedKeys;
-  GeneratedTextColumn get senderClaimedKeys =>
-      _senderClaimedKeys ??= _constructSenderClaimedKeys();
+  late final GeneratedTextColumn senderClaimedKeys =
+      _constructSenderClaimedKeys();
   GeneratedTextColumn _constructSenderClaimedKeys() {
     return GeneratedTextColumn('sender_claimed_keys', $tableName, true,
         $customConstraints: '');
@@ -2873,55 +2713,55 @@ class InboundGroupSessions extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
     if (data.containsKey('session_id')) {
       context.handle(_sessionIdMeta,
-          sessionId.isAcceptableOrUnknown(data['session_id'], _sessionIdMeta));
+          sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta));
     } else if (isInserting) {
       context.missing(_sessionIdMeta);
     }
     if (data.containsKey('pickle')) {
       context.handle(_pickleMeta,
-          pickle.isAcceptableOrUnknown(data['pickle'], _pickleMeta));
+          pickle.isAcceptableOrUnknown(data['pickle']!, _pickleMeta));
     } else if (isInserting) {
       context.missing(_pickleMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     if (data.containsKey('indexes')) {
       context.handle(_indexesMeta,
-          indexes.isAcceptableOrUnknown(data['indexes'], _indexesMeta));
+          indexes.isAcceptableOrUnknown(data['indexes']!, _indexesMeta));
     }
     if (data.containsKey('allowed_at_index')) {
       context.handle(
           _allowedAtIndexMeta,
           allowedAtIndex.isAcceptableOrUnknown(
-              data['allowed_at_index'], _allowedAtIndexMeta));
+              data['allowed_at_index']!, _allowedAtIndexMeta));
     }
     if (data.containsKey('uploaded')) {
       context.handle(_uploadedMeta,
-          uploaded.isAcceptableOrUnknown(data['uploaded'], _uploadedMeta));
+          uploaded.isAcceptableOrUnknown(data['uploaded']!, _uploadedMeta));
     }
     if (data.containsKey('sender_key')) {
       context.handle(_senderKeyMeta,
-          senderKey.isAcceptableOrUnknown(data['sender_key'], _senderKeyMeta));
+          senderKey.isAcceptableOrUnknown(data['sender_key']!, _senderKeyMeta));
     }
     if (data.containsKey('sender_claimed_keys')) {
       context.handle(
           _senderClaimedKeysMeta,
           senderClaimedKeys.isAcceptableOrUnknown(
-              data['sender_claimed_keys'], _senderClaimedKeysMeta));
+              data['sender_claimed_keys']!, _senderClaimedKeysMeta));
     }
     return context;
   }
@@ -2929,7 +2769,7 @@ class InboundGroupSessions extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbInboundGroupSession map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbInboundGroupSession map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbInboundGroupSession.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -2952,48 +2792,48 @@ class DbRoom extends DataClass implements Insertable<DbRoom> {
   final String membership;
   final int highlightCount;
   final int notificationCount;
-  final String prevBatch;
+  final String? prevBatch;
   final int joinedMemberCount;
   final int invitedMemberCount;
   final double newestSortOrder;
   final double oldestSortOrder;
-  final String heroes;
+  final String? heroes;
   DbRoom(
-      {@required this.clientId,
-      @required this.roomId,
-      @required this.membership,
-      @required this.highlightCount,
-      @required this.notificationCount,
+      {required this.clientId,
+      required this.roomId,
+      required this.membership,
+      required this.highlightCount,
+      required this.notificationCount,
       this.prevBatch,
-      @required this.joinedMemberCount,
-      @required this.invitedMemberCount,
-      @required this.newestSortOrder,
-      @required this.oldestSortOrder,
+      required this.joinedMemberCount,
+      required this.invitedMemberCount,
+      required this.newestSortOrder,
+      required this.oldestSortOrder,
       this.heroes});
   factory DbRoom.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbRoom(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       membership: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}membership']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}membership'])!,
       highlightCount: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}highlight_count']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}highlight_count'])!,
       notificationCount: const IntType().mapFromDatabaseResponse(
-          data['${effectivePrefix}notification_count']),
+          data['${effectivePrefix}notification_count'])!,
       prevBatch: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}prev_batch']),
       joinedMemberCount: const IntType().mapFromDatabaseResponse(
-          data['${effectivePrefix}joined_member_count']),
+          data['${effectivePrefix}joined_member_count'])!,
       invitedMemberCount: const IntType().mapFromDatabaseResponse(
-          data['${effectivePrefix}invited_member_count']),
-      newestSortOrder: const RealType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}newest_sort_order']),
-      oldestSortOrder: const RealType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}oldest_sort_order']),
+          data['${effectivePrefix}invited_member_count'])!,
+      newestSortOrder: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}newest_sort_order'])!,
+      oldestSortOrder: const RealType().mapFromDatabaseResponse(
+          data['${effectivePrefix}oldest_sort_order'])!,
       heroes: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}heroes']),
     );
@@ -3001,80 +2841,45 @@ class DbRoom extends DataClass implements Insertable<DbRoom> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
-    if (!nullToAbsent || membership != null) {
-      map['membership'] = Variable<String>(membership);
-    }
-    if (!nullToAbsent || highlightCount != null) {
-      map['highlight_count'] = Variable<int>(highlightCount);
-    }
-    if (!nullToAbsent || notificationCount != null) {
-      map['notification_count'] = Variable<int>(notificationCount);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['room_id'] = Variable<String>(roomId);
+    map['membership'] = Variable<String>(membership);
+    map['highlight_count'] = Variable<int>(highlightCount);
+    map['notification_count'] = Variable<int>(notificationCount);
     if (!nullToAbsent || prevBatch != null) {
-      map['prev_batch'] = Variable<String>(prevBatch);
+      map['prev_batch'] = Variable<String?>(prevBatch);
     }
-    if (!nullToAbsent || joinedMemberCount != null) {
-      map['joined_member_count'] = Variable<int>(joinedMemberCount);
-    }
-    if (!nullToAbsent || invitedMemberCount != null) {
-      map['invited_member_count'] = Variable<int>(invitedMemberCount);
-    }
-    if (!nullToAbsent || newestSortOrder != null) {
-      map['newest_sort_order'] = Variable<double>(newestSortOrder);
-    }
-    if (!nullToAbsent || oldestSortOrder != null) {
-      map['oldest_sort_order'] = Variable<double>(oldestSortOrder);
-    }
+    map['joined_member_count'] = Variable<int>(joinedMemberCount);
+    map['invited_member_count'] = Variable<int>(invitedMemberCount);
+    map['newest_sort_order'] = Variable<double>(newestSortOrder);
+    map['oldest_sort_order'] = Variable<double>(oldestSortOrder);
     if (!nullToAbsent || heroes != null) {
-      map['heroes'] = Variable<String>(heroes);
+      map['heroes'] = Variable<String?>(heroes);
     }
     return map;
   }
 
   RoomsCompanion toCompanion(bool nullToAbsent) {
     return RoomsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
-      membership: membership == null && nullToAbsent
-          ? const Value.absent()
-          : Value(membership),
-      highlightCount: highlightCount == null && nullToAbsent
-          ? const Value.absent()
-          : Value(highlightCount),
-      notificationCount: notificationCount == null && nullToAbsent
-          ? const Value.absent()
-          : Value(notificationCount),
+      clientId: Value(clientId),
+      roomId: Value(roomId),
+      membership: Value(membership),
+      highlightCount: Value(highlightCount),
+      notificationCount: Value(notificationCount),
       prevBatch: prevBatch == null && nullToAbsent
           ? const Value.absent()
           : Value(prevBatch),
-      joinedMemberCount: joinedMemberCount == null && nullToAbsent
-          ? const Value.absent()
-          : Value(joinedMemberCount),
-      invitedMemberCount: invitedMemberCount == null && nullToAbsent
-          ? const Value.absent()
-          : Value(invitedMemberCount),
-      newestSortOrder: newestSortOrder == null && nullToAbsent
-          ? const Value.absent()
-          : Value(newestSortOrder),
-      oldestSortOrder: oldestSortOrder == null && nullToAbsent
-          ? const Value.absent()
-          : Value(oldestSortOrder),
+      joinedMemberCount: Value(joinedMemberCount),
+      invitedMemberCount: Value(invitedMemberCount),
+      newestSortOrder: Value(newestSortOrder),
+      oldestSortOrder: Value(oldestSortOrder),
       heroes:
           heroes == null && nullToAbsent ? const Value.absent() : Value(heroes),
     );
   }
 
   factory DbRoom.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbRoom(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -3082,17 +2887,17 @@ class DbRoom extends DataClass implements Insertable<DbRoom> {
       membership: serializer.fromJson<String>(json['membership']),
       highlightCount: serializer.fromJson<int>(json['highlight_count']),
       notificationCount: serializer.fromJson<int>(json['notification_count']),
-      prevBatch: serializer.fromJson<String>(json['prev_batch']),
+      prevBatch: serializer.fromJson<String?>(json['prev_batch']),
       joinedMemberCount: serializer.fromJson<int>(json['joined_member_count']),
       invitedMemberCount:
           serializer.fromJson<int>(json['invited_member_count']),
       newestSortOrder: serializer.fromJson<double>(json['newest_sort_order']),
       oldestSortOrder: serializer.fromJson<double>(json['oldest_sort_order']),
-      heroes: serializer.fromJson<String>(json['heroes']),
+      heroes: serializer.fromJson<String?>(json['heroes']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -3100,27 +2905,27 @@ class DbRoom extends DataClass implements Insertable<DbRoom> {
       'membership': serializer.toJson<String>(membership),
       'highlight_count': serializer.toJson<int>(highlightCount),
       'notification_count': serializer.toJson<int>(notificationCount),
-      'prev_batch': serializer.toJson<String>(prevBatch),
+      'prev_batch': serializer.toJson<String?>(prevBatch),
       'joined_member_count': serializer.toJson<int>(joinedMemberCount),
       'invited_member_count': serializer.toJson<int>(invitedMemberCount),
       'newest_sort_order': serializer.toJson<double>(newestSortOrder),
       'oldest_sort_order': serializer.toJson<double>(oldestSortOrder),
-      'heroes': serializer.toJson<String>(heroes),
+      'heroes': serializer.toJson<String?>(heroes),
     };
   }
 
   DbRoom copyWith(
-          {int clientId,
-          String roomId,
-          String membership,
-          int highlightCount,
-          int notificationCount,
-          String prevBatch,
-          int joinedMemberCount,
-          int invitedMemberCount,
-          double newestSortOrder,
-          double oldestSortOrder,
-          String heroes}) =>
+          {int? clientId,
+          String? roomId,
+          String? membership,
+          int? highlightCount,
+          int? notificationCount,
+          String? prevBatch,
+          int? joinedMemberCount,
+          int? invitedMemberCount,
+          double? newestSortOrder,
+          double? oldestSortOrder,
+          String? heroes}) =>
       DbRoom(
         clientId: clientId ?? this.clientId,
         roomId: roomId ?? this.roomId,
@@ -3196,12 +3001,12 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
   final Value<String> membership;
   final Value<int> highlightCount;
   final Value<int> notificationCount;
-  final Value<String> prevBatch;
+  final Value<String?> prevBatch;
   final Value<int> joinedMemberCount;
   final Value<int> invitedMemberCount;
   final Value<double> newestSortOrder;
   final Value<double> oldestSortOrder;
-  final Value<String> heroes;
+  final Value<String?> heroes;
   const RoomsCompanion({
     this.clientId = const Value.absent(),
     this.roomId = const Value.absent(),
@@ -3216,9 +3021,9 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
     this.heroes = const Value.absent(),
   });
   RoomsCompanion.insert({
-    @required int clientId,
-    @required String roomId,
-    @required String membership,
+    required int clientId,
+    required String roomId,
+    required String membership,
     this.highlightCount = const Value.absent(),
     this.notificationCount = const Value.absent(),
     this.prevBatch = const Value.absent(),
@@ -3231,17 +3036,17 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
         roomId = Value(roomId),
         membership = Value(membership);
   static Insertable<DbRoom> custom({
-    Expression<int> clientId,
-    Expression<String> roomId,
-    Expression<String> membership,
-    Expression<int> highlightCount,
-    Expression<int> notificationCount,
-    Expression<String> prevBatch,
-    Expression<int> joinedMemberCount,
-    Expression<int> invitedMemberCount,
-    Expression<double> newestSortOrder,
-    Expression<double> oldestSortOrder,
-    Expression<String> heroes,
+    Expression<int>? clientId,
+    Expression<String>? roomId,
+    Expression<String>? membership,
+    Expression<int>? highlightCount,
+    Expression<int>? notificationCount,
+    Expression<String?>? prevBatch,
+    Expression<int>? joinedMemberCount,
+    Expression<int>? invitedMemberCount,
+    Expression<double>? newestSortOrder,
+    Expression<double>? oldestSortOrder,
+    Expression<String?>? heroes,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -3260,17 +3065,17 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
   }
 
   RoomsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> roomId,
-      Value<String> membership,
-      Value<int> highlightCount,
-      Value<int> notificationCount,
-      Value<String> prevBatch,
-      Value<int> joinedMemberCount,
-      Value<int> invitedMemberCount,
-      Value<double> newestSortOrder,
-      Value<double> oldestSortOrder,
-      Value<String> heroes}) {
+      {Value<int>? clientId,
+      Value<String>? roomId,
+      Value<String>? membership,
+      Value<int>? highlightCount,
+      Value<int>? notificationCount,
+      Value<String?>? prevBatch,
+      Value<int>? joinedMemberCount,
+      Value<int>? invitedMemberCount,
+      Value<double>? newestSortOrder,
+      Value<double>? oldestSortOrder,
+      Value<String?>? heroes}) {
     return RoomsCompanion(
       clientId: clientId ?? this.clientId,
       roomId: roomId ?? this.roomId,
@@ -3305,7 +3110,7 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
       map['notification_count'] = Variable<int>(notificationCount.value);
     }
     if (prevBatch.present) {
-      map['prev_batch'] = Variable<String>(prevBatch.value);
+      map['prev_batch'] = Variable<String?>(prevBatch.value);
     }
     if (joinedMemberCount.present) {
       map['joined_member_count'] = Variable<int>(joinedMemberCount.value);
@@ -3320,7 +3125,7 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
       map['oldest_sort_order'] = Variable<double>(oldestSortOrder.value);
     }
     if (heroes.present) {
-      map['heroes'] = Variable<String>(heroes.value);
+      map['heroes'] = Variable<String?>(heroes.value);
     }
     return map;
   }
@@ -3346,27 +3151,24 @@ class RoomsCompanion extends UpdateCompanion<DbRoom> {
 
 class Rooms extends Table with TableInfo<Rooms, DbRoom> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   Rooms(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _membershipMeta = const VerificationMeta('membership');
-  GeneratedTextColumn _membership;
-  GeneratedTextColumn get membership => _membership ??= _constructMembership();
+  late final GeneratedTextColumn membership = _constructMembership();
   GeneratedTextColumn _constructMembership() {
     return GeneratedTextColumn('membership', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -3374,9 +3176,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _highlightCountMeta =
       const VerificationMeta('highlightCount');
-  GeneratedIntColumn _highlightCount;
-  GeneratedIntColumn get highlightCount =>
-      _highlightCount ??= _constructHighlightCount();
+  late final GeneratedIntColumn highlightCount = _constructHighlightCount();
   GeneratedIntColumn _constructHighlightCount() {
     return GeneratedIntColumn('highlight_count', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3385,9 +3185,8 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _notificationCountMeta =
       const VerificationMeta('notificationCount');
-  GeneratedIntColumn _notificationCount;
-  GeneratedIntColumn get notificationCount =>
-      _notificationCount ??= _constructNotificationCount();
+  late final GeneratedIntColumn notificationCount =
+      _constructNotificationCount();
   GeneratedIntColumn _constructNotificationCount() {
     return GeneratedIntColumn('notification_count', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3395,8 +3194,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
   }
 
   final VerificationMeta _prevBatchMeta = const VerificationMeta('prevBatch');
-  GeneratedTextColumn _prevBatch;
-  GeneratedTextColumn get prevBatch => _prevBatch ??= _constructPrevBatch();
+  late final GeneratedTextColumn prevBatch = _constructPrevBatch();
   GeneratedTextColumn _constructPrevBatch() {
     return GeneratedTextColumn('prev_batch', $tableName, true,
         $customConstraints: 'DEFAULT \'\'',
@@ -3405,9 +3203,8 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _joinedMemberCountMeta =
       const VerificationMeta('joinedMemberCount');
-  GeneratedIntColumn _joinedMemberCount;
-  GeneratedIntColumn get joinedMemberCount =>
-      _joinedMemberCount ??= _constructJoinedMemberCount();
+  late final GeneratedIntColumn joinedMemberCount =
+      _constructJoinedMemberCount();
   GeneratedIntColumn _constructJoinedMemberCount() {
     return GeneratedIntColumn('joined_member_count', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3416,9 +3213,8 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _invitedMemberCountMeta =
       const VerificationMeta('invitedMemberCount');
-  GeneratedIntColumn _invitedMemberCount;
-  GeneratedIntColumn get invitedMemberCount =>
-      _invitedMemberCount ??= _constructInvitedMemberCount();
+  late final GeneratedIntColumn invitedMemberCount =
+      _constructInvitedMemberCount();
   GeneratedIntColumn _constructInvitedMemberCount() {
     return GeneratedIntColumn('invited_member_count', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3427,9 +3223,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _newestSortOrderMeta =
       const VerificationMeta('newestSortOrder');
-  GeneratedRealColumn _newestSortOrder;
-  GeneratedRealColumn get newestSortOrder =>
-      _newestSortOrder ??= _constructNewestSortOrder();
+  late final GeneratedRealColumn newestSortOrder = _constructNewestSortOrder();
   GeneratedRealColumn _constructNewestSortOrder() {
     return GeneratedRealColumn('newest_sort_order', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3438,9 +3232,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
 
   final VerificationMeta _oldestSortOrderMeta =
       const VerificationMeta('oldestSortOrder');
-  GeneratedRealColumn _oldestSortOrder;
-  GeneratedRealColumn get oldestSortOrder =>
-      _oldestSortOrder ??= _constructOldestSortOrder();
+  late final GeneratedRealColumn oldestSortOrder = _constructOldestSortOrder();
   GeneratedRealColumn _constructOldestSortOrder() {
     return GeneratedRealColumn('oldest_sort_order', $tableName, false,
         $customConstraints: 'NOT NULL DEFAULT \'0\'',
@@ -3448,8 +3240,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
   }
 
   final VerificationMeta _heroesMeta = const VerificationMeta('heroes');
-  GeneratedTextColumn _heroes;
-  GeneratedTextColumn get heroes => _heroes ??= _constructHeroes();
+  late final GeneratedTextColumn heroes = _constructHeroes();
   GeneratedTextColumn _constructHeroes() {
     return GeneratedTextColumn('heroes', $tableName, true,
         $customConstraints: 'DEFAULT \'\'',
@@ -3483,13 +3274,13 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
@@ -3497,7 +3288,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
       context.handle(
           _membershipMeta,
           membership.isAcceptableOrUnknown(
-              data['membership'], _membershipMeta));
+              data['membership']!, _membershipMeta));
     } else if (isInserting) {
       context.missing(_membershipMeta);
     }
@@ -3505,45 +3296,45 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
       context.handle(
           _highlightCountMeta,
           highlightCount.isAcceptableOrUnknown(
-              data['highlight_count'], _highlightCountMeta));
+              data['highlight_count']!, _highlightCountMeta));
     }
     if (data.containsKey('notification_count')) {
       context.handle(
           _notificationCountMeta,
           notificationCount.isAcceptableOrUnknown(
-              data['notification_count'], _notificationCountMeta));
+              data['notification_count']!, _notificationCountMeta));
     }
     if (data.containsKey('prev_batch')) {
       context.handle(_prevBatchMeta,
-          prevBatch.isAcceptableOrUnknown(data['prev_batch'], _prevBatchMeta));
+          prevBatch.isAcceptableOrUnknown(data['prev_batch']!, _prevBatchMeta));
     }
     if (data.containsKey('joined_member_count')) {
       context.handle(
           _joinedMemberCountMeta,
           joinedMemberCount.isAcceptableOrUnknown(
-              data['joined_member_count'], _joinedMemberCountMeta));
+              data['joined_member_count']!, _joinedMemberCountMeta));
     }
     if (data.containsKey('invited_member_count')) {
       context.handle(
           _invitedMemberCountMeta,
           invitedMemberCount.isAcceptableOrUnknown(
-              data['invited_member_count'], _invitedMemberCountMeta));
+              data['invited_member_count']!, _invitedMemberCountMeta));
     }
     if (data.containsKey('newest_sort_order')) {
       context.handle(
           _newestSortOrderMeta,
           newestSortOrder.isAcceptableOrUnknown(
-              data['newest_sort_order'], _newestSortOrderMeta));
+              data['newest_sort_order']!, _newestSortOrderMeta));
     }
     if (data.containsKey('oldest_sort_order')) {
       context.handle(
           _oldestSortOrderMeta,
           oldestSortOrder.isAcceptableOrUnknown(
-              data['oldest_sort_order'], _oldestSortOrderMeta));
+              data['oldest_sort_order']!, _oldestSortOrderMeta));
     }
     if (data.containsKey('heroes')) {
       context.handle(_heroesMeta,
-          heroes.isAcceptableOrUnknown(data['heroes'], _heroesMeta));
+          heroes.isAcceptableOrUnknown(data['heroes']!, _heroesMeta));
     }
     return context;
   }
@@ -3551,7 +3342,7 @@ class Rooms extends Table with TableInfo<Rooms, DbRoom> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbRoom map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbRoom map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbRoom.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -3575,42 +3366,42 @@ class DbEvent extends DataClass implements Insertable<DbEvent> {
   final int originServerTs;
   final String sender;
   final String type;
-  final String unsigned;
-  final String content;
-  final String prevContent;
-  final String stateKey;
-  final int status;
+  final String? unsigned;
+  final String? content;
+  final String? prevContent;
+  final String? stateKey;
+  final int? status;
   DbEvent(
-      {@required this.clientId,
-      @required this.eventId,
-      @required this.roomId,
-      @required this.sortOrder,
-      @required this.originServerTs,
-      @required this.sender,
-      @required this.type,
+      {required this.clientId,
+      required this.eventId,
+      required this.roomId,
+      required this.sortOrder,
+      required this.originServerTs,
+      required this.sender,
+      required this.type,
       this.unsigned,
       this.content,
       this.prevContent,
       this.stateKey,
       this.status});
   factory DbEvent.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbEvent(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       eventId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}event_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}event_id'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       sortOrder: const RealType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sort_order']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sort_order'])!,
       originServerTs: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}origin_server_ts']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}origin_server_ts'])!,
       sender: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sender']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sender'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       unsigned: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}unsigned']),
       content: const StringType()
@@ -3626,64 +3417,40 @@ class DbEvent extends DataClass implements Insertable<DbEvent> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || eventId != null) {
-      map['event_id'] = Variable<String>(eventId);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
-    if (!nullToAbsent || sortOrder != null) {
-      map['sort_order'] = Variable<double>(sortOrder);
-    }
-    if (!nullToAbsent || originServerTs != null) {
-      map['origin_server_ts'] = Variable<int>(originServerTs);
-    }
-    if (!nullToAbsent || sender != null) {
-      map['sender'] = Variable<String>(sender);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['event_id'] = Variable<String>(eventId);
+    map['room_id'] = Variable<String>(roomId);
+    map['sort_order'] = Variable<double>(sortOrder);
+    map['origin_server_ts'] = Variable<int>(originServerTs);
+    map['sender'] = Variable<String>(sender);
+    map['type'] = Variable<String>(type);
     if (!nullToAbsent || unsigned != null) {
-      map['unsigned'] = Variable<String>(unsigned);
+      map['unsigned'] = Variable<String?>(unsigned);
     }
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     if (!nullToAbsent || prevContent != null) {
-      map['prev_content'] = Variable<String>(prevContent);
+      map['prev_content'] = Variable<String?>(prevContent);
     }
     if (!nullToAbsent || stateKey != null) {
-      map['state_key'] = Variable<String>(stateKey);
+      map['state_key'] = Variable<String?>(stateKey);
     }
     if (!nullToAbsent || status != null) {
-      map['status'] = Variable<int>(status);
+      map['status'] = Variable<int?>(status);
     }
     return map;
   }
 
   EventsCompanion toCompanion(bool nullToAbsent) {
     return EventsCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      eventId: eventId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(eventId),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
-      sortOrder: sortOrder == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sortOrder),
-      originServerTs: originServerTs == null && nullToAbsent
-          ? const Value.absent()
-          : Value(originServerTs),
-      sender:
-          sender == null && nullToAbsent ? const Value.absent() : Value(sender),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+      clientId: Value(clientId),
+      eventId: Value(eventId),
+      roomId: Value(roomId),
+      sortOrder: Value(sortOrder),
+      originServerTs: Value(originServerTs),
+      sender: Value(sender),
+      type: Value(type),
       unsigned: unsigned == null && nullToAbsent
           ? const Value.absent()
           : Value(unsigned),
@@ -3702,7 +3469,7 @@ class DbEvent extends DataClass implements Insertable<DbEvent> {
   }
 
   factory DbEvent.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbEvent(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -3712,15 +3479,15 @@ class DbEvent extends DataClass implements Insertable<DbEvent> {
       originServerTs: serializer.fromJson<int>(json['origin_server_ts']),
       sender: serializer.fromJson<String>(json['sender']),
       type: serializer.fromJson<String>(json['type']),
-      unsigned: serializer.fromJson<String>(json['unsigned']),
-      content: serializer.fromJson<String>(json['content']),
-      prevContent: serializer.fromJson<String>(json['prev_content']),
-      stateKey: serializer.fromJson<String>(json['state_key']),
-      status: serializer.fromJson<int>(json['status']),
+      unsigned: serializer.fromJson<String?>(json['unsigned']),
+      content: serializer.fromJson<String?>(json['content']),
+      prevContent: serializer.fromJson<String?>(json['prev_content']),
+      stateKey: serializer.fromJson<String?>(json['state_key']),
+      status: serializer.fromJson<int?>(json['status']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -3730,27 +3497,27 @@ class DbEvent extends DataClass implements Insertable<DbEvent> {
       'origin_server_ts': serializer.toJson<int>(originServerTs),
       'sender': serializer.toJson<String>(sender),
       'type': serializer.toJson<String>(type),
-      'unsigned': serializer.toJson<String>(unsigned),
-      'content': serializer.toJson<String>(content),
-      'prev_content': serializer.toJson<String>(prevContent),
-      'state_key': serializer.toJson<String>(stateKey),
-      'status': serializer.toJson<int>(status),
+      'unsigned': serializer.toJson<String?>(unsigned),
+      'content': serializer.toJson<String?>(content),
+      'prev_content': serializer.toJson<String?>(prevContent),
+      'state_key': serializer.toJson<String?>(stateKey),
+      'status': serializer.toJson<int?>(status),
     };
   }
 
   DbEvent copyWith(
-          {int clientId,
-          String eventId,
-          String roomId,
-          double sortOrder,
-          int originServerTs,
-          String sender,
-          String type,
-          String unsigned,
-          String content,
-          String prevContent,
-          String stateKey,
-          int status}) =>
+          {int? clientId,
+          String? eventId,
+          String? roomId,
+          double? sortOrder,
+          int? originServerTs,
+          String? sender,
+          String? type,
+          String? unsigned,
+          String? content,
+          String? prevContent,
+          String? stateKey,
+          int? status}) =>
       DbEvent(
         clientId: clientId ?? this.clientId,
         eventId: eventId ?? this.eventId,
@@ -3833,11 +3600,11 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
   final Value<int> originServerTs;
   final Value<String> sender;
   final Value<String> type;
-  final Value<String> unsigned;
-  final Value<String> content;
-  final Value<String> prevContent;
-  final Value<String> stateKey;
-  final Value<int> status;
+  final Value<String?> unsigned;
+  final Value<String?> content;
+  final Value<String?> prevContent;
+  final Value<String?> stateKey;
+  final Value<int?> status;
   const EventsCompanion({
     this.clientId = const Value.absent(),
     this.eventId = const Value.absent(),
@@ -3853,13 +3620,13 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
     this.status = const Value.absent(),
   });
   EventsCompanion.insert({
-    @required int clientId,
-    @required String eventId,
-    @required String roomId,
-    @required double sortOrder,
-    @required int originServerTs,
-    @required String sender,
-    @required String type,
+    required int clientId,
+    required String eventId,
+    required String roomId,
+    required double sortOrder,
+    required int originServerTs,
+    required String sender,
+    required String type,
     this.unsigned = const Value.absent(),
     this.content = const Value.absent(),
     this.prevContent = const Value.absent(),
@@ -3873,18 +3640,18 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
         sender = Value(sender),
         type = Value(type);
   static Insertable<DbEvent> custom({
-    Expression<int> clientId,
-    Expression<String> eventId,
-    Expression<String> roomId,
-    Expression<double> sortOrder,
-    Expression<int> originServerTs,
-    Expression<String> sender,
-    Expression<String> type,
-    Expression<String> unsigned,
-    Expression<String> content,
-    Expression<String> prevContent,
-    Expression<String> stateKey,
-    Expression<int> status,
+    Expression<int>? clientId,
+    Expression<String>? eventId,
+    Expression<String>? roomId,
+    Expression<double>? sortOrder,
+    Expression<int>? originServerTs,
+    Expression<String>? sender,
+    Expression<String>? type,
+    Expression<String?>? unsigned,
+    Expression<String?>? content,
+    Expression<String?>? prevContent,
+    Expression<String?>? stateKey,
+    Expression<int?>? status,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -3903,18 +3670,18 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
   }
 
   EventsCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> eventId,
-      Value<String> roomId,
-      Value<double> sortOrder,
-      Value<int> originServerTs,
-      Value<String> sender,
-      Value<String> type,
-      Value<String> unsigned,
-      Value<String> content,
-      Value<String> prevContent,
-      Value<String> stateKey,
-      Value<int> status}) {
+      {Value<int>? clientId,
+      Value<String>? eventId,
+      Value<String>? roomId,
+      Value<double>? sortOrder,
+      Value<int>? originServerTs,
+      Value<String>? sender,
+      Value<String>? type,
+      Value<String?>? unsigned,
+      Value<String?>? content,
+      Value<String?>? prevContent,
+      Value<String?>? stateKey,
+      Value<int?>? status}) {
     return EventsCompanion(
       clientId: clientId ?? this.clientId,
       eventId: eventId ?? this.eventId,
@@ -3956,19 +3723,19 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
       map['type'] = Variable<String>(type.value);
     }
     if (unsigned.present) {
-      map['unsigned'] = Variable<String>(unsigned.value);
+      map['unsigned'] = Variable<String?>(unsigned.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     if (prevContent.present) {
-      map['prev_content'] = Variable<String>(prevContent.value);
+      map['prev_content'] = Variable<String?>(prevContent.value);
     }
     if (stateKey.present) {
-      map['state_key'] = Variable<String>(stateKey.value);
+      map['state_key'] = Variable<String?>(stateKey.value);
     }
     if (status.present) {
-      map['status'] = Variable<int>(status.value);
+      map['status'] = Variable<int?>(status.value);
     }
     return map;
   }
@@ -3995,35 +3762,31 @@ class EventsCompanion extends UpdateCompanion<DbEvent> {
 
 class Events extends Table with TableInfo<Events, DbEvent> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   Events(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _eventIdMeta = const VerificationMeta('eventId');
-  GeneratedTextColumn _eventId;
-  GeneratedTextColumn get eventId => _eventId ??= _constructEventId();
+  late final GeneratedTextColumn eventId = _constructEventId();
   GeneratedTextColumn _constructEventId() {
     return GeneratedTextColumn('event_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _sortOrderMeta = const VerificationMeta('sortOrder');
-  GeneratedRealColumn _sortOrder;
-  GeneratedRealColumn get sortOrder => _sortOrder ??= _constructSortOrder();
+  late final GeneratedRealColumn sortOrder = _constructSortOrder();
   GeneratedRealColumn _constructSortOrder() {
     return GeneratedRealColumn('sort_order', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -4031,41 +3794,35 @@ class Events extends Table with TableInfo<Events, DbEvent> {
 
   final VerificationMeta _originServerTsMeta =
       const VerificationMeta('originServerTs');
-  GeneratedIntColumn _originServerTs;
-  GeneratedIntColumn get originServerTs =>
-      _originServerTs ??= _constructOriginServerTs();
+  late final GeneratedIntColumn originServerTs = _constructOriginServerTs();
   GeneratedIntColumn _constructOriginServerTs() {
     return GeneratedIntColumn('origin_server_ts', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _senderMeta = const VerificationMeta('sender');
-  GeneratedTextColumn _sender;
-  GeneratedTextColumn get sender => _sender ??= _constructSender();
+  late final GeneratedTextColumn sender = _constructSender();
   GeneratedTextColumn _constructSender() {
     return GeneratedTextColumn('sender', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _unsignedMeta = const VerificationMeta('unsigned');
-  GeneratedTextColumn _unsigned;
-  GeneratedTextColumn get unsigned => _unsigned ??= _constructUnsigned();
+  late final GeneratedTextColumn unsigned = _constructUnsigned();
   GeneratedTextColumn _constructUnsigned() {
     return GeneratedTextColumn('unsigned', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
@@ -4073,25 +3830,21 @@ class Events extends Table with TableInfo<Events, DbEvent> {
 
   final VerificationMeta _prevContentMeta =
       const VerificationMeta('prevContent');
-  GeneratedTextColumn _prevContent;
-  GeneratedTextColumn get prevContent =>
-      _prevContent ??= _constructPrevContent();
+  late final GeneratedTextColumn prevContent = _constructPrevContent();
   GeneratedTextColumn _constructPrevContent() {
     return GeneratedTextColumn('prev_content', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _stateKeyMeta = const VerificationMeta('stateKey');
-  GeneratedTextColumn _stateKey;
-  GeneratedTextColumn get stateKey => _stateKey ??= _constructStateKey();
+  late final GeneratedTextColumn stateKey = _constructStateKey();
   GeneratedTextColumn _constructStateKey() {
     return GeneratedTextColumn('state_key', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _statusMeta = const VerificationMeta('status');
-  GeneratedIntColumn _status;
-  GeneratedIntColumn get status => _status ??= _constructStatus();
+  late final GeneratedIntColumn status = _constructStatus();
   GeneratedIntColumn _constructStatus() {
     return GeneratedIntColumn('status', $tableName, true,
         $customConstraints: '');
@@ -4125,25 +3878,25 @@ class Events extends Table with TableInfo<Events, DbEvent> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('event_id')) {
       context.handle(_eventIdMeta,
-          eventId.isAcceptableOrUnknown(data['event_id'], _eventIdMeta));
+          eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta));
     } else if (isInserting) {
       context.missing(_eventIdMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
     if (data.containsKey('sort_order')) {
       context.handle(_sortOrderMeta,
-          sortOrder.isAcceptableOrUnknown(data['sort_order'], _sortOrderMeta));
+          sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta));
     } else if (isInserting) {
       context.missing(_sortOrderMeta);
     }
@@ -4151,43 +3904,43 @@ class Events extends Table with TableInfo<Events, DbEvent> {
       context.handle(
           _originServerTsMeta,
           originServerTs.isAcceptableOrUnknown(
-              data['origin_server_ts'], _originServerTsMeta));
+              data['origin_server_ts']!, _originServerTsMeta));
     } else if (isInserting) {
       context.missing(_originServerTsMeta);
     }
     if (data.containsKey('sender')) {
       context.handle(_senderMeta,
-          sender.isAcceptableOrUnknown(data['sender'], _senderMeta));
+          sender.isAcceptableOrUnknown(data['sender']!, _senderMeta));
     } else if (isInserting) {
       context.missing(_senderMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('unsigned')) {
       context.handle(_unsignedMeta,
-          unsigned.isAcceptableOrUnknown(data['unsigned'], _unsignedMeta));
+          unsigned.isAcceptableOrUnknown(data['unsigned']!, _unsignedMeta));
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     if (data.containsKey('prev_content')) {
       context.handle(
           _prevContentMeta,
           prevContent.isAcceptableOrUnknown(
-              data['prev_content'], _prevContentMeta));
+              data['prev_content']!, _prevContentMeta));
     }
     if (data.containsKey('state_key')) {
       context.handle(_stateKeyMeta,
-          stateKey.isAcceptableOrUnknown(data['state_key'], _stateKeyMeta));
+          stateKey.isAcceptableOrUnknown(data['state_key']!, _stateKeyMeta));
     }
     if (data.containsKey('status')) {
       context.handle(_statusMeta,
-          status.isAcceptableOrUnknown(data['status'], _statusMeta));
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
     }
     return context;
   }
@@ -4195,7 +3948,7 @@ class Events extends Table with TableInfo<Events, DbEvent> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbEvent map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbEvent.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -4220,40 +3973,40 @@ class DbRoomState extends DataClass implements Insertable<DbRoomState> {
   final int originServerTs;
   final String sender;
   final String type;
-  final String unsigned;
-  final String content;
-  final String prevContent;
+  final String? unsigned;
+  final String? content;
+  final String? prevContent;
   final String stateKey;
   DbRoomState(
-      {@required this.clientId,
-      @required this.eventId,
-      @required this.roomId,
-      @required this.sortOrder,
-      @required this.originServerTs,
-      @required this.sender,
-      @required this.type,
+      {required this.clientId,
+      required this.eventId,
+      required this.roomId,
+      required this.sortOrder,
+      required this.originServerTs,
+      required this.sender,
+      required this.type,
       this.unsigned,
       this.content,
       this.prevContent,
-      @required this.stateKey});
+      required this.stateKey});
   factory DbRoomState.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbRoomState(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       eventId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}event_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}event_id'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       sortOrder: const RealType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sort_order']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sort_order'])!,
       originServerTs: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}origin_server_ts']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}origin_server_ts'])!,
       sender: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sender']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sender'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       unsigned: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}unsigned']),
       content: const StringType()
@@ -4261,67 +4014,41 @@ class DbRoomState extends DataClass implements Insertable<DbRoomState> {
       prevContent: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}prev_content']),
       stateKey: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}state_key']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}state_key'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || eventId != null) {
-      map['event_id'] = Variable<String>(eventId);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
-    if (!nullToAbsent || sortOrder != null) {
-      map['sort_order'] = Variable<double>(sortOrder);
-    }
-    if (!nullToAbsent || originServerTs != null) {
-      map['origin_server_ts'] = Variable<int>(originServerTs);
-    }
-    if (!nullToAbsent || sender != null) {
-      map['sender'] = Variable<String>(sender);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['event_id'] = Variable<String>(eventId);
+    map['room_id'] = Variable<String>(roomId);
+    map['sort_order'] = Variable<double>(sortOrder);
+    map['origin_server_ts'] = Variable<int>(originServerTs);
+    map['sender'] = Variable<String>(sender);
+    map['type'] = Variable<String>(type);
     if (!nullToAbsent || unsigned != null) {
-      map['unsigned'] = Variable<String>(unsigned);
+      map['unsigned'] = Variable<String?>(unsigned);
     }
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     if (!nullToAbsent || prevContent != null) {
-      map['prev_content'] = Variable<String>(prevContent);
+      map['prev_content'] = Variable<String?>(prevContent);
     }
-    if (!nullToAbsent || stateKey != null) {
-      map['state_key'] = Variable<String>(stateKey);
-    }
+    map['state_key'] = Variable<String>(stateKey);
     return map;
   }
 
   RoomStatesCompanion toCompanion(bool nullToAbsent) {
     return RoomStatesCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      eventId: eventId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(eventId),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
-      sortOrder: sortOrder == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sortOrder),
-      originServerTs: originServerTs == null && nullToAbsent
-          ? const Value.absent()
-          : Value(originServerTs),
-      sender:
-          sender == null && nullToAbsent ? const Value.absent() : Value(sender),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+      clientId: Value(clientId),
+      eventId: Value(eventId),
+      roomId: Value(roomId),
+      sortOrder: Value(sortOrder),
+      originServerTs: Value(originServerTs),
+      sender: Value(sender),
+      type: Value(type),
       unsigned: unsigned == null && nullToAbsent
           ? const Value.absent()
           : Value(unsigned),
@@ -4331,14 +4058,12 @@ class DbRoomState extends DataClass implements Insertable<DbRoomState> {
       prevContent: prevContent == null && nullToAbsent
           ? const Value.absent()
           : Value(prevContent),
-      stateKey: stateKey == null && nullToAbsent
-          ? const Value.absent()
-          : Value(stateKey),
+      stateKey: Value(stateKey),
     );
   }
 
   factory DbRoomState.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbRoomState(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -4348,14 +4073,14 @@ class DbRoomState extends DataClass implements Insertable<DbRoomState> {
       originServerTs: serializer.fromJson<int>(json['origin_server_ts']),
       sender: serializer.fromJson<String>(json['sender']),
       type: serializer.fromJson<String>(json['type']),
-      unsigned: serializer.fromJson<String>(json['unsigned']),
-      content: serializer.fromJson<String>(json['content']),
-      prevContent: serializer.fromJson<String>(json['prev_content']),
+      unsigned: serializer.fromJson<String?>(json['unsigned']),
+      content: serializer.fromJson<String?>(json['content']),
+      prevContent: serializer.fromJson<String?>(json['prev_content']),
       stateKey: serializer.fromJson<String>(json['state_key']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -4365,25 +4090,25 @@ class DbRoomState extends DataClass implements Insertable<DbRoomState> {
       'origin_server_ts': serializer.toJson<int>(originServerTs),
       'sender': serializer.toJson<String>(sender),
       'type': serializer.toJson<String>(type),
-      'unsigned': serializer.toJson<String>(unsigned),
-      'content': serializer.toJson<String>(content),
-      'prev_content': serializer.toJson<String>(prevContent),
+      'unsigned': serializer.toJson<String?>(unsigned),
+      'content': serializer.toJson<String?>(content),
+      'prev_content': serializer.toJson<String?>(prevContent),
       'state_key': serializer.toJson<String>(stateKey),
     };
   }
 
   DbRoomState copyWith(
-          {int clientId,
-          String eventId,
-          String roomId,
-          double sortOrder,
-          int originServerTs,
-          String sender,
-          String type,
-          String unsigned,
-          String content,
-          String prevContent,
-          String stateKey}) =>
+          {int? clientId,
+          String? eventId,
+          String? roomId,
+          double? sortOrder,
+          int? originServerTs,
+          String? sender,
+          String? type,
+          String? unsigned,
+          String? content,
+          String? prevContent,
+          String? stateKey}) =>
       DbRoomState(
         clientId: clientId ?? this.clientId,
         eventId: eventId ?? this.eventId,
@@ -4461,9 +4186,9 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
   final Value<int> originServerTs;
   final Value<String> sender;
   final Value<String> type;
-  final Value<String> unsigned;
-  final Value<String> content;
-  final Value<String> prevContent;
+  final Value<String?> unsigned;
+  final Value<String?> content;
+  final Value<String?> prevContent;
   final Value<String> stateKey;
   const RoomStatesCompanion({
     this.clientId = const Value.absent(),
@@ -4479,17 +4204,17 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
     this.stateKey = const Value.absent(),
   });
   RoomStatesCompanion.insert({
-    @required int clientId,
-    @required String eventId,
-    @required String roomId,
-    @required double sortOrder,
-    @required int originServerTs,
-    @required String sender,
-    @required String type,
+    required int clientId,
+    required String eventId,
+    required String roomId,
+    required double sortOrder,
+    required int originServerTs,
+    required String sender,
+    required String type,
     this.unsigned = const Value.absent(),
     this.content = const Value.absent(),
     this.prevContent = const Value.absent(),
-    @required String stateKey,
+    required String stateKey,
   })  : clientId = Value(clientId),
         eventId = Value(eventId),
         roomId = Value(roomId),
@@ -4499,17 +4224,17 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
         type = Value(type),
         stateKey = Value(stateKey);
   static Insertable<DbRoomState> custom({
-    Expression<int> clientId,
-    Expression<String> eventId,
-    Expression<String> roomId,
-    Expression<double> sortOrder,
-    Expression<int> originServerTs,
-    Expression<String> sender,
-    Expression<String> type,
-    Expression<String> unsigned,
-    Expression<String> content,
-    Expression<String> prevContent,
-    Expression<String> stateKey,
+    Expression<int>? clientId,
+    Expression<String>? eventId,
+    Expression<String>? roomId,
+    Expression<double>? sortOrder,
+    Expression<int>? originServerTs,
+    Expression<String>? sender,
+    Expression<String>? type,
+    Expression<String?>? unsigned,
+    Expression<String?>? content,
+    Expression<String?>? prevContent,
+    Expression<String>? stateKey,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -4527,17 +4252,17 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
   }
 
   RoomStatesCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> eventId,
-      Value<String> roomId,
-      Value<double> sortOrder,
-      Value<int> originServerTs,
-      Value<String> sender,
-      Value<String> type,
-      Value<String> unsigned,
-      Value<String> content,
-      Value<String> prevContent,
-      Value<String> stateKey}) {
+      {Value<int>? clientId,
+      Value<String>? eventId,
+      Value<String>? roomId,
+      Value<double>? sortOrder,
+      Value<int>? originServerTs,
+      Value<String>? sender,
+      Value<String>? type,
+      Value<String?>? unsigned,
+      Value<String?>? content,
+      Value<String?>? prevContent,
+      Value<String>? stateKey}) {
     return RoomStatesCompanion(
       clientId: clientId ?? this.clientId,
       eventId: eventId ?? this.eventId,
@@ -4578,13 +4303,13 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
       map['type'] = Variable<String>(type.value);
     }
     if (unsigned.present) {
-      map['unsigned'] = Variable<String>(unsigned.value);
+      map['unsigned'] = Variable<String?>(unsigned.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     if (prevContent.present) {
-      map['prev_content'] = Variable<String>(prevContent.value);
+      map['prev_content'] = Variable<String?>(prevContent.value);
     }
     if (stateKey.present) {
       map['state_key'] = Variable<String>(stateKey.value);
@@ -4613,35 +4338,31 @@ class RoomStatesCompanion extends UpdateCompanion<DbRoomState> {
 
 class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   RoomStates(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _eventIdMeta = const VerificationMeta('eventId');
-  GeneratedTextColumn _eventId;
-  GeneratedTextColumn get eventId => _eventId ??= _constructEventId();
+  late final GeneratedTextColumn eventId = _constructEventId();
   GeneratedTextColumn _constructEventId() {
     return GeneratedTextColumn('event_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _sortOrderMeta = const VerificationMeta('sortOrder');
-  GeneratedRealColumn _sortOrder;
-  GeneratedRealColumn get sortOrder => _sortOrder ??= _constructSortOrder();
+  late final GeneratedRealColumn sortOrder = _constructSortOrder();
   GeneratedRealColumn _constructSortOrder() {
     return GeneratedRealColumn('sort_order', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -4649,41 +4370,35 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
 
   final VerificationMeta _originServerTsMeta =
       const VerificationMeta('originServerTs');
-  GeneratedIntColumn _originServerTs;
-  GeneratedIntColumn get originServerTs =>
-      _originServerTs ??= _constructOriginServerTs();
+  late final GeneratedIntColumn originServerTs = _constructOriginServerTs();
   GeneratedIntColumn _constructOriginServerTs() {
     return GeneratedIntColumn('origin_server_ts', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _senderMeta = const VerificationMeta('sender');
-  GeneratedTextColumn _sender;
-  GeneratedTextColumn get sender => _sender ??= _constructSender();
+  late final GeneratedTextColumn sender = _constructSender();
   GeneratedTextColumn _constructSender() {
     return GeneratedTextColumn('sender', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _unsignedMeta = const VerificationMeta('unsigned');
-  GeneratedTextColumn _unsigned;
-  GeneratedTextColumn get unsigned => _unsigned ??= _constructUnsigned();
+  late final GeneratedTextColumn unsigned = _constructUnsigned();
   GeneratedTextColumn _constructUnsigned() {
     return GeneratedTextColumn('unsigned', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
@@ -4691,17 +4406,14 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
 
   final VerificationMeta _prevContentMeta =
       const VerificationMeta('prevContent');
-  GeneratedTextColumn _prevContent;
-  GeneratedTextColumn get prevContent =>
-      _prevContent ??= _constructPrevContent();
+  late final GeneratedTextColumn prevContent = _constructPrevContent();
   GeneratedTextColumn _constructPrevContent() {
     return GeneratedTextColumn('prev_content', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _stateKeyMeta = const VerificationMeta('stateKey');
-  GeneratedTextColumn _stateKey;
-  GeneratedTextColumn get stateKey => _stateKey ??= _constructStateKey();
+  late final GeneratedTextColumn stateKey = _constructStateKey();
   GeneratedTextColumn _constructStateKey() {
     return GeneratedTextColumn('state_key', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -4734,25 +4446,25 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('event_id')) {
       context.handle(_eventIdMeta,
-          eventId.isAcceptableOrUnknown(data['event_id'], _eventIdMeta));
+          eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta));
     } else if (isInserting) {
       context.missing(_eventIdMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
     if (data.containsKey('sort_order')) {
       context.handle(_sortOrderMeta,
-          sortOrder.isAcceptableOrUnknown(data['sort_order'], _sortOrderMeta));
+          sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta));
     } else if (isInserting) {
       context.missing(_sortOrderMeta);
     }
@@ -4760,39 +4472,39 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
       context.handle(
           _originServerTsMeta,
           originServerTs.isAcceptableOrUnknown(
-              data['origin_server_ts'], _originServerTsMeta));
+              data['origin_server_ts']!, _originServerTsMeta));
     } else if (isInserting) {
       context.missing(_originServerTsMeta);
     }
     if (data.containsKey('sender')) {
       context.handle(_senderMeta,
-          sender.isAcceptableOrUnknown(data['sender'], _senderMeta));
+          sender.isAcceptableOrUnknown(data['sender']!, _senderMeta));
     } else if (isInserting) {
       context.missing(_senderMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('unsigned')) {
       context.handle(_unsignedMeta,
-          unsigned.isAcceptableOrUnknown(data['unsigned'], _unsignedMeta));
+          unsigned.isAcceptableOrUnknown(data['unsigned']!, _unsignedMeta));
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     if (data.containsKey('prev_content')) {
       context.handle(
           _prevContentMeta,
           prevContent.isAcceptableOrUnknown(
-              data['prev_content'], _prevContentMeta));
+              data['prev_content']!, _prevContentMeta));
     }
     if (data.containsKey('state_key')) {
       context.handle(_stateKeyMeta,
-          stateKey.isAcceptableOrUnknown(data['state_key'], _stateKeyMeta));
+          stateKey.isAcceptableOrUnknown(data['state_key']!, _stateKeyMeta));
     } else if (isInserting) {
       context.missing(_stateKeyMeta);
     }
@@ -4802,7 +4514,7 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbRoomState map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbRoomState map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbRoomState.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -4824,17 +4536,17 @@ class RoomStates extends Table with TableInfo<RoomStates, DbRoomState> {
 class DbAccountData extends DataClass implements Insertable<DbAccountData> {
   final int clientId;
   final String type;
-  final String content;
-  DbAccountData({@required this.clientId, @required this.type, this.content});
+  final String? content;
+  DbAccountData({required this.clientId, required this.type, this.content});
   factory DbAccountData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbAccountData(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       content: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}content']),
     );
@@ -4842,24 +4554,18 @@ class DbAccountData extends DataClass implements Insertable<DbAccountData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['type'] = Variable<String>(type);
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     return map;
   }
 
   AccountDataCompanion toCompanion(bool nullToAbsent) {
     return AccountDataCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+      clientId: Value(clientId),
+      type: Value(type),
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
@@ -4867,25 +4573,25 @@ class DbAccountData extends DataClass implements Insertable<DbAccountData> {
   }
 
   factory DbAccountData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbAccountData(
       clientId: serializer.fromJson<int>(json['client_id']),
       type: serializer.fromJson<String>(json['type']),
-      content: serializer.fromJson<String>(json['content']),
+      content: serializer.fromJson<String?>(json['content']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'type': serializer.toJson<String>(type),
-      'content': serializer.toJson<String>(content),
+      'content': serializer.toJson<String?>(content),
     };
   }
 
-  DbAccountData copyWith({int clientId, String type, String content}) =>
+  DbAccountData copyWith({int? clientId, String? type, String? content}) =>
       DbAccountData(
         clientId: clientId ?? this.clientId,
         type: type ?? this.type,
@@ -4916,22 +4622,22 @@ class DbAccountData extends DataClass implements Insertable<DbAccountData> {
 class AccountDataCompanion extends UpdateCompanion<DbAccountData> {
   final Value<int> clientId;
   final Value<String> type;
-  final Value<String> content;
+  final Value<String?> content;
   const AccountDataCompanion({
     this.clientId = const Value.absent(),
     this.type = const Value.absent(),
     this.content = const Value.absent(),
   });
   AccountDataCompanion.insert({
-    @required int clientId,
-    @required String type,
+    required int clientId,
+    required String type,
     this.content = const Value.absent(),
   })  : clientId = Value(clientId),
         type = Value(type);
   static Insertable<DbAccountData> custom({
-    Expression<int> clientId,
-    Expression<String> type,
-    Expression<String> content,
+    Expression<int>? clientId,
+    Expression<String>? type,
+    Expression<String?>? content,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -4941,7 +4647,7 @@ class AccountDataCompanion extends UpdateCompanion<DbAccountData> {
   }
 
   AccountDataCompanion copyWith(
-      {Value<int> clientId, Value<String> type, Value<String> content}) {
+      {Value<int>? clientId, Value<String>? type, Value<String?>? content}) {
     return AccountDataCompanion(
       clientId: clientId ?? this.clientId,
       type: type ?? this.type,
@@ -4959,7 +4665,7 @@ class AccountDataCompanion extends UpdateCompanion<DbAccountData> {
       map['type'] = Variable<String>(type.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     return map;
   }
@@ -4977,27 +4683,24 @@ class AccountDataCompanion extends UpdateCompanion<DbAccountData> {
 
 class AccountData extends Table with TableInfo<AccountData, DbAccountData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   AccountData(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
@@ -5018,19 +4721,19 @@ class AccountData extends Table with TableInfo<AccountData, DbAccountData> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     return context;
   }
@@ -5038,7 +4741,7 @@ class AccountData extends Table with TableInfo<AccountData, DbAccountData> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbAccountData map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbAccountData map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbAccountData.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -5059,23 +4762,23 @@ class DbRoomAccountData extends DataClass
   final int clientId;
   final String type;
   final String roomId;
-  final String content;
+  final String? content;
   DbRoomAccountData(
-      {@required this.clientId,
-      @required this.type,
-      @required this.roomId,
+      {required this.clientId,
+      required this.type,
+      required this.roomId,
       this.content});
   factory DbRoomAccountData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbRoomAccountData(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       roomId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}room_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}room_id'])!,
       content: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}content']),
     );
@@ -5083,29 +4786,20 @@ class DbRoomAccountData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
-    if (!nullToAbsent || roomId != null) {
-      map['room_id'] = Variable<String>(roomId);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['type'] = Variable<String>(type);
+    map['room_id'] = Variable<String>(roomId);
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     return map;
   }
 
   RoomAccountDataCompanion toCompanion(bool nullToAbsent) {
     return RoomAccountDataCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      roomId:
-          roomId == null && nullToAbsent ? const Value.absent() : Value(roomId),
+      clientId: Value(clientId),
+      type: Value(type),
+      roomId: Value(roomId),
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
@@ -5113,28 +4807,28 @@ class DbRoomAccountData extends DataClass
   }
 
   factory DbRoomAccountData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbRoomAccountData(
       clientId: serializer.fromJson<int>(json['client_id']),
       type: serializer.fromJson<String>(json['type']),
       roomId: serializer.fromJson<String>(json['room_id']),
-      content: serializer.fromJson<String>(json['content']),
+      content: serializer.fromJson<String?>(json['content']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'type': serializer.toJson<String>(type),
       'room_id': serializer.toJson<String>(roomId),
-      'content': serializer.toJson<String>(content),
+      'content': serializer.toJson<String?>(content),
     };
   }
 
   DbRoomAccountData copyWith(
-          {int clientId, String type, String roomId, String content}) =>
+          {int? clientId, String? type, String? roomId, String? content}) =>
       DbRoomAccountData(
         clientId: clientId ?? this.clientId,
         type: type ?? this.type,
@@ -5169,7 +4863,7 @@ class RoomAccountDataCompanion extends UpdateCompanion<DbRoomAccountData> {
   final Value<int> clientId;
   final Value<String> type;
   final Value<String> roomId;
-  final Value<String> content;
+  final Value<String?> content;
   const RoomAccountDataCompanion({
     this.clientId = const Value.absent(),
     this.type = const Value.absent(),
@@ -5177,18 +4871,18 @@ class RoomAccountDataCompanion extends UpdateCompanion<DbRoomAccountData> {
     this.content = const Value.absent(),
   });
   RoomAccountDataCompanion.insert({
-    @required int clientId,
-    @required String type,
-    @required String roomId,
+    required int clientId,
+    required String type,
+    required String roomId,
     this.content = const Value.absent(),
   })  : clientId = Value(clientId),
         type = Value(type),
         roomId = Value(roomId);
   static Insertable<DbRoomAccountData> custom({
-    Expression<int> clientId,
-    Expression<String> type,
-    Expression<String> roomId,
-    Expression<String> content,
+    Expression<int>? clientId,
+    Expression<String>? type,
+    Expression<String>? roomId,
+    Expression<String?>? content,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -5199,10 +4893,10 @@ class RoomAccountDataCompanion extends UpdateCompanion<DbRoomAccountData> {
   }
 
   RoomAccountDataCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> type,
-      Value<String> roomId,
-      Value<String> content}) {
+      {Value<int>? clientId,
+      Value<String>? type,
+      Value<String>? roomId,
+      Value<String?>? content}) {
     return RoomAccountDataCompanion(
       clientId: clientId ?? this.clientId,
       type: type ?? this.type,
@@ -5224,7 +4918,7 @@ class RoomAccountDataCompanion extends UpdateCompanion<DbRoomAccountData> {
       map['room_id'] = Variable<String>(roomId.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     return map;
   }
@@ -5244,35 +4938,31 @@ class RoomAccountDataCompanion extends UpdateCompanion<DbRoomAccountData> {
 class RoomAccountData extends Table
     with TableInfo<RoomAccountData, DbRoomAccountData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   RoomAccountData(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _roomIdMeta = const VerificationMeta('roomId');
-  GeneratedTextColumn _roomId;
-  GeneratedTextColumn get roomId => _roomId ??= _constructRoomId();
+  late final GeneratedTextColumn roomId = _constructRoomId();
   GeneratedTextColumn _constructRoomId() {
     return GeneratedTextColumn('room_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
@@ -5293,25 +4983,25 @@ class RoomAccountData extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('room_id')) {
       context.handle(_roomIdMeta,
-          roomId.isAcceptableOrUnknown(data['room_id'], _roomIdMeta));
+          roomId.isAcceptableOrUnknown(data['room_id']!, _roomIdMeta));
     } else if (isInserting) {
       context.missing(_roomIdMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     return context;
   }
@@ -5319,7 +5009,7 @@ class RoomAccountData extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbRoomAccountData map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbRoomAccountData map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbRoomAccountData.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -5340,22 +5030,22 @@ class DbPresence extends DataClass implements Insertable<DbPresence> {
   final int clientId;
   final String type;
   final String sender;
-  final String content;
+  final String? content;
   DbPresence(
-      {@required this.clientId,
-      @required this.type,
-      @required this.sender,
+      {required this.clientId,
+      required this.type,
+      required this.sender,
       this.content});
   factory DbPresence.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbPresence(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       sender: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}sender']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}sender'])!,
       content: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}content']),
     );
@@ -5363,29 +5053,20 @@ class DbPresence extends DataClass implements Insertable<DbPresence> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
-    if (!nullToAbsent || sender != null) {
-      map['sender'] = Variable<String>(sender);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['type'] = Variable<String>(type);
+    map['sender'] = Variable<String>(sender);
     if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
+      map['content'] = Variable<String?>(content);
     }
     return map;
   }
 
   PresencesCompanion toCompanion(bool nullToAbsent) {
     return PresencesCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      sender:
-          sender == null && nullToAbsent ? const Value.absent() : Value(sender),
+      clientId: Value(clientId),
+      type: Value(type),
+      sender: Value(sender),
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
@@ -5393,28 +5074,28 @@ class DbPresence extends DataClass implements Insertable<DbPresence> {
   }
 
   factory DbPresence.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbPresence(
       clientId: serializer.fromJson<int>(json['client_id']),
       type: serializer.fromJson<String>(json['type']),
       sender: serializer.fromJson<String>(json['sender']),
-      content: serializer.fromJson<String>(json['content']),
+      content: serializer.fromJson<String?>(json['content']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
       'type': serializer.toJson<String>(type),
       'sender': serializer.toJson<String>(sender),
-      'content': serializer.toJson<String>(content),
+      'content': serializer.toJson<String?>(content),
     };
   }
 
   DbPresence copyWith(
-          {int clientId, String type, String sender, String content}) =>
+          {int? clientId, String? type, String? sender, String? content}) =>
       DbPresence(
         clientId: clientId ?? this.clientId,
         type: type ?? this.type,
@@ -5449,7 +5130,7 @@ class PresencesCompanion extends UpdateCompanion<DbPresence> {
   final Value<int> clientId;
   final Value<String> type;
   final Value<String> sender;
-  final Value<String> content;
+  final Value<String?> content;
   const PresencesCompanion({
     this.clientId = const Value.absent(),
     this.type = const Value.absent(),
@@ -5457,18 +5138,18 @@ class PresencesCompanion extends UpdateCompanion<DbPresence> {
     this.content = const Value.absent(),
   });
   PresencesCompanion.insert({
-    @required int clientId,
-    @required String type,
-    @required String sender,
+    required int clientId,
+    required String type,
+    required String sender,
     this.content = const Value.absent(),
   })  : clientId = Value(clientId),
         type = Value(type),
         sender = Value(sender);
   static Insertable<DbPresence> custom({
-    Expression<int> clientId,
-    Expression<String> type,
-    Expression<String> sender,
-    Expression<String> content,
+    Expression<int>? clientId,
+    Expression<String>? type,
+    Expression<String>? sender,
+    Expression<String?>? content,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -5479,10 +5160,10 @@ class PresencesCompanion extends UpdateCompanion<DbPresence> {
   }
 
   PresencesCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> type,
-      Value<String> sender,
-      Value<String> content}) {
+      {Value<int>? clientId,
+      Value<String>? type,
+      Value<String>? sender,
+      Value<String?>? content}) {
     return PresencesCompanion(
       clientId: clientId ?? this.clientId,
       type: type ?? this.type,
@@ -5504,7 +5185,7 @@ class PresencesCompanion extends UpdateCompanion<DbPresence> {
       map['sender'] = Variable<String>(sender.value);
     }
     if (content.present) {
-      map['content'] = Variable<String>(content.value);
+      map['content'] = Variable<String?>(content.value);
     }
     return map;
   }
@@ -5523,35 +5204,31 @@ class PresencesCompanion extends UpdateCompanion<DbPresence> {
 
 class Presences extends Table with TableInfo<Presences, DbPresence> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   Presences(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _senderMeta = const VerificationMeta('sender');
-  GeneratedTextColumn _sender;
-  GeneratedTextColumn get sender => _sender ??= _constructSender();
+  late final GeneratedTextColumn sender = _constructSender();
   GeneratedTextColumn _constructSender() {
     return GeneratedTextColumn('sender', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, true,
         $customConstraints: '');
@@ -5572,25 +5249,25 @@ class Presences extends Table with TableInfo<Presences, DbPresence> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('sender')) {
       context.handle(_senderMeta,
-          sender.isAcceptableOrUnknown(data['sender'], _senderMeta));
+          sender.isAcceptableOrUnknown(data['sender']!, _senderMeta));
     } else if (isInserting) {
       context.missing(_senderMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     }
     return context;
   }
@@ -5598,7 +5275,7 @@ class Presences extends Table with TableInfo<Presences, DbPresence> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbPresence map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbPresence map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbPresence.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -5622,65 +5299,51 @@ class DbToDeviceQueue extends DataClass implements Insertable<DbToDeviceQueue> {
   final String txnId;
   final String content;
   DbToDeviceQueue(
-      {@required this.clientId,
-      @required this.id,
-      @required this.type,
-      @required this.txnId,
-      @required this.content});
+      {required this.clientId,
+      required this.id,
+      required this.type,
+      required this.txnId,
+      required this.content});
   factory DbToDeviceQueue.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbToDeviceQueue(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
-      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       txnId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}txn_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}txn_id'])!,
       content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
-    if (!nullToAbsent || txnId != null) {
-      map['txn_id'] = Variable<String>(txnId);
-    }
-    if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['id'] = Variable<int>(id);
+    map['type'] = Variable<String>(type);
+    map['txn_id'] = Variable<String>(txnId);
+    map['content'] = Variable<String>(content);
     return map;
   }
 
   ToDeviceQueueCompanion toCompanion(bool nullToAbsent) {
     return ToDeviceQueueCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      txnId:
-          txnId == null && nullToAbsent ? const Value.absent() : Value(txnId),
-      content: content == null && nullToAbsent
-          ? const Value.absent()
-          : Value(content),
+      clientId: Value(clientId),
+      id: Value(id),
+      type: Value(type),
+      txnId: Value(txnId),
+      content: Value(content),
     );
   }
 
   factory DbToDeviceQueue.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbToDeviceQueue(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -5691,7 +5354,7 @@ class DbToDeviceQueue extends DataClass implements Insertable<DbToDeviceQueue> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -5703,7 +5366,11 @@ class DbToDeviceQueue extends DataClass implements Insertable<DbToDeviceQueue> {
   }
 
   DbToDeviceQueue copyWith(
-          {int clientId, int id, String type, String txnId, String content}) =>
+          {int? clientId,
+          int? id,
+          String? type,
+          String? txnId,
+          String? content}) =>
       DbToDeviceQueue(
         clientId: clientId ?? this.clientId,
         id: id ?? this.id,
@@ -5753,21 +5420,21 @@ class ToDeviceQueueCompanion extends UpdateCompanion<DbToDeviceQueue> {
     this.content = const Value.absent(),
   });
   ToDeviceQueueCompanion.insert({
-    @required int clientId,
+    required int clientId,
     this.id = const Value.absent(),
-    @required String type,
-    @required String txnId,
-    @required String content,
+    required String type,
+    required String txnId,
+    required String content,
   })  : clientId = Value(clientId),
         type = Value(type),
         txnId = Value(txnId),
         content = Value(content);
   static Insertable<DbToDeviceQueue> custom({
-    Expression<int> clientId,
-    Expression<int> id,
-    Expression<String> type,
-    Expression<String> txnId,
-    Expression<String> content,
+    Expression<int>? clientId,
+    Expression<int>? id,
+    Expression<String>? type,
+    Expression<String>? txnId,
+    Expression<String>? content,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -5779,11 +5446,11 @@ class ToDeviceQueueCompanion extends UpdateCompanion<DbToDeviceQueue> {
   }
 
   ToDeviceQueueCompanion copyWith(
-      {Value<int> clientId,
-      Value<int> id,
-      Value<String> type,
-      Value<String> txnId,
-      Value<String> content}) {
+      {Value<int>? clientId,
+      Value<int>? id,
+      Value<String>? type,
+      Value<String>? txnId,
+      Value<String>? content}) {
     return ToDeviceQueueCompanion(
       clientId: clientId ?? this.clientId,
       id: id ?? this.id,
@@ -5830,19 +5497,17 @@ class ToDeviceQueueCompanion extends UpdateCompanion<DbToDeviceQueue> {
 class ToDeviceQueue extends Table
     with TableInfo<ToDeviceQueue, DbToDeviceQueue> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   ToDeviceQueue(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         declaredAsPrimaryKey: true,
@@ -5851,24 +5516,21 @@ class ToDeviceQueue extends Table
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _txnIdMeta = const VerificationMeta('txnId');
-  GeneratedTextColumn _txnId;
-  GeneratedTextColumn get txnId => _txnId ??= _constructTxnId();
+  late final GeneratedTextColumn txnId = _constructTxnId();
   GeneratedTextColumn _constructTxnId() {
     return GeneratedTextColumn('txn_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -5889,28 +5551,28 @@ class ToDeviceQueue extends Table
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('txn_id')) {
       context.handle(
-          _txnIdMeta, txnId.isAcceptableOrUnknown(data['txn_id'], _txnIdMeta));
+          _txnIdMeta, txnId.isAcceptableOrUnknown(data['txn_id']!, _txnIdMeta));
     } else if (isInserting) {
       context.missing(_txnIdMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
@@ -5920,7 +5582,7 @@ class ToDeviceQueue extends Table
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  DbToDeviceQueue map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbToDeviceQueue map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbToDeviceQueue.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -5941,67 +5603,50 @@ class DbSSSSCache extends DataClass implements Insertable<DbSSSSCache> {
   final String ciphertext;
   final String content;
   DbSSSSCache(
-      {@required this.clientId,
-      @required this.type,
-      @required this.keyId,
-      @required this.ciphertext,
-      @required this.content});
+      {required this.clientId,
+      required this.type,
+      required this.keyId,
+      required this.ciphertext,
+      required this.content});
   factory DbSSSSCache.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbSSSSCache(
       clientId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}client_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}client_id'])!,
       type: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}type']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}type'])!,
       keyId: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}key_id']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}key_id'])!,
       ciphertext: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}ciphertext']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}ciphertext'])!,
       content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || clientId != null) {
-      map['client_id'] = Variable<int>(clientId);
-    }
-    if (!nullToAbsent || type != null) {
-      map['type'] = Variable<String>(type);
-    }
-    if (!nullToAbsent || keyId != null) {
-      map['key_id'] = Variable<String>(keyId);
-    }
-    if (!nullToAbsent || ciphertext != null) {
-      map['ciphertext'] = Variable<String>(ciphertext);
-    }
-    if (!nullToAbsent || content != null) {
-      map['content'] = Variable<String>(content);
-    }
+    map['client_id'] = Variable<int>(clientId);
+    map['type'] = Variable<String>(type);
+    map['key_id'] = Variable<String>(keyId);
+    map['ciphertext'] = Variable<String>(ciphertext);
+    map['content'] = Variable<String>(content);
     return map;
   }
 
   SsssCacheCompanion toCompanion(bool nullToAbsent) {
     return SsssCacheCompanion(
-      clientId: clientId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(clientId),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-      keyId:
-          keyId == null && nullToAbsent ? const Value.absent() : Value(keyId),
-      ciphertext: ciphertext == null && nullToAbsent
-          ? const Value.absent()
-          : Value(ciphertext),
-      content: content == null && nullToAbsent
-          ? const Value.absent()
-          : Value(content),
+      clientId: Value(clientId),
+      type: Value(type),
+      keyId: Value(keyId),
+      ciphertext: Value(ciphertext),
+      content: Value(content),
     );
   }
 
   factory DbSSSSCache.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbSSSSCache(
       clientId: serializer.fromJson<int>(json['client_id']),
@@ -6012,7 +5657,7 @@ class DbSSSSCache extends DataClass implements Insertable<DbSSSSCache> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'client_id': serializer.toJson<int>(clientId),
@@ -6024,11 +5669,11 @@ class DbSSSSCache extends DataClass implements Insertable<DbSSSSCache> {
   }
 
   DbSSSSCache copyWith(
-          {int clientId,
-          String type,
-          String keyId,
-          String ciphertext,
-          String content}) =>
+          {int? clientId,
+          String? type,
+          String? keyId,
+          String? ciphertext,
+          String? content}) =>
       DbSSSSCache(
         clientId: clientId ?? this.clientId,
         type: type ?? this.type,
@@ -6080,22 +5725,22 @@ class SsssCacheCompanion extends UpdateCompanion<DbSSSSCache> {
     this.content = const Value.absent(),
   });
   SsssCacheCompanion.insert({
-    @required int clientId,
-    @required String type,
-    @required String keyId,
-    @required String ciphertext,
-    @required String content,
+    required int clientId,
+    required String type,
+    required String keyId,
+    required String ciphertext,
+    required String content,
   })  : clientId = Value(clientId),
         type = Value(type),
         keyId = Value(keyId),
         ciphertext = Value(ciphertext),
         content = Value(content);
   static Insertable<DbSSSSCache> custom({
-    Expression<int> clientId,
-    Expression<String> type,
-    Expression<String> keyId,
-    Expression<String> ciphertext,
-    Expression<String> content,
+    Expression<int>? clientId,
+    Expression<String>? type,
+    Expression<String>? keyId,
+    Expression<String>? ciphertext,
+    Expression<String>? content,
   }) {
     return RawValuesInsertable({
       if (clientId != null) 'client_id': clientId,
@@ -6107,11 +5752,11 @@ class SsssCacheCompanion extends UpdateCompanion<DbSSSSCache> {
   }
 
   SsssCacheCompanion copyWith(
-      {Value<int> clientId,
-      Value<String> type,
-      Value<String> keyId,
-      Value<String> ciphertext,
-      Value<String> content}) {
+      {Value<int>? clientId,
+      Value<String>? type,
+      Value<String>? keyId,
+      Value<String>? ciphertext,
+      Value<String>? content}) {
     return SsssCacheCompanion(
       clientId: clientId ?? this.clientId,
       type: type ?? this.type,
@@ -6157,43 +5802,38 @@ class SsssCacheCompanion extends UpdateCompanion<DbSSSSCache> {
 
 class SsssCache extends Table with TableInfo<SsssCache, DbSSSSCache> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   SsssCache(this._db, [this._alias]);
   final VerificationMeta _clientIdMeta = const VerificationMeta('clientId');
-  GeneratedIntColumn _clientId;
-  GeneratedIntColumn get clientId => _clientId ??= _constructClientId();
+  late final GeneratedIntColumn clientId = _constructClientId();
   GeneratedIntColumn _constructClientId() {
     return GeneratedIntColumn('client_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES clients(client_id)');
   }
 
   final VerificationMeta _typeMeta = const VerificationMeta('type');
-  GeneratedTextColumn _type;
-  GeneratedTextColumn get type => _type ??= _constructType();
+  late final GeneratedTextColumn type = _constructType();
   GeneratedTextColumn _constructType() {
     return GeneratedTextColumn('type', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _keyIdMeta = const VerificationMeta('keyId');
-  GeneratedTextColumn _keyId;
-  GeneratedTextColumn get keyId => _keyId ??= _constructKeyId();
+  late final GeneratedTextColumn keyId = _constructKeyId();
   GeneratedTextColumn _constructKeyId() {
     return GeneratedTextColumn('key_id', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _ciphertextMeta = const VerificationMeta('ciphertext');
-  GeneratedTextColumn _ciphertext;
-  GeneratedTextColumn get ciphertext => _ciphertext ??= _constructCiphertext();
+  late final GeneratedTextColumn ciphertext = _constructCiphertext();
   GeneratedTextColumn _constructCiphertext() {
     return GeneratedTextColumn('ciphertext', $tableName, false,
         $customConstraints: 'NOT NULL');
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
-  GeneratedTextColumn get content => _content ??= _constructContent();
+  late final GeneratedTextColumn content = _constructContent();
   GeneratedTextColumn _constructContent() {
     return GeneratedTextColumn('content', $tableName, false,
         $customConstraints: 'NOT NULL');
@@ -6215,19 +5855,19 @@ class SsssCache extends Table with TableInfo<SsssCache, DbSSSSCache> {
     final data = instance.toColumns(true);
     if (data.containsKey('client_id')) {
       context.handle(_clientIdMeta,
-          clientId.isAcceptableOrUnknown(data['client_id'], _clientIdMeta));
+          clientId.isAcceptableOrUnknown(data['client_id']!, _clientIdMeta));
     } else if (isInserting) {
       context.missing(_clientIdMeta);
     }
     if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type']!, _typeMeta));
     } else if (isInserting) {
       context.missing(_typeMeta);
     }
     if (data.containsKey('key_id')) {
       context.handle(
-          _keyIdMeta, keyId.isAcceptableOrUnknown(data['key_id'], _keyIdMeta));
+          _keyIdMeta, keyId.isAcceptableOrUnknown(data['key_id']!, _keyIdMeta));
     } else if (isInserting) {
       context.missing(_keyIdMeta);
     }
@@ -6235,13 +5875,13 @@ class SsssCache extends Table with TableInfo<SsssCache, DbSSSSCache> {
       context.handle(
           _ciphertextMeta,
           ciphertext.isAcceptableOrUnknown(
-              data['ciphertext'], _ciphertextMeta));
+              data['ciphertext']!, _ciphertextMeta));
     } else if (isInserting) {
       context.missing(_ciphertextMeta);
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['content'], _contentMeta));
+          content.isAcceptableOrUnknown(data['content']!, _contentMeta));
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
@@ -6251,7 +5891,7 @@ class SsssCache extends Table with TableInfo<SsssCache, DbSSSSCache> {
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  DbSSSSCache map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbSSSSCache map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbSSSSCache.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -6269,15 +5909,15 @@ class SsssCache extends Table with TableInfo<SsssCache, DbSSSSCache> {
 
 class DbFile extends DataClass implements Insertable<DbFile> {
   final String mxcUri;
-  final Uint8List bytes;
-  final int savedAt;
-  DbFile({@required this.mxcUri, this.bytes, this.savedAt});
+  final Uint8List? bytes;
+  final int? savedAt;
+  DbFile({required this.mxcUri, this.bytes, this.savedAt});
   factory DbFile.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return DbFile(
       mxcUri: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}mxc_uri']),
+          .mapFromDatabaseResponse(data['${effectivePrefix}mxc_uri'])!,
       bytes: const BlobType()
           .mapFromDatabaseResponse(data['${effectivePrefix}bytes']),
       savedAt: const IntType()
@@ -6287,22 +5927,19 @@ class DbFile extends DataClass implements Insertable<DbFile> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || mxcUri != null) {
-      map['mxc_uri'] = Variable<String>(mxcUri);
-    }
+    map['mxc_uri'] = Variable<String>(mxcUri);
     if (!nullToAbsent || bytes != null) {
-      map['bytes'] = Variable<Uint8List>(bytes);
+      map['bytes'] = Variable<Uint8List?>(bytes);
     }
     if (!nullToAbsent || savedAt != null) {
-      map['saved_at'] = Variable<int>(savedAt);
+      map['saved_at'] = Variable<int?>(savedAt);
     }
     return map;
   }
 
   FilesCompanion toCompanion(bool nullToAbsent) {
     return FilesCompanion(
-      mxcUri:
-          mxcUri == null && nullToAbsent ? const Value.absent() : Value(mxcUri),
+      mxcUri: Value(mxcUri),
       bytes:
           bytes == null && nullToAbsent ? const Value.absent() : Value(bytes),
       savedAt: savedAt == null && nullToAbsent
@@ -6312,25 +5949,25 @@ class DbFile extends DataClass implements Insertable<DbFile> {
   }
 
   factory DbFile.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return DbFile(
       mxcUri: serializer.fromJson<String>(json['mxc_uri']),
-      bytes: serializer.fromJson<Uint8List>(json['bytes']),
-      savedAt: serializer.fromJson<int>(json['saved_at']),
+      bytes: serializer.fromJson<Uint8List?>(json['bytes']),
+      savedAt: serializer.fromJson<int?>(json['saved_at']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'mxc_uri': serializer.toJson<String>(mxcUri),
-      'bytes': serializer.toJson<Uint8List>(bytes),
-      'saved_at': serializer.toJson<int>(savedAt),
+      'bytes': serializer.toJson<Uint8List?>(bytes),
+      'saved_at': serializer.toJson<int?>(savedAt),
     };
   }
 
-  DbFile copyWith({String mxcUri, Uint8List bytes, int savedAt}) => DbFile(
+  DbFile copyWith({String? mxcUri, Uint8List? bytes, int? savedAt}) => DbFile(
         mxcUri: mxcUri ?? this.mxcUri,
         bytes: bytes ?? this.bytes,
         savedAt: savedAt ?? this.savedAt,
@@ -6359,22 +5996,22 @@ class DbFile extends DataClass implements Insertable<DbFile> {
 
 class FilesCompanion extends UpdateCompanion<DbFile> {
   final Value<String> mxcUri;
-  final Value<Uint8List> bytes;
-  final Value<int> savedAt;
+  final Value<Uint8List?> bytes;
+  final Value<int?> savedAt;
   const FilesCompanion({
     this.mxcUri = const Value.absent(),
     this.bytes = const Value.absent(),
     this.savedAt = const Value.absent(),
   });
   FilesCompanion.insert({
-    @required String mxcUri,
+    required String mxcUri,
     this.bytes = const Value.absent(),
     this.savedAt = const Value.absent(),
   }) : mxcUri = Value(mxcUri);
   static Insertable<DbFile> custom({
-    Expression<String> mxcUri,
-    Expression<Uint8List> bytes,
-    Expression<int> savedAt,
+    Expression<String>? mxcUri,
+    Expression<Uint8List?>? bytes,
+    Expression<int?>? savedAt,
   }) {
     return RawValuesInsertable({
       if (mxcUri != null) 'mxc_uri': mxcUri,
@@ -6384,7 +6021,7 @@ class FilesCompanion extends UpdateCompanion<DbFile> {
   }
 
   FilesCompanion copyWith(
-      {Value<String> mxcUri, Value<Uint8List> bytes, Value<int> savedAt}) {
+      {Value<String>? mxcUri, Value<Uint8List?>? bytes, Value<int?>? savedAt}) {
     return FilesCompanion(
       mxcUri: mxcUri ?? this.mxcUri,
       bytes: bytes ?? this.bytes,
@@ -6399,10 +6036,10 @@ class FilesCompanion extends UpdateCompanion<DbFile> {
       map['mxc_uri'] = Variable<String>(mxcUri.value);
     }
     if (bytes.present) {
-      map['bytes'] = Variable<Uint8List>(bytes.value);
+      map['bytes'] = Variable<Uint8List?>(bytes.value);
     }
     if (savedAt.present) {
-      map['saved_at'] = Variable<int>(savedAt.value);
+      map['saved_at'] = Variable<int?>(savedAt.value);
     }
     return map;
   }
@@ -6420,27 +6057,24 @@ class FilesCompanion extends UpdateCompanion<DbFile> {
 
 class Files extends Table with TableInfo<Files, DbFile> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   Files(this._db, [this._alias]);
   final VerificationMeta _mxcUriMeta = const VerificationMeta('mxcUri');
-  GeneratedTextColumn _mxcUri;
-  GeneratedTextColumn get mxcUri => _mxcUri ??= _constructMxcUri();
+  late final GeneratedTextColumn mxcUri = _constructMxcUri();
   GeneratedTextColumn _constructMxcUri() {
     return GeneratedTextColumn('mxc_uri', $tableName, false,
         $customConstraints: 'NOT NULL PRIMARY KEY');
   }
 
   final VerificationMeta _bytesMeta = const VerificationMeta('bytes');
-  GeneratedBlobColumn _bytes;
-  GeneratedBlobColumn get bytes => _bytes ??= _constructBytes();
+  late final GeneratedBlobColumn bytes = _constructBytes();
   GeneratedBlobColumn _constructBytes() {
     return GeneratedBlobColumn('bytes', $tableName, true,
         $customConstraints: '');
   }
 
   final VerificationMeta _savedAtMeta = const VerificationMeta('savedAt');
-  GeneratedIntColumn _savedAt;
-  GeneratedIntColumn get savedAt => _savedAt ??= _constructSavedAt();
+  late final GeneratedIntColumn savedAt = _constructSavedAt();
   GeneratedIntColumn _constructSavedAt() {
     return GeneratedIntColumn('saved_at', $tableName, true,
         $customConstraints: '');
@@ -6461,17 +6095,17 @@ class Files extends Table with TableInfo<Files, DbFile> {
     final data = instance.toColumns(true);
     if (data.containsKey('mxc_uri')) {
       context.handle(_mxcUriMeta,
-          mxcUri.isAcceptableOrUnknown(data['mxc_uri'], _mxcUriMeta));
+          mxcUri.isAcceptableOrUnknown(data['mxc_uri']!, _mxcUriMeta));
     } else if (isInserting) {
       context.missing(_mxcUriMeta);
     }
     if (data.containsKey('bytes')) {
       context.handle(
-          _bytesMeta, bytes.isAcceptableOrUnknown(data['bytes'], _bytesMeta));
+          _bytesMeta, bytes.isAcceptableOrUnknown(data['bytes']!, _bytesMeta));
     }
     if (data.containsKey('saved_at')) {
       context.handle(_savedAtMeta,
-          savedAt.isAcceptableOrUnknown(data['saved_at'], _savedAtMeta));
+          savedAt.isAcceptableOrUnknown(data['saved_at']!, _savedAtMeta));
     }
     return context;
   }
@@ -6479,7 +6113,7 @@ class Files extends Table with TableInfo<Files, DbFile> {
   @override
   Set<GeneratedColumn> get $primaryKey => {mxcUri};
   @override
-  DbFile map(Map<String, dynamic> data, {String tablePrefix}) {
+  DbFile map(Map<String, dynamic> data, {String? tablePrefix}) {
     return DbFile.fromData(data, _db,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
@@ -6498,95 +6132,57 @@ class Files extends Table with TableInfo<Files, DbFile> {
 abstract class _$Database extends GeneratedDatabase {
   _$Database(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   _$Database.connect(DatabaseConnection c) : super.connect(c);
-  Clients _clients;
-  Clients get clients => _clients ??= Clients(this);
-  UserDeviceKeys _userDeviceKeys;
-  UserDeviceKeys get userDeviceKeys => _userDeviceKeys ??= UserDeviceKeys(this);
-  Index _userDeviceKeysIndex;
-  Index get userDeviceKeysIndex => _userDeviceKeysIndex ??= Index(
-      'user_device_keys_index',
+  late final Clients clients = Clients(this);
+  late final UserDeviceKeys userDeviceKeys = UserDeviceKeys(this);
+  late final Index userDeviceKeysIndex = Index('user_device_keys_index',
       'CREATE INDEX user_device_keys_index ON user_device_keys(client_id);');
-  UserDeviceKeysKey _userDeviceKeysKey;
-  UserDeviceKeysKey get userDeviceKeysKey =>
-      _userDeviceKeysKey ??= UserDeviceKeysKey(this);
-  Index _userDeviceKeysKeyIndex;
-  Index get userDeviceKeysKeyIndex => _userDeviceKeysKeyIndex ??= Index(
-      'user_device_keys_key_index',
+  late final UserDeviceKeysKey userDeviceKeysKey = UserDeviceKeysKey(this);
+  late final Index userDeviceKeysKeyIndex = Index('user_device_keys_key_index',
       'CREATE INDEX user_device_keys_key_index ON user_device_keys_key(client_id);');
-  UserCrossSigningKeys _userCrossSigningKeys;
-  UserCrossSigningKeys get userCrossSigningKeys =>
-      _userCrossSigningKeys ??= UserCrossSigningKeys(this);
-  Index _userCrossSigningKeysIndex;
-  Index get userCrossSigningKeysIndex => _userCrossSigningKeysIndex ??= Index(
+  late final UserCrossSigningKeys userCrossSigningKeys =
+      UserCrossSigningKeys(this);
+  late final Index userCrossSigningKeysIndex = Index(
       'user_cross_signing_keys_index',
       'CREATE INDEX user_cross_signing_keys_index ON user_cross_signing_keys(client_id);');
-  OlmSessions _olmSessions;
-  OlmSessions get olmSessions => _olmSessions ??= OlmSessions(this);
-  Index _olmSessionsIndex;
-  Index get olmSessionsIndex => _olmSessionsIndex ??= Index(
-      'olm_sessions_index',
+  late final OlmSessions olmSessions = OlmSessions(this);
+  late final Index olmSessionsIndex = Index('olm_sessions_index',
       'CREATE INDEX olm_sessions_index ON olm_sessions(client_id);');
-  Index _olmSessionsIdentityIndex;
-  Index get olmSessionsIdentityIndex => _olmSessionsIdentityIndex ??= Index(
+  late final Index olmSessionsIdentityIndex = Index(
       'olm_sessions_identity_index',
       'CREATE INDEX olm_sessions_identity_index ON olm_sessions(client_id, identity_key);');
-  OutboundGroupSessions _outboundGroupSessions;
-  OutboundGroupSessions get outboundGroupSessions =>
-      _outboundGroupSessions ??= OutboundGroupSessions(this);
-  Index _outboundGroupSessionsIndex;
-  Index get outboundGroupSessionsIndex => _outboundGroupSessionsIndex ??= Index(
+  late final OutboundGroupSessions outboundGroupSessions =
+      OutboundGroupSessions(this);
+  late final Index outboundGroupSessionsIndex = Index(
       'outbound_group_sessions_index',
       'CREATE INDEX outbound_group_sessions_index ON outbound_group_sessions(client_id);');
-  InboundGroupSessions _inboundGroupSessions;
-  InboundGroupSessions get inboundGroupSessions =>
-      _inboundGroupSessions ??= InboundGroupSessions(this);
-  Index _inboundGroupSessionsIndex;
-  Index get inboundGroupSessionsIndex => _inboundGroupSessionsIndex ??= Index(
+  late final InboundGroupSessions inboundGroupSessions =
+      InboundGroupSessions(this);
+  late final Index inboundGroupSessionsIndex = Index(
       'inbound_group_sessions_index',
       'CREATE INDEX inbound_group_sessions_index ON inbound_group_sessions(client_id);');
-  Rooms _rooms;
-  Rooms get rooms => _rooms ??= Rooms(this);
-  Index _roomsIndex;
-  Index get roomsIndex => _roomsIndex ??=
+  late final Rooms rooms = Rooms(this);
+  late final Index roomsIndex =
       Index('rooms_index', 'CREATE INDEX rooms_index ON rooms(client_id);');
-  Events _events;
-  Events get events => _events ??= Events(this);
-  Index _eventsIndex;
-  Index get eventsIndex => _eventsIndex ??= Index('events_index',
+  late final Events events = Events(this);
+  late final Index eventsIndex = Index('events_index',
       'CREATE INDEX events_index ON events(client_id, room_id);');
-  RoomStates _roomStates;
-  RoomStates get roomStates => _roomStates ??= RoomStates(this);
-  Index _roomStatesIndex;
-  Index get roomStatesIndex => _roomStatesIndex ??= Index('room_states_index',
+  late final RoomStates roomStates = RoomStates(this);
+  late final Index roomStatesIndex = Index('room_states_index',
       'CREATE INDEX room_states_index ON room_states(client_id);');
-  AccountData _accountData;
-  AccountData get accountData => _accountData ??= AccountData(this);
-  Index _accountDataIndex;
-  Index get accountDataIndex => _accountDataIndex ??= Index(
-      'account_data_index',
+  late final AccountData accountData = AccountData(this);
+  late final Index accountDataIndex = Index('account_data_index',
       'CREATE INDEX account_data_index ON account_data(client_id);');
-  RoomAccountData _roomAccountData;
-  RoomAccountData get roomAccountData =>
-      _roomAccountData ??= RoomAccountData(this);
-  Index _roomAccountDataIndex;
-  Index get roomAccountDataIndex => _roomAccountDataIndex ??= Index(
-      'room_account_data_index',
+  late final RoomAccountData roomAccountData = RoomAccountData(this);
+  late final Index roomAccountDataIndex = Index('room_account_data_index',
       'CREATE INDEX room_account_data_index ON room_account_data(client_id);');
-  Presences _presences;
-  Presences get presences => _presences ??= Presences(this);
-  Index _presencesIndex;
-  Index get presencesIndex => _presencesIndex ??= Index('presences_index',
+  late final Presences presences = Presences(this);
+  late final Index presencesIndex = Index('presences_index',
       'CREATE INDEX presences_index ON presences(client_id);');
-  ToDeviceQueue _toDeviceQueue;
-  ToDeviceQueue get toDeviceQueue => _toDeviceQueue ??= ToDeviceQueue(this);
-  Index _toDeviceQueueIndex;
-  Index get toDeviceQueueIndex => _toDeviceQueueIndex ??= Index(
-      'to_device_queue_index',
+  late final ToDeviceQueue toDeviceQueue = ToDeviceQueue(this);
+  late final Index toDeviceQueueIndex = Index('to_device_queue_index',
       'CREATE INDEX to_device_queue_index ON to_device_queue(client_id);');
-  SsssCache _ssssCache;
-  SsssCache get ssssCache => _ssssCache ??= SsssCache(this);
-  Files _files;
-  Files get files => _files ??= Files(this);
+  late final SsssCache ssssCache = SsssCache(this);
+  late final Files files = Files(this);
   Selectable<DbClient> dbGetClient(String name) {
     return customSelect('SELECT * FROM clients WHERE name = :name',
         variables: [Variable<String>(name)],
@@ -6597,10 +6193,10 @@ abstract class _$Database extends GeneratedDatabase {
       String homeserver_url,
       String token,
       String user_id,
-      String device_id,
-      String device_name,
-      String prev_batch,
-      String olm_account,
+      String? device_id,
+      String? device_name,
+      String? prev_batch,
+      String? olm_account,
       int client_id) {
     return customUpdate(
       'UPDATE clients SET homeserver_url = :homeserver_url, token = :token, user_id = :user_id, device_id = :device_id, device_name = :device_name, prev_batch = :prev_batch, olm_account = :olm_account WHERE client_id = :client_id',
@@ -6608,10 +6204,10 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(homeserver_url),
         Variable<String>(token),
         Variable<String>(user_id),
-        Variable<String>(device_id),
-        Variable<String>(device_name),
-        Variable<String>(prev_batch),
-        Variable<String>(olm_account),
+        Variable<String?>(device_id),
+        Variable<String?>(device_name),
+        Variable<String?>(prev_batch),
+        Variable<String?>(olm_account),
         Variable<int>(client_id)
       ],
       updates: {clients},
@@ -6619,28 +6215,28 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> updateClientKeys(String olm_account, int client_id) {
+  Future<int> updateClientKeys(String? olm_account, int client_id) {
     return customUpdate(
       'UPDATE clients SET olm_account = :olm_account WHERE client_id = :client_id',
-      variables: [Variable<String>(olm_account), Variable<int>(client_id)],
+      variables: [Variable<String?>(olm_account), Variable<int>(client_id)],
       updates: {clients},
       updateKind: UpdateKind.update,
     );
   }
 
-  Future<int> storePrevBatch(String prev_batch, int client_id) {
+  Future<int> storePrevBatch(String? prev_batch, int client_id) {
     return customUpdate(
       'UPDATE clients SET prev_batch = :prev_batch WHERE client_id = :client_id',
-      variables: [Variable<String>(prev_batch), Variable<int>(client_id)],
+      variables: [Variable<String?>(prev_batch), Variable<int>(client_id)],
       updates: {clients},
       updateKind: UpdateKind.update,
     );
   }
 
-  Future<int> storeSyncFilterId(String sync_filter_id, int client_id) {
+  Future<int> storeSyncFilterId(String? sync_filter_id, int client_id) {
     return customUpdate(
       'UPDATE clients SET sync_filter_id = :sync_filter_id WHERE client_id = :client_id',
-      variables: [Variable<String>(sync_filter_id), Variable<int>(client_id)],
+      variables: [Variable<String?>(sync_filter_id), Variable<int>(client_id)],
       updates: {clients},
       updateKind: UpdateKind.update,
     );
@@ -6683,7 +6279,7 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Selectable<DbOlmSessions> dbGetOlmSessionsForDevices(
-      int client_id, List<String> identity_keys) {
+      int client_id, List<String?> identity_keys) {
     var $arrayStartIndex = 2;
     final expandedidentity_keys =
         $expandVar($arrayStartIndex, identity_keys.length);
@@ -6700,7 +6296,7 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> storeOlmSession(int client_id, String identitiy_key,
-      String session_id, String pickle, int last_received) {
+      String session_id, String pickle, int? last_received) {
     return customInsert(
       'INSERT OR REPLACE INTO olm_sessions (client_id, identity_key, session_id, pickle, last_received) VALUES (:client_id, :identitiy_key, :session_id, :pickle, :last_received)',
       variables: [
@@ -6708,7 +6304,7 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(identitiy_key),
         Variable<String>(session_id),
         Variable<String>(pickle),
-        Variable<int>(last_received)
+        Variable<int?>(last_received)
       ],
       updates: {olmSessions},
     );
@@ -6799,11 +6395,11 @@ abstract class _$Database extends GeneratedDatabase {
       String room_id,
       String session_id,
       String pickle,
-      String content,
-      String indexes,
-      String allowed_at_index,
-      String sender_key,
-      String sender_claimed_keys) {
+      String? content,
+      String? indexes,
+      String? allowed_at_index,
+      String? sender_key,
+      String? sender_claimed_keys) {
     return customInsert(
       'INSERT OR REPLACE INTO inbound_group_sessions (client_id, room_id, session_id, pickle, content, indexes, allowed_at_index, sender_key, sender_claimed_keys) VALUES (:client_id, :room_id, :session_id, :pickle, :content, :indexes, :allowed_at_index, :sender_key, :sender_claimed_keys)',
       variables: [
@@ -6811,22 +6407,22 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(room_id),
         Variable<String>(session_id),
         Variable<String>(pickle),
-        Variable<String>(content),
-        Variable<String>(indexes),
-        Variable<String>(allowed_at_index),
-        Variable<String>(sender_key),
-        Variable<String>(sender_claimed_keys)
+        Variable<String?>(content),
+        Variable<String?>(indexes),
+        Variable<String?>(allowed_at_index),
+        Variable<String?>(sender_key),
+        Variable<String?>(sender_claimed_keys)
       ],
       updates: {inboundGroupSessions},
     );
   }
 
   Future<int> updateInboundGroupSessionIndexes(
-      String indexes, int client_id, String room_id, String session_id) {
+      String? indexes, int client_id, String room_id, String session_id) {
     return customUpdate(
       'UPDATE inbound_group_sessions SET indexes = :indexes WHERE client_id = :client_id AND room_id = :room_id AND session_id = :session_id',
       variables: [
-        Variable<String>(indexes),
+        Variable<String?>(indexes),
         Variable<int>(client_id),
         Variable<String>(room_id),
         Variable<String>(session_id)
@@ -6836,12 +6432,12 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> updateInboundGroupSessionAllowedAtIndex(String allowed_at_index,
+  Future<int> updateInboundGroupSessionAllowedAtIndex(String? allowed_at_index,
       int client_id, String room_id, String session_id) {
     return customUpdate(
       'UPDATE inbound_group_sessions SET allowed_at_index = :allowed_at_index WHERE client_id = :client_id AND room_id = :room_id AND session_id = :session_id',
       variables: [
-        Variable<String>(allowed_at_index),
+        Variable<String?>(allowed_at_index),
         Variable<int>(client_id),
         Variable<String>(room_id),
         Variable<String>(session_id)
@@ -6882,24 +6478,24 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> storeUserDeviceKeysInfo(
-      int client_id, String user_id, bool outdated) {
+      int client_id, String user_id, bool? outdated) {
     return customInsert(
       'INSERT OR REPLACE INTO user_device_keys (client_id, user_id, outdated) VALUES (:client_id, :user_id, :outdated)',
       variables: [
         Variable<int>(client_id),
         Variable<String>(user_id),
-        Variable<bool>(outdated)
+        Variable<bool?>(outdated)
       ],
       updates: {userDeviceKeys},
     );
   }
 
   Future<int> setVerifiedUserDeviceKey(
-      bool verified, int client_id, String user_id, String device_id) {
+      bool? verified, int client_id, String user_id, String device_id) {
     return customUpdate(
       'UPDATE user_device_keys_key SET verified = :verified WHERE client_id = :client_id AND user_id = :user_id AND device_id = :device_id',
       variables: [
-        Variable<bool>(verified),
+        Variable<bool?>(verified),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(device_id)
@@ -6910,11 +6506,11 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> setBlockedUserDeviceKey(
-      bool blocked, int client_id, String user_id, String device_id) {
+      bool? blocked, int client_id, String user_id, String device_id) {
     return customUpdate(
       'UPDATE user_device_keys_key SET blocked = :blocked WHERE client_id = :client_id AND user_id = :user_id AND device_id = :device_id',
       variables: [
-        Variable<bool>(blocked),
+        Variable<bool?>(blocked),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(device_id)
@@ -6929,9 +6525,9 @@ abstract class _$Database extends GeneratedDatabase {
       String user_id,
       String device_id,
       String content,
-      bool verified,
-      bool blocked,
-      int last_active) {
+      bool? verified,
+      bool? blocked,
+      int? last_active) {
     return customInsert(
       'INSERT OR REPLACE INTO user_device_keys_key (client_id, user_id, device_id, content, verified, blocked, last_active) VALUES (:client_id, :user_id, :device_id, :content, :verified, :blocked, :last_active)',
       variables: [
@@ -6939,9 +6535,9 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(user_id),
         Variable<String>(device_id),
         Variable<String>(content),
-        Variable<bool>(verified),
-        Variable<bool>(blocked),
-        Variable<int>(last_active)
+        Variable<bool?>(verified),
+        Variable<bool?>(blocked),
+        Variable<int?>(last_active)
       ],
       updates: {userDeviceKeysKey},
     );
@@ -6962,11 +6558,11 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> setLastActiveUserDeviceKey(
-      int last_active, int client_id, String user_id, String device_id) {
+      int? last_active, int client_id, String user_id, String device_id) {
     return customUpdate(
       'UPDATE user_device_keys_key SET last_active = :last_active WHERE client_id = :client_id AND user_id = :user_id AND device_id = :device_id',
       variables: [
-        Variable<int>(last_active),
+        Variable<int?>(last_active),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(device_id)
@@ -6976,12 +6572,12 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> setLastSentMessageUserDeviceKey(String last_sent_message,
+  Future<int> setLastSentMessageUserDeviceKey(String? last_sent_message,
       int client_id, String user_id, String device_id) {
     return customUpdate(
       'UPDATE user_device_keys_key SET last_sent_message = :last_sent_message WHERE client_id = :client_id AND user_id = :user_id AND device_id = :device_id',
       variables: [
-        Variable<String>(last_sent_message),
+        Variable<String?>(last_sent_message),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(device_id)
@@ -6991,7 +6587,7 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Selectable<String> dbGetLastSentMessageUserDeviceKey(
+  Selectable<String?> dbGetLastSentMessageUserDeviceKey(
       int client_id, String user_id, String device_id) {
     return customSelect(
         'SELECT last_sent_message FROM user_device_keys_key WHERE client_id = :client_id AND user_id = :user_id AND device_id = :device_id',
@@ -7002,15 +6598,15 @@ abstract class _$Database extends GeneratedDatabase {
         ],
         readsFrom: {
           userDeviceKeysKey
-        }).map((QueryRow row) => row.read<String>('last_sent_message'));
+        }).map((QueryRow row) => row.read<String?>('last_sent_message'));
   }
 
   Future<int> setVerifiedUserCrossSigningKey(
-      bool verified, int client_id, String user_id, String public_key) {
+      bool? verified, int client_id, String user_id, String public_key) {
     return customUpdate(
       'UPDATE user_cross_signing_keys SET verified = :verified WHERE client_id = :client_id AND user_id = :user_id AND public_key = :public_key',
       variables: [
-        Variable<bool>(verified),
+        Variable<bool?>(verified),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(public_key)
@@ -7021,11 +6617,11 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> setBlockedUserCrossSigningKey(
-      bool blocked, int client_id, String user_id, String public_key) {
+      bool? blocked, int client_id, String user_id, String public_key) {
     return customUpdate(
       'UPDATE user_cross_signing_keys SET blocked = :blocked WHERE client_id = :client_id AND user_id = :user_id AND public_key = :public_key',
       variables: [
-        Variable<bool>(blocked),
+        Variable<bool?>(blocked),
         Variable<int>(client_id),
         Variable<String>(user_id),
         Variable<String>(public_key)
@@ -7036,7 +6632,7 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> storeUserCrossSigningKey(int client_id, String user_id,
-      String public_key, String content, bool verified, bool blocked) {
+      String public_key, String content, bool? verified, bool? blocked) {
     return customInsert(
       'INSERT OR REPLACE INTO user_cross_signing_keys (client_id, user_id, public_key, content, verified, blocked) VALUES (:client_id, :user_id, :public_key, :content, :verified, :blocked)',
       variables: [
@@ -7044,8 +6640,8 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(user_id),
         Variable<String>(public_key),
         Variable<String>(content),
-        Variable<bool>(verified),
-        Variable<bool>(blocked)
+        Variable<bool?>(verified),
+        Variable<bool?>(blocked)
       ],
       updates: {userCrossSigningKeys},
     );
@@ -7101,10 +6697,10 @@ abstract class _$Database extends GeneratedDatabase {
       String homeserver_url,
       String token,
       String user_id,
-      String device_id,
-      String device_name,
-      String prev_batch,
-      String olm_account) {
+      String? device_id,
+      String? device_name,
+      String? prev_batch,
+      String? olm_account) {
     return customInsert(
       'INSERT INTO clients (name, homeserver_url, token, user_id, device_id, device_name, prev_batch, olm_account) VALUES (:name, :homeserver_url, :token, :user_id, :device_id, :device_name, :prev_batch, :olm_account)',
       variables: [
@@ -7112,10 +6708,10 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<String>(homeserver_url),
         Variable<String>(token),
         Variable<String>(user_id),
-        Variable<String>(device_id),
-        Variable<String>(device_name),
-        Variable<String>(prev_batch),
-        Variable<String>(olm_account)
+        Variable<String?>(device_id),
+        Variable<String?>(device_name),
+        Variable<String?>(prev_batch),
+        Variable<String?>(olm_account)
       ],
       updates: {clients},
     );
@@ -7135,11 +6731,11 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> setRoomPrevBatch(
-      String prev_batch, int client_id, String room_id) {
+      String? prev_batch, int client_id, String room_id) {
     return customUpdate(
       'UPDATE rooms SET prev_batch = :prev_batch WHERE client_id = :client_id AND room_id = :room_id',
       variables: [
-        Variable<String>(prev_batch),
+        Variable<String?>(prev_batch),
         Variable<int>(client_id),
         Variable<String>(room_id)
       ],
@@ -7170,26 +6766,26 @@ abstract class _$Database extends GeneratedDatabase {
         readsFrom: {accountData}).map(accountData.mapFromRow);
   }
 
-  Future<int> storeAccountData(int client_id, String type, String content) {
+  Future<int> storeAccountData(int client_id, String type, String? content) {
     return customInsert(
       'INSERT OR REPLACE INTO account_data (client_id, type, content) VALUES (:client_id, :type, :content)',
       variables: [
         Variable<int>(client_id),
         Variable<String>(type),
-        Variable<String>(content)
+        Variable<String?>(content)
       ],
       updates: {accountData},
     );
   }
 
-  Future<int> updateEvent(String unsigned, String content, String prev_content,
-      int client_id, String event_id, String room_id) {
+  Future<int> updateEvent(String? unsigned, String? content,
+      String? prev_content, int client_id, String event_id, String room_id) {
     return customUpdate(
       'UPDATE events SET unsigned = :unsigned, content = :content, prev_content = :prev_content WHERE client_id = :client_id AND event_id = :event_id AND room_id = :room_id',
       variables: [
-        Variable<String>(unsigned),
-        Variable<String>(content),
-        Variable<String>(prev_content),
+        Variable<String?>(unsigned),
+        Variable<String?>(content),
+        Variable<String?>(prev_content),
         Variable<int>(client_id),
         Variable<String>(event_id),
         Variable<String>(room_id)
@@ -7199,12 +6795,12 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> updateEventStatus(int status, String new_event_id, int client_id,
+  Future<int> updateEventStatus(int? status, String new_event_id, int client_id,
       String old_event_id, String room_id) {
     return customUpdate(
       'UPDATE events SET status = :status, event_id = :new_event_id WHERE client_id = :client_id AND event_id = :old_event_id AND room_id = :room_id',
       variables: [
-        Variable<int>(status),
+        Variable<int?>(status),
         Variable<String>(new_event_id),
         Variable<int>(client_id),
         Variable<String>(old_event_id),
@@ -7216,11 +6812,11 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> updateEventStatusOnly(
-      int status, int client_id, String event_id, String room_id) {
+      int? status, int client_id, String event_id, String room_id) {
     return customUpdate(
       'UPDATE events SET status = :status WHERE client_id = :client_id AND event_id = :event_id AND room_id = :room_id',
       variables: [
-        Variable<int>(status),
+        Variable<int?>(status),
         Variable<int>(client_id),
         Variable<String>(event_id),
         Variable<String>(room_id)
@@ -7278,11 +6874,11 @@ abstract class _$Database extends GeneratedDatabase {
       int origin_server_ts,
       String sender,
       String type,
-      String unsigned,
-      String content,
-      String prev_content,
-      String state_key,
-      int status) {
+      String? unsigned,
+      String? content,
+      String? prev_content,
+      String? state_key,
+      int? status) {
     return customInsert(
       'INSERT OR REPLACE INTO events (client_id, event_id, room_id, sort_order, origin_server_ts, sender, type, unsigned, content, prev_content, state_key, status) VALUES (:client_id, :event_id, :room_id, :sort_order, :origin_server_ts, :sender, :type, :unsigned, :content, :prev_content, :state_key, :status)',
       variables: [
@@ -7293,11 +6889,11 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<int>(origin_server_ts),
         Variable<String>(sender),
         Variable<String>(type),
-        Variable<String>(unsigned),
-        Variable<String>(content),
-        Variable<String>(prev_content),
-        Variable<String>(state_key),
-        Variable<int>(status)
+        Variable<String?>(unsigned),
+        Variable<String?>(content),
+        Variable<String?>(prev_content),
+        Variable<String?>(state_key),
+        Variable<int?>(status)
       ],
       updates: {events},
     );
@@ -7311,9 +6907,9 @@ abstract class _$Database extends GeneratedDatabase {
       int origin_server_ts,
       String sender,
       String type,
-      String unsigned,
-      String content,
-      String prev_content,
+      String? unsigned,
+      String? content,
+      String? prev_content,
       String state_key) {
     return customInsert(
       'INSERT OR REPLACE INTO room_states (client_id, event_id, room_id, sort_order, origin_server_ts, sender, type, unsigned, content, prev_content, state_key) VALUES (:client_id, :event_id, :room_id, :sort_order, :origin_server_ts, :sender, :type, :unsigned, :content, :prev_content, :state_key)',
@@ -7325,9 +6921,9 @@ abstract class _$Database extends GeneratedDatabase {
         Variable<int>(origin_server_ts),
         Variable<String>(sender),
         Variable<String>(type),
-        Variable<String>(unsigned),
-        Variable<String>(content),
-        Variable<String>(prev_content),
+        Variable<String?>(unsigned),
+        Variable<String?>(content),
+        Variable<String?>(prev_content),
         Variable<String>(state_key)
       ],
       updates: {roomStates},
@@ -7342,14 +6938,14 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Future<int> storeRoomAccountData(
-      int client_id, String type, String room_id, String content) {
+      int client_id, String type, String room_id, String? content) {
     return customInsert(
       'INSERT OR REPLACE INTO room_account_data (client_id, type, room_id, content) VALUES (:client_id, :type, :room_id, :content)',
       variables: [
         Variable<int>(client_id),
         Variable<String>(type),
         Variable<String>(room_id),
-        Variable<String>(content)
+        Variable<String?>(content)
       ],
       updates: {roomAccountData},
     );
@@ -7450,13 +7046,13 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> storeFile(String mxc_uri, Uint8List bytes, int time) {
+  Future<int> storeFile(String mxc_uri, Uint8List? bytes, int? time) {
     return customInsert(
       'INSERT OR REPLACE INTO files (mxc_uri, bytes, saved_at) VALUES (:mxc_uri, :bytes, :time)',
       variables: [
         Variable<String>(mxc_uri),
-        Variable<Uint8List>(bytes),
-        Variable<int>(time)
+        Variable<Uint8List?>(bytes),
+        Variable<int?>(time)
       ],
       updates: {files},
     );
@@ -7477,10 +7073,10 @@ abstract class _$Database extends GeneratedDatabase {
     );
   }
 
-  Future<int> deleteOldFiles(int saved_at) {
+  Future<int> deleteOldFiles(int? saved_at) {
     return customUpdate(
       'DELETE FROM files WHERE saved_at < :saved_at',
-      variables: [Variable<int>(saved_at)],
+      variables: [Variable<int?>(saved_at)],
       updates: {files},
       updateKind: UpdateKind.delete,
     );

@@ -16,8 +16,10 @@
  *   along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:matrix/encryption/utils/outbound_group_session.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:test/test.dart';
@@ -169,13 +171,13 @@ void main() {
       final room = client!.getRoomById(roomId)!;
       final member = room.getState('m.room.member', '@alice:example.com')!;
       member.content['membership'] = 'leave';
-      room.summary.mJoinedMemberCount--;
+      room.summary.mJoinedMemberCount = room.summary.mJoinedMemberCount! -1;
       await client!.encryption!.keyManager!.clearOrUseOutboundGroupSession(roomId);
       expect(
           client!.encryption!.keyManager!.getOutboundGroupSession(roomId) != null,
           false);
       member.content['membership'] = 'join';
-      room.summary.mJoinedMemberCount++;
+      room.summary.mJoinedMemberCount = room.summary.mJoinedMemberCount! +1;
 
       // do not rotate if new device is added
       sess =
@@ -213,11 +215,11 @@ void main() {
 
       // do not rotate if new user is added
       member.content['membership'] = 'leave';
-      room.summary.mJoinedMemberCount--;
+      room.summary.mJoinedMemberCount = room.summary.mJoinedMemberCount! -1;
       sess =
           await (client!.encryption!.keyManager!.createOutboundGroupSession(roomId) as FutureOr<OutboundGroupSession>);
       member.content['membership'] = 'join';
-      room.summary.mJoinedMemberCount++;
+      room.summary.mJoinedMemberCount = room.summary.mJoinedMemberCount! +1;
       await client!.encryption!.keyManager!.clearOrUseOutboundGroupSession(roomId);
       expect(
           client!.encryption!.keyManager!.getOutboundGroupSession(roomId) != null,

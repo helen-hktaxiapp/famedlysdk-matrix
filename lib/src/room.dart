@@ -146,7 +146,7 @@ class Room {
 
   Future<void> updateSortOrder() async {
     await client!.database?.updateRoomSortOrder(
-        _oldestSortOrder, _newestSortOrder, client!.id, id);
+        _oldestSortOrder!, _newestSortOrder!, client!.id, id!);
   }
 
   /// Flag if the room is partial, meaning not all state events have been loaded yet
@@ -887,7 +887,7 @@ class Room {
 
   /// Call the Matrix API to forget this room if you already left it.
   Future<void> forget() async {
-    await client!.database?.forgetRoom(client!.id, id);
+    await client!.database?.forgetRoom(client!.id, id!);
     await client!.forgetRoom(id!);
     return;
   }
@@ -955,7 +955,7 @@ class Room {
 
     if (client!.database != null) {
       await client!.database!.transaction(() async {
-        await client!.database!.setRoomPrevBatch(resp.end, client!.id, id);
+        await client!.database!.setRoomPrevBatch(resp.end!, client!.id, id!);
         await loadFn();
         await updateSortOrder();
       });
@@ -1009,7 +1009,7 @@ class Room {
   Future<void> setReadMarker(String eventId, {String? mRead}) async {
     if (mRead != null) {
       notificationCount = 0;
-      await client!.database?.resetNotificationCount(client!.id, id);
+      await client!.database?.resetNotificationCount(client!.id, id!);
     }
     await client!.setReadMarker(
       id!,
@@ -1023,7 +1023,7 @@ class Room {
   /// specified.
   Future<void> postReceipt(String eventId) async {
     notificationCount = 0;
-    await client!.database?.resetNotificationCount(client!.id, id);
+    await client!.database?.resetNotificationCount(client!.id, id!);
     await client!.postReceipt(
       id!,
       ReceiptType.mRead,
@@ -1037,7 +1037,7 @@ class Room {
   @Deprecated('Use sendReadMarker instead')
   Future<void> sendReadReceipt(String eventID) async {
     notificationCount = 0;
-    await client!.database?.resetNotificationCount(client!.id, id);
+    await client!.database?.resetNotificationCount(client!.id, id!);
     await client!.setReadMarker(
       id!,
       eventID,

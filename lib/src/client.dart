@@ -940,24 +940,24 @@ class Client extends MatrixApi {
         if (id != null) {
           await database!.updateClient(
             homeserver.toString(),
-            accessToken,
-            _userID,
-            _deviceID,
-            _deviceName,
-            prevBatch,
-            encryption?.pickledOlmAccount,
+            accessToken!,
+            _userID!,
+            _deviceID!,
+            _deviceName!,
+            prevBatch!,
+            encryption!.pickledOlmAccount!,
             id,
           );
         } else {
           _id = (await (database!.insertClient(
             clientName,
             homeserver.toString(),
-            accessToken,
-            _userID,
-            _deviceID,
-            _deviceName,
-            prevBatch,
-            encryption?.pickledOlmAccount,
+            accessToken!,
+            _userID!,
+            _deviceID!,
+            _deviceName!,
+            prevBatch!,
+            encryption!.pickledOlmAccount!,
           ) as FutureOr<int?>))!;
         }
         _userDeviceKeys = await database!.getUserDeviceKeys(this);
@@ -1060,7 +1060,7 @@ class Client extends MatrixApi {
   Future<void> _checkSyncFilter() async {
     if (syncFilterId == null) {
       syncFilterId = await defineFilter(userID!, syncFilter);
-      await database?.storeSyncFilterId(syncFilterId, id);
+      await database?.storeSyncFilterId(syncFilterId!, id);
     }
     return;
   }
@@ -1679,7 +1679,7 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
                         userId,
                         deviceId,
                         json.encode(entry.toJson()),
-                        entry.directVerified,
+                        entry.directVerified!,
                         entry.blocked,
                         entry.lastActive!.millisecondsSinceEpoch,
                       ));
@@ -1768,10 +1768,10 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
                 dbActions.add(() => database!.storeUserCrossSigningKey(
                       id,
                       userId,
-                      publicKey,
+                      publicKey!,
                       json.encode(entry.toJson()),
-                      entry.directVerified,
-                      entry.blocked,
+                      entry.directVerified!,
+                      entry.blocked!,
                     ));
               }
             }
@@ -1828,7 +1828,7 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
                   k, Map<String, dynamic>.from(v)))));
 
       await super.sendToDevice(entry.type!, entry.txnId!, data);
-      await database!.deleteFromToDeviceQueue(id, entry.id);
+      await database!.deleteFromToDeviceQueue(id, entry.id!);
     }
   }
 
@@ -2161,7 +2161,7 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
         migrateClient['user_id'],
         migrateClient['device_id'],
         migrateClient['device_name'],
-        null,
+        '',
         migrateClient['olm_account'],
       );
       Logs().d('Migrate SSSSCache...');
@@ -2172,9 +2172,9 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
           await database!.storeSSSSCache(
             _id,
             type,
-            ssssCache.keyId,
-            ssssCache.ciphertext,
-            ssssCache.content,
+            ssssCache.keyId!,
+            ssssCache.ciphertext!,
+            ssssCache.content!,
           );
         }
       }
@@ -2188,28 +2188,28 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
               'Migrate cross signing key with usage ${crossSigningKey!.usage} and verified ${crossSigningKey.directVerified}...');
           await database!.storeUserCrossSigningKey(
             _id,
-            userId,
-            crossSigningKey.publicKey,
+            userId!,
+            crossSigningKey.publicKey!,
             jsonEncode(crossSigningKey.toJson()),
-            crossSigningKey.directVerified,
-            crossSigningKey.blocked,
+            crossSigningKey.directVerified!,
+            crossSigningKey.blocked!,
           );
         }
         for (final deviceKeys in deviceKeysList.deviceKeys.values) {
           Logs().d('Migrate device keys for ${deviceKeys!.deviceId}...');
           await database!.storeUserDeviceKey(
             _id,
-            userId,
-            deviceKeys.deviceId,
+            userId!,
+            deviceKeys.deviceId!,
             jsonEncode(deviceKeys.toJson()),
-            deviceKeys.directVerified,
+            deviceKeys.directVerified!,
             deviceKeys.blocked,
             deviceKeys.lastActive!.millisecondsSinceEpoch,
           );
         }
         Logs().d('Migrate user device keys info...');
         await database!.storeUserDeviceKeysInfo(
-            _id, userId, deviceKeysList.outdated);
+            _id, userId!, deviceKeysList.outdated!);
       }
       Logs().d('Migrate inbound group sessions...');
       try {
@@ -2219,14 +2219,14 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
           final session = sessions[i];
           await database!.storeInboundGroupSession(
             _id,
-            session.roomId,
-            session.sessionId,
-            session.pickle,
-            session.content,
-            session.indexes,
-            session.allowedAtIndex,
-            session.senderKey,
-            session.senderClaimedKeys,
+            session.roomId!,
+            session.sessionId!,
+            session.pickle!,
+            session.content!,
+            session.indexes!,
+            session.allowedAtIndex!,
+            session.senderKey!,
+            session.senderClaimedKeys!,
           );
         }
       } catch (e, s) {

@@ -66,9 +66,59 @@ extension MigratorExtension on Migrator {
     }
   }
 
-  Future? removeUserCrossSigningKey (int? clientId, String userId, String publicKey){
-    return null;
-  }
+  // Future<int> removeUserCrossSigningKey(
+  //     int? clientId, String userId, String publicKey) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
+
+  // Future<int> deleteFromToDeviceQueue(int client_id, int id) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
+
+  // Future<int> updateClient(
+  //     String homeserver_url,
+  //     String token,
+  //     String user_id,
+  //     String? device_id,
+  //     String? device_name,
+  //     String? prev_batch,
+  //     String? olm_account,
+  //     int client_id) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
+
+  // Future<int> setRoomPrevBatch(
+  //     String? prev_batch, int client_id, String room_id) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
+
+  // Future<int> updateInboundGroupSessionIndexes(
+  //     String? indexes, int client_id, String room_id, String session_id) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
+
+  // Future<int> setBlockedUserCrossSigningKey(
+  //     bool? blocked, int client_id, String user_id, String public_key) {
+  //   final haha = Future<int>.delayed(Duration(seconds: 1), () {
+  //     return 0;
+  //   });
+  //   return haha;
+  // }
 }
 
 @UseMoor(
@@ -311,7 +361,8 @@ class Database extends _$Database implements DatabaseApi {
         .get();
     final resAccountData = await getAllRoomAccountData(client.id).get();
     final roomList = <sdk.Room?>[];
-    final Map<String?, Set<String?>> allMembersToPostload = <String?, Set<String>>{};
+    final Map<String?, Set<String?>> allMembersToPostload =
+        <String?, Set<String>>{};
     for (final r in res) {
       final room = await getRoomFromTableRow(
         r,
@@ -479,10 +530,10 @@ class Database extends _$Database implements DatabaseApi {
     // removed from the database!
     if (roomUpdate.limitedTimeline!) {
       await removeSuccessfulRoomEvents(clientId!, roomUpdate.id!);
-      await updateRoomSortOrder(0.0, 0.0, clientId, roomUpdate.id);
+      await updateRoomSortOrder(0.0, 0.0, clientId, roomUpdate.id!);
     }
     if (roomUpdate.prev_batch != null) {
-      await setRoomPrevBatch(roomUpdate.prev_batch, clientId, roomUpdate.id);
+      await setRoomPrevBatch(roomUpdate.prev_batch, clientId!, roomUpdate.id!);
     }
   }
 
@@ -557,7 +608,8 @@ class Database extends _$Database implements DatabaseApi {
         DbEvent? oldEvent;
         if (type == sdk.EventUpdateType.history) {
           final allOldEvents =
-              await getEvent(clientId!, eventContent['event_id'], chatId!).get();
+              await getEvent(clientId!, eventContent['event_id'], chatId!)
+                  .get();
           if (allOldEvents.isNotEmpty) {
             oldEvent = allOldEvents.first;
           }
@@ -584,8 +636,8 @@ class Database extends _$Database implements DatabaseApi {
           status != 0 &&
           eventUpdate.content!['unsigned'] is Map &&
           eventUpdate.content!['unsigned']['transaction_id'] is String) {
-        await removeEvent(clientId,
-            eventUpdate.content!['unsigned']['transaction_id'], chatId);
+        await removeEvent(clientId!,
+            eventUpdate.content!['unsigned']['transaction_id'], chatId!);
       }
     }
 
@@ -692,7 +744,7 @@ class Database extends _$Database implements DatabaseApi {
           ..where((r) => r.clientId.equals(clientId)))
         .go();
     _ensuredRooms.clear();
-    await storePrevBatch(null, clientId);
+    await storePrevBatch(null, clientId!);
   }
 
   @override
@@ -717,7 +769,8 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<sdk.User?> getUser(int? clientId, String? userId, sdk.Room room) async {
+  Future<sdk.User?> getUser(
+      int? clientId, String? userId, sdk.Room room) async {
     final res = await dbGetUser(clientId!, userId!, room.id!).get();
     if (res.isEmpty) {
       return null;
@@ -784,7 +837,8 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<List<QueuedToDeviceEvent>> getToDeviceEventQueue(int? client_id) async {
+  Future<List<QueuedToDeviceEvent>> getToDeviceEventQueue(
+      int? client_id) async {
     final rows = await getToDeviceQueue(client_id!).get();
     return rows
         .map((row) => QueuedToDeviceEvent(
@@ -798,12 +852,12 @@ class Database extends _$Database implements DatabaseApi {
   }
 
   @override
-  Future<List<String>> getLastSentMessageUserDeviceKey(
+  Future<List<String?>> getLastSentMessageUserDeviceKey(
     int? client_id,
     String user_id,
-    String? device_id,
+    String device_id,
   ) =>
-      dbGetLastSentMessageUserDeviceKey(client_id!, user_id, device_id!).get();
+      dbGetLastSentMessageUserDeviceKey(client_id!, user_id, device_id).get();
 
   @override
   Future<List<StoredInboundGroupSession>>

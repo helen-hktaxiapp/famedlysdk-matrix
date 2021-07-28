@@ -148,13 +148,13 @@ class KeyManager {
     client!.database
         ?.storeInboundGroupSession(
       client!.id,
-      roomId,
-      sessionId,
+      roomId!,
+      sessionId!,
       inboundGroupSession.pickle(client!.userID!),
       json.encode(content),
       json.encode({}),
       json.encode(allowedAtIndex ?? {}),
-      senderKey,
+      senderKey!,
       json.encode(senderClaimedKeys),
     )
         ?.then((_) {
@@ -377,7 +377,7 @@ class KeyManager {
               await client!.database!.updateInboundGroupSessionAllowedAtIndex(
                   json.encode(inboundSess!.allowedAtIndex),
                   client!.id,
-                  room.id,
+                  room.id!,
                   sess.outboundGroupSession!.session_id());
             }
             // send out the key
@@ -395,7 +395,7 @@ class KeyManager {
     }
     sess.dispose();
     _outboundGroupSessions.remove(roomId);
-    await client!.database?.removeOutboundGroupSession(client!.id, roomId);
+    await client!.database?.removeOutboundGroupSession(client!.id, roomId!);
     return true;
   }
 
@@ -407,11 +407,11 @@ class KeyManager {
     }
     await client!.database?.storeOutboundGroupSession(
         client!.id,
-        roomId,
+        roomId!,
         sess.outboundGroupSession!.pickle(client!.userID!),
         json.encode(sess.devices),
         sess.creationTime!.millisecondsSinceEpoch,
-        sess.sentMessages);
+        sess.sentMessages!);
   }
 
   final Map<String?, Future<OutboundGroupSession?>>
@@ -747,7 +747,7 @@ class KeyManager {
         // no need to optimze this, as we only run it so seldomly and almost never with many keys at once
         for (final dbSession in dbSessions) {
           await client!.database!.markInboundGroupSessionAsUploaded(
-              client!.id, dbSession.roomId, dbSession.sessionId);
+              client!.id, dbSession.roomId!, dbSession.sessionId!);
         }
       } finally {
         decryption.free();
@@ -964,14 +964,13 @@ class KeyManagerKeyShareRequest {
 class RoomKeyRequest extends ToDeviceEvent {
   late KeyManager keyManager;
   late KeyManagerKeyShareRequest request;
-  RoomKeyRequest.fromToDeviceEvent(ToDeviceEvent toDeviceEvent,
-      KeyManager keyManager, KeyManagerKeyShareRequest request) {
+  RoomKeyRequest.fromToDeviceEvent(ToDeviceEvent toDeviceEvent, KeyManager keyManager, KeyManagerKeyShareRequest request): super(content: toDeviceEvent.content, type: toDeviceEvent.type, sender: toDeviceEvent.sender) {
     this.keyManager = keyManager;
     this.request = request;
     sender = toDeviceEvent.sender;
     content = toDeviceEvent.content;
     type = toDeviceEvent.type;
-  } 
+  }
 
   Room? get room => request.room;
 

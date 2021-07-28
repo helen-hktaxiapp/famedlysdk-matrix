@@ -603,7 +603,7 @@ class KeyVerification {
         }
       } else {
         await client!.sendToDeviceEncrypted(
-            [client!.userDeviceKeys[userId]!.deviceKeys[deviceId]],
+            [client!.userDeviceKeys[userId]!.deviceKeys[deviceId]!],
             type,
             payload);
       }

@@ -45,13 +45,13 @@ void main() {
         type: 'm.room.power_levels',
         content: {},
         room: room,
-        stateKey: '',
+        stateKey: '', eventId: '', senderId: '',
       ));
       room!.setState(Event(
         type: 'm.room.member',
         content: {'membership': 'join'},
         room: room,
-        stateKey: client!.userID,
+        stateKey: client!.userID, eventId: '', senderId: '',
       ));
     });
 
@@ -126,7 +126,7 @@ void main() {
     test('react', () async {
       FakeMatrixApi.calledEndpoints.clear();
       await room!.sendTextEvent('/react 🦊',
-          inReplyTo: Event(eventId: '\$event'));
+          inReplyTo: Event(eventId: '\$event', content: {}, senderId: '', type: ''));
       final sent = getLastMessagePayload('m.reaction');
       expect(sent, {
         'm.relates_to': {

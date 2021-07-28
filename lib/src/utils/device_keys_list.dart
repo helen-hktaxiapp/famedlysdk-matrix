@@ -360,14 +360,14 @@ class CrossSigningKey extends SignableKey {
   Future<void>? setVerified(bool newVerified, [bool sign = true]) async {
     await super.setVerified(newVerified, sign);
     return client!.database?.setVerifiedUserCrossSigningKey(
-        newVerified, client!.id, userId, publicKey);
+        newVerified, client!.id, userId, publicKey!);
   }
 
   @override
   Future<void>? setBlocked(bool newBlocked) {
     blocked = newBlocked;
     return client!.database?.setBlockedUserCrossSigningKey(
-        newBlocked, client!.id, userId, publicKey);
+        newBlocked, client!.id, userId, publicKey!);
   }
 
   CrossSigningKey.fromMatrixCrossSigningKey(MatrixCrossSigningKey k, Client cl)
@@ -401,7 +401,7 @@ class DeviceKeys extends SignableKey {
   List<String>? algorithms;
   DateTime? lastActive;
 
-  String? get curve25519Key => keys['curve25519:$deviceId'];
+  String get curve25519Key => keys['curve25519:$deviceId']!;
   String? get deviceDisplayName =>
       unsigned != null ? unsigned!['device_display_name'] : null;
 
@@ -434,14 +434,14 @@ class DeviceKeys extends SignableKey {
   Future<void>? setVerified(bool newVerified, [bool sign = true]) async {
     await super.setVerified(newVerified, sign);
     return client?.database
-        ?.setVerifiedUserDeviceKey(newVerified, client!.id, userId, deviceId);
+        ?.setVerifiedUserDeviceKey(newVerified, client!.id, userId, deviceId!);
   }
 
   @override
   Future<void>? setBlocked(bool newBlocked) {
     blocked = newBlocked;
     return client?.database
-        ?.setBlockedUserDeviceKey(newBlocked, client!.id, userId, deviceId);
+        ?.setBlockedUserDeviceKey(newBlocked, client!.id, userId, deviceId!);
   }
 
   DeviceKeys.fromMatrixDeviceKeys(MatrixDeviceKeys k, Client cl,

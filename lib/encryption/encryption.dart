@@ -221,8 +221,8 @@ class Encryption {
         client!.database?.updateInboundGroupSessionIndexes(
             json.encode(inboundGroupSession.indexes),
             client!.id,
-            roomId,
-            sessionId);
+            roomId!,
+            sessionId!);
       }
       decryptedPayload = json.decode(decryptResult.plaintext);
     } catch (exception) {

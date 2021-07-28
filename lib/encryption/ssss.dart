@@ -232,9 +232,9 @@ class SSSS {
 
     final accountDataType = EventTypes.secretStorageKey(keyId);
     // noooow we set the account data
-    final waitForAccountData = client.onSync.stream.firstWhere((syncUpdate) =>
+    final waitForAccountData = client!.onSync.stream.firstWhere((syncUpdate) =>
         syncUpdate.accountData != null &&
-        syncUpdate.accountData
+        syncUpdate.accountData!
             .any((accountData) => accountData.type == accountDataType));
     await client!.setAccountData(
         client!.userID!, accountDataType, content.toJson());
@@ -310,7 +310,7 @@ class SSSS {
     if (cacheTypes.contains(type) && client!.database != null) {
       // cache the thing
       await client!.database!
-          .storeSSSSCache(client!.id, type, keyId, enc['ciphertext'], decrypted);
+          .storeSSSSCache(client!.id, type, keyId!, enc['ciphertext'], decrypted);
       if (_cacheCallbacks.containsKey(type) && await getCached(type) == null) {
         _cacheCallbacks[type]!(decrypted);
       }
@@ -343,7 +343,7 @@ class SSSS {
     if (cacheTypes.contains(type) && client!.database != null) {
       // cache the thing
       await client!.database!
-          .storeSSSSCache(client!.id, type, keyId, encrypted.ciphertext, secret);
+          .storeSSSSCache(client!.id, type, keyId!, encrypted.ciphertext!, secret);
       if (triggerCacheCallback) {
         _cacheCallbacks[type]!(secret);
       }
@@ -368,7 +368,7 @@ class SSSS {
     await client!.setAccountData(client!.userID!, type, content);
     if (cacheTypes.contains(type) && client!.database != null) {
       // cache the thing
-      await client!.database!.storeSSSSCache(client!.id, type, keyId,
+      await client!.database!.storeSSSSCache(client!.id, type, keyId!,
           content['encrypted'][keyId]['ciphertext'], secret);
     }
   }
@@ -532,7 +532,7 @@ class SSSS {
           final ciphertext = client!.accountData[request.type]!
               .content['encrypted'][keyId]['ciphertext'];
           await client!.database!.storeSSSSCache(
-              client!.id, request.type, keyId, ciphertext, secret);
+              client!.id, request.type!, keyId, ciphertext, secret);
           if (_cacheCallbacks.containsKey(request.type)) {
             _cacheCallbacks[request.type!]!(secret);
           }

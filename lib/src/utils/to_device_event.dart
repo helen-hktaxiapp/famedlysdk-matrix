@@ -35,7 +35,7 @@ class ToDeviceEvent extends BasicEventWithSender {
     this.content = content;
   }
 
-  ToDeviceEvent.fromJson(Map<String, dynamic> json) {
+  ToDeviceEvent.fromJson(Map<String, dynamic> json): super.fromJson(json) {
     final event = BasicEventWithSender.fromJson(json);
     senderId = event.senderId;
     type = event.type;

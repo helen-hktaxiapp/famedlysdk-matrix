@@ -70,7 +70,7 @@ void main() {
         roomId: roomId,
         room: room,
         originServerTs: now,
-        eventId: '\$event',
+        eventId: '\$event', senderId: '',
       );
       final decryptedEvent =
           await client.encryption!.decryptRoomEvent(roomId, encryptedEvent);
