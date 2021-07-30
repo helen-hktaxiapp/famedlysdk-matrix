@@ -55,7 +55,7 @@ extension TrailingSlash on Uri {
 /// [Matrix](https://matrix.org) homeserver and is the entry point for this
 /// SDK.
 class Client extends MatrixApi {
-  late int _id;
+  int _id;
 
   // Keeps track of the currently ongoing syncRequest
   // in case we want to cancel it.
@@ -148,6 +148,7 @@ class Client extends MatrixApi {
   /// Set [compute] to the Flutter compute method to enable the SDK to run some
   /// code in background.
   Client(
+    this._id,
     this.clientName, {
     this.databaseBuilder,
     this.databaseDestroyer,
@@ -880,7 +881,7 @@ class Client extends MatrixApi {
 
       String? olmAccount;
       if (database != null) {
-        final account = await database!.getClient(clientName);
+        final account = await database?.getClient(clientName);
         if (account != null) {
           _id = account['client_id'];
           homeserver = Uri.parse(account['homeserver_url']);
@@ -949,7 +950,7 @@ class Client extends MatrixApi {
             id,
           );
         } else {
-          _id = (await (database!.insertClient(
+          _id = (await (database?.insertClient(
             clientName,
             homeserver.toString(),
             accessToken!,
@@ -960,10 +961,10 @@ class Client extends MatrixApi {
             encryption!.pickledOlmAccount!,
           ) as FutureOr<int?>))!;
         }
-        _userDeviceKeys = await database!.getUserDeviceKeys(this);
-        _rooms = await database!.getRoomList(this);
+        _userDeviceKeys = (await database?.getUserDeviceKeys(this))!;
+        _rooms = (await database?.getRoomList(this))!;
         _sortRooms();
-        accountData = await database!.getAccountData(id);
+        accountData = (await database?.getAccountData(id))!;
         presences.clear();
       }
       _initLock = false;
@@ -1099,7 +1100,7 @@ class Client extends MatrixApi {
         _currentTransaction = database!.transaction(() async {
           await handleSync(syncResp);
           if (prevBatch != syncResp.nextBatch) {
-            await database!.storePrevBatch(syncResp.nextBatch, id);
+            await database?.storePrevBatch(syncResp.nextBatch, id);
           }
         });
         await _currentTransaction;
