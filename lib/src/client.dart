@@ -938,7 +938,7 @@ class Client extends MatrixApi {
 
       if (database != null) {
         if (id != null) {
-          await database!.updateClient(
+          await database?.updateClient(
             homeserver.toString(),
             accessToken!,
             _userID!,
