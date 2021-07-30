@@ -33,11 +33,11 @@ abstract class DatabaseApi {
 
   Future updateClient(
     String homeserverUrl,
-    String token,
-    String userId,
-    String deviceId,
-    String deviceName,
-    String prevBatch,
+    String? token,
+    String? userId,
+    String? deviceId,
+    String? deviceName,
+    String? prevBatch,
     String olmAccount,
     int clientId,
   );
@@ -45,11 +45,11 @@ abstract class DatabaseApi {
   Future insertClient(
     String name,
     String homeserverUrl,
-    String token,
-    String userId,
-    String deviceId,
-    String deviceName,
-    String prevBatch,
+    String? token,
+    String? userId,
+    String? deviceId,
+    String? deviceName,
+    String? prevBatch,
     String olmAccount,
   );
 

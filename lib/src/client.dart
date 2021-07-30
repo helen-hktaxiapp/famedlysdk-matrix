@@ -880,6 +880,7 @@ class Client extends MatrixApi {
 
       String? olmAccount;
       // ignore: avoid_print
+      print('Client init');
       if (database != null) {
         // ignore: avoid_print
         final account = await database?.getClient(clientName);
@@ -942,11 +943,11 @@ class Client extends MatrixApi {
         if (id != null) {
           await database?.updateClient(
             homeserver.toString(),
-            accessToken!,
-            _userID!,
-            _deviceID!,
-            _deviceName!,
-            prevBatch!,
+            accessToken,
+            _userID,
+            _deviceID,
+            _deviceName,
+            prevBatch,
             encryption!.pickledOlmAccount!,
             id,
           );
@@ -954,11 +955,11 @@ class Client extends MatrixApi {
           _id = (await (database?.insertClient(
             clientName,
             homeserver.toString(),
-            accessToken!,
-            _userID!,
-            _deviceID!,
-            _deviceName!,
-            prevBatch!,
+            accessToken,
+            _userID,
+            _deviceID,
+            _deviceName,
+            prevBatch,
             encryption!.pickledOlmAccount!,
           ) as FutureOr<int?>))!;
         }
@@ -1008,7 +1009,7 @@ class Client extends MatrixApi {
     _userID = null;
     _deviceID = null;
     _deviceName = null;
-    prevBatch = null; //null;
+    prevBatch = ''; //null;
     _rooms = [];
     encryption?.dispose();
     encryption = null;
@@ -2060,7 +2061,7 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
   /// sessions and perform a new clean sync.
   Future<void> clearCache() async {
     await abortSync();
-    prevBatch = null;
+    prevBatch = '';
     rooms.clear();
     await database?.clearCache(id);
     encryption?.keyManager?.clearOutboundGroupSessions();
