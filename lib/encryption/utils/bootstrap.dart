@@ -386,7 +386,7 @@ class Bootstrap {
       } else {
         Logs().v('Get stored key...');
         masterSigningKey = base64.decode(
-            await newSsssKey.getStored(EventTypes.CrossSigningMasterKey) ?? '');
+            await newSsssKey.getStored(EventTypes.CrossSigningMasterKey));
         if (masterSigningKey == null || masterSigningKey.isEmpty) {
           // no master signing key :(
           throw BootstrapBadStateException('No master key');

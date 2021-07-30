@@ -1567,7 +1567,7 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
   void _sortRooms() {
     if (prevBatch == null || _sortLock || rooms.length < 2) return;
     _sortLock = true;
-    rooms?.sort(sortRoomsBy);
+    rooms.sort(sortRoomsBy);
     _sortLock = false;
   }
 

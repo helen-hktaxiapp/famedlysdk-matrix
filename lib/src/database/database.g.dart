@@ -6279,7 +6279,7 @@ abstract class _$Database extends GeneratedDatabase {
   }
 
   Selectable<DbOlmSessions> dbGetOlmSessionsForDevices(
-      int client_id, List<String?> identity_keys) {
+      int client_id, List<String> identity_keys) {
     var $arrayStartIndex = 2;
     final expandedidentity_keys =
         $expandVar($arrayStartIndex, identity_keys.length);

@@ -386,7 +386,7 @@ class OlmManager {
             )));
         updateSessionUsage();
       } catch (e) {
-        newSession?.free();
+        newSession.free();
         throw DecryptException(DecryptException.decryptionFailed, e.toString());
       }
     }
@@ -544,7 +544,7 @@ class OlmManager {
           Logs().v('[OlmManager] Starting session with $userId:$deviceId');
           final session = olm.Session();
           try {
-            session.create_outbound(_olmAccount!, identityKey!, deviceKey['key']);
+            session.create_outbound(_olmAccount!, identityKey, deviceKey['key']);
             await storeOlmSession(OlmSession(
               key: client!.userID,
               identityKey: identityKey,

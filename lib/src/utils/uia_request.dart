@@ -69,7 +69,7 @@ class UiaRequest<T> {
         rethrow;
       }
       session ??= err.session;
-      final completed = err.completedAuthenticationFlows ?? <String>[];
+      final completed = err.completedAuthenticationFlows;
       final flows = err.authenticationFlows ?? <AuthenticationFlow>[];
       params = err.authenticationParams ?? <String, dynamic>{};
       nextStages = getNextStages(flows, completed);

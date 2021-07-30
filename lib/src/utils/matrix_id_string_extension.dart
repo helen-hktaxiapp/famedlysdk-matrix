@@ -31,7 +31,7 @@ extension MatrixIdExtension on String {
   }
 
   bool get isValidMatrixId {
-    if (isEmpty ?? true) return false;
+    if (isEmpty) return false;
     if (length > maxLength) return false;
     if (!validSigils.contains(substring(0, 1))) {
       return false;
@@ -55,7 +55,7 @@ extension MatrixIdExtension on String {
 
   String? get domain => isValidMatrixId ? _getParts().last : null;
 
-  bool equals(String other) => toLowerCase() == other?.toLowerCase();
+  bool equals(String other) => toLowerCase() == other.toLowerCase();
 
   /// Separate a matrix identifier string into a primary indentifier, a secondary identifier,
   /// a query string and already parsed `via` parameters. A matrix identifier string

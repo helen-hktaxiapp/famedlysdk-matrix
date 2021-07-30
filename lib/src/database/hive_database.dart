@@ -416,7 +416,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
           room.getState(EventTypes.RoomCanonicalAlias) == null) {
         // we don't have a name and no canonical alias, so we'll need to
         // post-load the heroes
-        membersToPostload.addAll(room.summary?.mHeroes ?? []);
+        membersToPostload.addAll(room.summary.mHeroes ?? []);
       }
       // Load members
       for (final userId in membersToPostload) {

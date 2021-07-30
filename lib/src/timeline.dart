@@ -102,7 +102,7 @@ class Timeline {
   }
 
   Timeline({this.room, required List<Event> events, this.onUpdate, this.onInsert})
-      : events = events ?? [] {
+      : events = events {
     sub ??= room!.client!.onEvent.stream.listen(_handleEventUpdate);
     // if the timeline is limited we want to clear our events cache
     // as r.limitedTimeline can be "null" sometimes, we need to check for == true
@@ -327,7 +327,7 @@ class Timeline {
   void _sort() {
     if (_sortLock || events.length < 2) return;
     _sortLock = true;
-    events?.sort((a, b) {
+    events.sort((a, b) {
       if (b.status == -1 && a.status != -1) {
         return 1;
       }

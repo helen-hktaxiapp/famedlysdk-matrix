@@ -43,10 +43,7 @@ extension ImagePackRoomExtension on Room {
         }
         if (!packs.containsKey(finalSlug)) {
           packs[finalSlug] = ImagePackContent.fromJson(<String, dynamic>{});
-          packs[finalSlug]!.pack.displayName = imagePack.pack.displayName ??
-              room?.displayname ??
-              finalSlug ??
-              '';
+          packs[finalSlug]!.pack.displayName = imagePack.pack.displayName;
           packs[finalSlug]!.pack.avatarUrl =
               imagePack.pack.avatarUrl ?? room?.avatar;
           packs[finalSlug]!.pack.attribution = imagePack.pack.attribution;

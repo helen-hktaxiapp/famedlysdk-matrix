@@ -415,7 +415,7 @@ class Room {
         for (final entry in states[EventTypes.RoomMember]!.entries) {
           final state = entry.value;
           if (state.type == EventTypes.RoomMember &&
-              state.stateKey != client?.userID) heroes!.add(state.stateKey);
+              state.stateKey != client?.userID) heroes.add(state.stateKey);
         }
       }
     }

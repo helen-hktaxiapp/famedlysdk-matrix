@@ -464,7 +464,7 @@ class Database extends _$Database implements DatabaseApi {
       }
       newAccountData[d.type] = api.BasicEvent(
         content: content,
-        type: d.type!,
+        type: d.type,
       );
     }
     return newAccountData;
@@ -582,7 +582,7 @@ class Database extends _$Database implements DatabaseApi {
               (oldEvent.status == 0 && status == -1)) {
             // update the status
             await updateEventStatusOnly(
-                status, clientId!, eventContent['event_id'], chatId!);
+                status, clientId, eventContent['event_id'], chatId);
           }
         } else {
           // status changed and we have an old transaction id --> update event id and stuffs
@@ -590,9 +590,9 @@ class Database extends _$Database implements DatabaseApi {
             final updated = await updateEventStatus(
                 status!,
                 eventContent['event_id'],
-                clientId!,
+                clientId,
                 eventContent['unsigned']['transaction_id'],
-                chatId!);
+                chatId);
             if (updated == 0) {
               storeNewEvent = true;
             }
@@ -826,7 +826,7 @@ class Database extends _$Database implements DatabaseApi {
   @override
   Future<List<OlmSession>> getOlmSessionsForDevices(
     int? client_id,
-    List<String?> identity_keys,
+    List<String> identity_keys,
     String? userId,
   ) async {
     final rows =
@@ -846,7 +846,7 @@ class Database extends _$Database implements DatabaseApi {
               type: row.type,
               txnId: row.txnId,
               content:
-                  (json.decode(row.content!) as Map<String, dynamic>).copy(),
+                  (json.decode(row.content) as Map<String, dynamic>).copy(),
             ))
         .toList();
   }
@@ -909,7 +909,7 @@ Future<Room> getRoomFromTableRow(
   final newRoom = Room(
     id: row.roomId,
     membership: sdk.Membership.values
-        .firstWhere((e) => e.toString() == 'Membership.' + row.membership!),
+        .firstWhere((e) => e.toString() == 'Membership.' + row.membership),
     notificationCount: row.notificationCount,
     highlightCount: row.highlightCount,
     // TODO: do proper things
