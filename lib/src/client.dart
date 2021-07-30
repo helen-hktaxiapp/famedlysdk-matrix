@@ -55,7 +55,7 @@ extension TrailingSlash on Uri {
 /// [Matrix](https://matrix.org) homeserver and is the entry point for this
 /// SDK.
 class Client extends MatrixApi {
-  int _id;
+  late int _id;
 
   // Keeps track of the currently ongoing syncRequest
   // in case we want to cancel it.
@@ -148,7 +148,6 @@ class Client extends MatrixApi {
   /// Set [compute] to the Flutter compute method to enable the SDK to run some
   /// code in background.
   Client(
-    this._id,
     this.clientName, {
     this.databaseBuilder,
     this.databaseDestroyer,
@@ -657,7 +656,7 @@ class Client extends MatrixApi {
           membership: Membership.leave,
           client: this,
           roomAccountData:
-              room.accountData?.asMap()?.map((k, v) => MapEntry(v.type, v)) ??
+              room.accountData?.asMap().map((k, v) => MapEntry(v.type, v)) ??
                   <String, BasicRoomEvent>{},
         );
         if (room.timeline?.events != null) {
@@ -880,7 +879,9 @@ class Client extends MatrixApi {
       }
 
       String? olmAccount;
+      // ignore: avoid_print
       if (database != null) {
+        // ignore: avoid_print
         final account = await database?.getClient(clientName);
         if (account != null) {
           _id = account['client_id'];

@@ -29,7 +29,7 @@ import '../../matrix.dart';
 abstract class DatabaseApi {
   int get maxFileSize => 1 * 1024 * 1024;
   bool get supportsFileStoring => false;
-  Future<Map<String?, dynamic>?> getClient(String name);
+  Future<Map<String, dynamic>?> getClient(String name);
 
   Future updateClient(
     String homeserverUrl,

@@ -273,8 +273,8 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
   }
 
   @override
-  Future<Map<String?, dynamic>?> getClient(String name) async {
-    final map = <String?, dynamic>{};
+  Future<Map<String, dynamic>?> getClient(String name) async {
+    final map = <String, dynamic>{};
     for (final key in _clientBox!.keys) {
       if (key == 'version') continue;
       map[key] = await _clientBox!.get(key);
