@@ -6196,18 +6196,18 @@ abstract class _$Database extends GeneratedDatabase {
       String? device_id,
       String? device_name,
       String? prev_batch,
-      String olm_account,
+      String? olm_account,
       int client_id) {
     return customUpdate(
       'UPDATE clients SET homeserver_url = :homeserver_url, token = :token, user_id = :user_id, device_id = :device_id, device_name = :device_name, prev_batch = :prev_batch, olm_account = :olm_account WHERE client_id = :client_id',
       variables: [
         Variable<String>(homeserver_url),
-        Variable<String>(token),
-        Variable<String>(user_id),
+        Variable<String?>(token),
+        Variable<String?>(user_id),
         Variable<String?>(device_id),
         Variable<String?>(device_name),
         Variable<String?>(prev_batch),
-        Variable<String?>(olm_account),
+        Variable<String>(olm_account),
         Variable<int>(client_id)
       ],
       updates: {clients},
@@ -6706,12 +6706,12 @@ abstract class _$Database extends GeneratedDatabase {
       variables: [
         Variable<String>(name),
         Variable<String>(homeserver_url),
-        Variable<String>(token),
-        Variable<String>(user_id),
+        Variable<String?>(token),
+        Variable<String?>(user_id),
         Variable<String?>(device_id),
         Variable<String?>(device_name),
         Variable<String?>(prev_batch),
-        Variable<String?>(olm_account)
+        Variable<String>(olm_account)
       ],
       updates: {clients},
     );
@@ -6770,7 +6770,7 @@ abstract class _$Database extends GeneratedDatabase {
     return customInsert(
       'INSERT OR REPLACE INTO account_data (client_id, type, content) VALUES (:client_id, :type, :content)',
       variables: [
-        Variable<int>(client_id),
+        Variable<int?>(client_id),
         Variable<String>(type),
         Variable<String?>(content)
       ],
