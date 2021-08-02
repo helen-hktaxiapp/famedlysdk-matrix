@@ -6191,12 +6191,12 @@ abstract class _$Database extends GeneratedDatabase {
 
   Future<int> updateClient(
       String homeserver_url,
-      String token,
-      String user_id,
+      String? token,
+      String? user_id,
       String? device_id,
       String? device_name,
       String? prev_batch,
-      String? olm_account,
+      String olm_account,
       int client_id) {
     return customUpdate(
       'UPDATE clients SET homeserver_url = :homeserver_url, token = :token, user_id = :user_id, device_id = :device_id, device_name = :device_name, prev_batch = :prev_batch, olm_account = :olm_account WHERE client_id = :client_id',
@@ -6695,12 +6695,12 @@ abstract class _$Database extends GeneratedDatabase {
   Future<int> insertClient(
       String name,
       String homeserver_url,
-      String token,
-      String user_id,
+      String? token,
+      String? user_id,
       String? device_id,
       String? device_name,
       String? prev_batch,
-      String? olm_account) {
+      String olm_account) {
     return customInsert(
       'INSERT INTO clients (name, homeserver_url, token, user_id, device_id, device_name, prev_batch, olm_account) VALUES (:name, :homeserver_url, :token, :user_id, :device_id, :device_name, :prev_batch, :olm_account)',
       variables: [
@@ -6766,7 +6766,7 @@ abstract class _$Database extends GeneratedDatabase {
         readsFrom: {accountData}).map(accountData.mapFromRow);
   }
 
-  Future<int> storeAccountData(int client_id, String type, String? content) {
+  Future<int> storeAccountData(int? client_id, String type, String content) {
     return customInsert(
       'INSERT OR REPLACE INTO account_data (client_id, type, content) VALUES (:client_id, :type, :content)',
       variables: [

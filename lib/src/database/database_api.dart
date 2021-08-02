@@ -41,7 +41,7 @@ abstract class DatabaseApi {
     String olmAccount,
     int clientId,
   );
-
+  
   Future insertClient(
     String name,
     String homeserverUrl,
@@ -86,7 +86,7 @@ abstract class DatabaseApi {
 
   Future storeSyncFilterId(String syncFilterId, int clientId);
 
-  Future storeAccountData(int clientId, String type, String content);
+  Future storeAccountData(int? clientId, String type, String content);
 
   Future<Map<String?, DeviceKeysList>> getUserDeviceKeys(Client client);
 
