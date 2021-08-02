@@ -6196,7 +6196,7 @@ abstract class _$Database extends GeneratedDatabase {
       String? device_id,
       String? device_name,
       String? prev_batch,
-      String? olm_account,
+      String olm_account,
       int client_id) {
     return customUpdate(
       'UPDATE clients SET homeserver_url = :homeserver_url, token = :token, user_id = :user_id, device_id = :device_id, device_name = :device_name, prev_batch = :prev_batch, olm_account = :olm_account WHERE client_id = :client_id',
