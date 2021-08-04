@@ -267,11 +267,11 @@ class Database extends _$Database implements DatabaseApi {
       );
 
   @override
-  Future<Map<String, dynamic>?> getClient(String name) async {
+  Future<Map<String, dynamic>> getClient(String name) async {
     print('client123 getClient name: $name');
     final res = await dbGetClient(name).get();
     print('client123 res: $res');
-    if (res.isEmpty) return null;
+    if (res.isEmpty) return {};
     await markPendingEventsAsError(res.single.clientId);
     return res.single.toJson();
   }
