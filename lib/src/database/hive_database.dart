@@ -292,14 +292,15 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
 
   @override
   Future<List<Event>> getEventList(int? clientId, Room room) async {
-    final List eventIds =
-        (await (_timelineFragmentsBox!.get(MultiKey(room.id, '').toString()) as FutureOr<List<dynamic>?>) ??
-            []);
-    final events = await Future.wait(eventIds
+    final eventIds =
+        await _timelineFragmentsBox!.get(MultiKey(room.id, '').toString()) ??
+            [];
+    // ignore: omit_local_variable_types
+    final List<Event> events = await Future.wait(eventIds
         .map(
           (eventId) async => Event.fromJson(
             convertToJson(
-              await (_eventsBox!.get(MultiKey(room.id, eventId).toString()) as FutureOr<Map<dynamic, dynamic>>),
+              await _eventsBox!.get(MultiKey(room.id, eventId).toString()) ,
             ),
             room,
           ),
@@ -433,7 +434,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
       // `getUnimportantRoomStates()` is called.
       for (final type in importantRoomStates!) {
         final Map? states =
-            await (_roomStateBox!.get(MultiKey(room.id, type).toString()) as FutureOr<Map<dynamic, dynamic>?>);
+            await _roomStateBox!.get(MultiKey(room.id, type).toString());
         if (states == null) continue;
         final stateEvents = states.values
             .map((raw) => Event.fromJson(convertToJson(raw), room))
@@ -490,7 +491,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
 
     final unimportantEvents = <Event>[];
     for (final key in keys) {
-      final Map states = await (_roomStateBox!.get(key) as FutureOr<Map<dynamic, dynamic>>);
+      final Map states = await _roomStateBox!.get(key) ;
       unimportantEvents.addAll(
           states.values.map((raw) => Event.fromJson(convertToJson(raw), room)));
     }
@@ -529,9 +530,9 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
             'outdated': await _userDeviceKeysOutdatedBox!.get(userId),
           },
           await Future.wait(deviceKeysBoxKeys.map(
-              (key) async => convertToJson(await (_userDeviceKeysBox!.get(key) as FutureOr<Map<dynamic, dynamic>>)))),
+              (key) async => convertToJson(await _userDeviceKeysBox!.get(key)))),
           await Future.wait(crossSigningKeysBoxKeys.map((key) async =>
-              convertToJson(await (_userCrossSigningKeysBox!.get(key) as FutureOr<Map<dynamic, dynamic>>)))),
+              convertToJson(await _userCrossSigningKeysBox!.get(key)))),
           client);
     }
     return res;
@@ -610,7 +611,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
     for (final key in _timelineFragmentsBox!.keys) {
       final multiKey = MultiKey.fromString(key);
       if (multiKey.parts.first != roomId) continue;
-      final List eventIds = await (_timelineFragmentsBox!.get(key) as FutureOr<List<dynamic>?>) ?? [];
+      final List eventIds = await _timelineFragmentsBox!.get(key)?? [];
       final prevLength = eventIds.length;
       eventIds.removeWhere((id) => id == eventId);
       if (eventIds.length < prevLength) {
@@ -773,7 +774,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
               .containsKey(MultiKey(eventUpdate.roomID, eventId).toString())
           ? Event.fromJson(
               convertToJson(await (_eventsBox!
-                  .get(MultiKey(eventUpdate.roomID, eventId).toString()) as FutureOr<Map<dynamic, dynamic>>)),
+                  .get(MultiKey(eventUpdate.roomID, eventId).toString()))),
               null)
           : null;
 
@@ -805,7 +806,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
 
       // Update timeline fragments
       final key = MultiKey(eventUpdate.roomID, '').toString();
-      final List eventIds = (await (_timelineFragmentsBox!.get(key) as FutureOr<List<dynamic>?>) ?? []);
+      final List eventIds = (await (_timelineFragmentsBox!.get(key)) ?? []);
       if (!eventIds.any((id) => id == eventId)) {
         eventIds.add(eventId);
         await _timelineFragmentsBox!.put(key, eventIds);
@@ -832,7 +833,7 @@ class FamedlySdkHiveDatabase extends DatabaseApi {
           eventUpdate.roomID,
           eventUpdate.content!['type'],
         ).toString();
-        final Map stateMap = await (_roomStateBox!.get(key) as FutureOr<Map<dynamic, dynamic>?>) ?? {};
+        final Map stateMap = await (_roomStateBox!.get(key)) ?? {};
         stateMap[eventUpdate.content!['state_key']] = eventUpdate.content;
         await _roomStateBox!.put(key, stateMap);
       }

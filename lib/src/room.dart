@@ -224,12 +224,13 @@ class Room {
 
   /// The pinned events for this room. If there are none this returns an empty
   /// list.
-  List<String>? get pinnedEventIds => getState(EventTypes.RoomPinnedEvents) !=
-          null
-      ? (getState(EventTypes.RoomPinnedEvents)!.content['pinned'] is List<String>
-          ? getState(EventTypes.RoomPinnedEvents)!.content['pinned']
-          : <String>[])
-      : <String>[];
+  List<String>? get pinnedEventIds =>
+      getState(EventTypes.RoomPinnedEvents) != null
+          ? (getState(EventTypes.RoomPinnedEvents)!.content['pinned']
+                  is List<String>
+              ? getState(EventTypes.RoomPinnedEvents)!.content['pinned']
+              : <String>[])
+          : <String>[];
 
   /// Returns a localized displayname for this server. If the room is a groupchat
   /// without a name, then it will return the localized version of 'Group with Alice' instead
@@ -276,11 +277,11 @@ class Room {
   }
 
   /// The address in the format: #roomname:homeserver.org.
-  String? get canonicalAlias =>
-      getState(EventTypes.RoomCanonicalAlias) != null &&
-              getState(EventTypes.RoomCanonicalAlias)!.content['alias'] is String
-          ? getState(EventTypes.RoomCanonicalAlias)!.content['alias']
-          : '';
+  String? get canonicalAlias => getState(EventTypes.RoomCanonicalAlias) !=
+              null &&
+          getState(EventTypes.RoomCanonicalAlias)!.content['alias'] is String
+      ? getState(EventTypes.RoomCanonicalAlias)!.content['alias']
+      : '';
 
   /// Sets the canonical alias. If the [canonicalAlias] is not yet an alias of
   /// this room, it will create one.
@@ -360,7 +361,8 @@ class Room {
   /// Returns a list of all current typing users.
   List<User> get typingUsers {
     if (!ephemerals.containsKey('m.typing')) return [];
-    final List<dynamic> typingMxid = ephemerals['m.typing']!.content['user_ids'];
+    final List<dynamic> typingMxid =
+        ephemerals['m.typing']!.content['user_ids'];
     return typingMxid.cast<String>().map(getUserByMXIDSync).toList();
   }
 
@@ -626,7 +628,8 @@ class Room {
     MatrixImageFile? thumbnail,
   }) async {
     MatrixFile uploadFile = file; // ignore: omit_local_variable_types
-    MatrixFile? uploadThumbnail = thumbnail; // ignore: omit_local_variable_types
+    MatrixFile? uploadThumbnail =
+        thumbnail; // ignore: omit_local_variable_types
     EncryptedFile? encryptedFile;
     EncryptedFile? encryptedThumbnail;
     if (encrypted && client!.fileEncryptionEnabled) {
@@ -1048,7 +1051,8 @@ class Room {
 
   /// Creates a timeline from the store. Returns a [Timeline] object.
   Future<Timeline> getTimeline(
-      {void Function()? onUpdate, void Function(int insertID)? onInsert}) async {
+      {void Function()? onUpdate,
+      void Function(int insertID)? onInsert}) async {
     await postLoad();
     var events;
     if (client!.database != null) {
@@ -1112,16 +1116,21 @@ class Room {
     if (_requestedParticipants || participantListComplete) {
       return getParticipants();
     }
-    final matrixEvents = await (client!.getMembersByRoom(id!) as FutureOr<List<MatrixEvent>>);
-    final users =
-        matrixEvents.map((e) => Event.fromMatrixEvent(e, this).asUser).toList();
-    for (final user in users) {
-      setState(user); // at *least* cache this in-memory
+    final matrixEvents = await client!.getMembersByRoom(id!);
+    final users = matrixEvents
+        ?.map((e) => Event.fromMatrixEvent(e, this).asUser)
+        .toList();
+    if (users != null) {
+      for (final user in users) {
+        setState(user); // at *least* cache this in-memory
+      }
+      _requestedParticipants = true;
+      users.removeWhere(
+          (u) => [Membership.leave, Membership.ban].contains(u.membership));
+      return users;
+    }else{
+      return [];
     }
-    _requestedParticipants = true;
-    users.removeWhere(
-        (u) => [Membership.leave, Membership.ban].contains(u.membership));
-    return users;
   }
 
   /// Checks if the local participant list of joined and invited users is complete.
@@ -1575,10 +1584,9 @@ class Room {
   /// to the room from someone already inside of the room. Currently, knock and private are reserved
   /// keywords which are not implemented.
   JoinRules? get joinRules => getState(EventTypes.RoomJoinRules) != null
-      ? JoinRules.values.firstWhereOrNull(
-          (r) =>
-              r.toString().replaceAll('JoinRules.', '') ==
-              getState(EventTypes.RoomJoinRules)!.content['join_rule'])
+      ? JoinRules.values.firstWhereOrNull((r) =>
+          r.toString().replaceAll('JoinRules.', '') ==
+          getState(EventTypes.RoomJoinRules)!.content['join_rule'])
       : null;
 
   /// Changes the join rules. You should check first if the user is able to change it.

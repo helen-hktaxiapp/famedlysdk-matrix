@@ -381,8 +381,8 @@ class Client extends MatrixApi {
             versions.versions.toSet(), supportedVersions);
       }
 
-      final loginTypes = await (getLoginFlows() as FutureOr<List<LoginFlow>>);
-      if (!loginTypes.any((f) => supportedLoginTypes!.contains(f.type))) {
+      final loginTypes = await getLoginFlows();
+      if (!loginTypes!.any((f) => supportedLoginTypes!.contains(f.type))) {
         throw BadServerLoginTypesException(
             loginTypes.map((f) => f.type).toSet(), supportedLoginTypes);
       }
@@ -884,7 +884,9 @@ class Client extends MatrixApi {
       if (database != null) {
         // ignore: avoid_print
         final account = await database?.getClient(clientName);
-        if (account != null) {
+        print('client123 account $account');
+        if (account != null && account['client_id'] != null) {
+          print('client123  clientid ${account['client_id']}');
           _id = account['client_id'];
           homeserver = Uri.parse(account['homeserver_url']);
           accessToken = account['token'];
@@ -952,7 +954,7 @@ class Client extends MatrixApi {
             id,
           );
         } else {
-          _id = (await (database?.insertClient(
+          _id = await database?.insertClient(
             clientName,
             homeserver.toString(),
             accessToken,
@@ -961,7 +963,7 @@ class Client extends MatrixApi {
             _deviceName,
             prevBatch,
             encryption!.pickledOlmAccount!,
-          ) as FutureOr<int?>))!;
+          );
         }
         _userDeviceKeys = (await database?.getUserDeviceKeys(this))!;
         _rooms = (await database?.getRoomList(this))!;

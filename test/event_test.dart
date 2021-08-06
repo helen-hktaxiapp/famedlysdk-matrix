@@ -278,9 +278,9 @@ void main() {
           jsonObj, Room(id: '!1234:example.com', client: matrix));
       final resp1 = await event.sendAgain();
       event.status = -1;
-      final resp2 = await (event.sendAgain(txid: '1234') as FutureOr<String>);
+      final resp2 = await (event.sendAgain(txid: '1234'));
       expect(resp1, null);
-      expect(resp2.startsWith('\$event'), true);
+      expect(resp2?.startsWith('\$event'), true);
 
       await matrix.dispose(closeDatabase: true);
     });
