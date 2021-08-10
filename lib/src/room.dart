@@ -171,8 +171,15 @@ class Room {
 
   /// Returns the [Event] for the given [typeKey] and optional [stateKey].
   /// If no [stateKey] is provided, it defaults to an empty string.
-  Event? getState(String typeKey, [String? stateKey = '']) =>
-      states[typeKey] != null ? states[typeKey]![stateKey!] : null;
+  Event? getState(String typeKey, [String? stateKey = '']) {
+    var statesTypeKey = states[typeKey];
+    if (statesTypeKey != null && stateKey != null) {
+      return statesTypeKey[stateKey];
+    } else {
+      return null;
+    }
+  }
+      
 
   /// Adds the [state] to this room and overwrites a state with the same
   /// typeKey/stateKey key pair if there is one.

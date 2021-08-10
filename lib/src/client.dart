@@ -1620,14 +1620,14 @@ sort order of ${prevState.sortOrder}. This should never happen...''');
       final dbActions = <Future<dynamic> Function()>[];
       final trackedUserIds = await _getUserIdsInEncryptedRooms();
       if (!isLogged()) return;
-      trackedUserIds.add(userID);
+      if (userID != null) trackedUserIds.add(userID);
 
       // Remove all userIds we no longer need to track the devices of.
       _userDeviceKeys
           .removeWhere((String? userId, v) => !trackedUserIds.contains(userId));
 
       // Check if there are outdated device key lists. Add it to the set.
-      final outdatedLists = <String?, List<String>>{};
+      final outdatedLists = <String, List<String>>{};
       for (final userId in trackedUserIds) {
         if (!userDeviceKeys.containsKey(userId)) {
           _userDeviceKeys[userId] = DeviceKeysList(userId, this);
