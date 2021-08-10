@@ -55,7 +55,7 @@ extension TrailingSlash on Uri {
 /// [Matrix](https://matrix.org) homeserver and is the entry point for this
 /// SDK.
 class Client extends MatrixApi {
-  late int _id;
+  int _id = 0;
 
   // Keeps track of the currently ongoing syncRequest
   // in case we want to cancel it.
