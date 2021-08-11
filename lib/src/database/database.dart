@@ -363,8 +363,7 @@ class Database extends _$Database implements DatabaseApi {
         .get();
     final resAccountData = await getAllRoomAccountData(client.id).get();
     final roomList = <sdk.Room?>[];
-    final Map<String?, Set<String?>> allMembersToPostload =
-        <String?, Set<String>>{};
+    final Map<String?, Set<String?>> allMembersToPostload = {};
     for (final r in res) {
       final room = await getRoomFromTableRow(
         r,
