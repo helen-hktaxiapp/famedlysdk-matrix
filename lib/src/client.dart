@@ -942,7 +942,7 @@ class Client extends MatrixApi {
       await encryption?.init(olmAccount);
 
       if (database != null) {
-        if (id != null) {
+        if (id != null && id != 0) {
           await database?.updateClient(
             homeserver.toString(),
             accessToken,
