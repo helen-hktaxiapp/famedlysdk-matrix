@@ -17,7 +17,10 @@ dependencies:
   crypto: ^3.0.0
   base58check: ^2.0.0
   olm: ^2.0.0
-  matrix_api_lite: ^0.4.0
+  matrix_api_lite:
+    git:
+      url: https://github.com/mkc188/matrix_api_lite.git
+      ref: e4e0845
   hive: ^2.0.4
   ffi: ^1.0.0
   js: ^0.6.3
