@@ -328,12 +328,12 @@ class Timeline {
     if (_sortLock || events.length < 2) return;
     _sortLock = true;
     events.sort((a, b) {
-      if (b.status == -1 && a.status != -1) {
-        return 1;
-      }
-      if (a.status == -1 && b.status != -1) {
-        return -1;
-      }
+      // if (b.status == -1 && a.status != -1) {
+      //   return 1;
+      // }
+      // if (a.status == -1 && b.status != -1) {
+      //   return -1;
+      // }
       return b.sortOrder! - a.sortOrder! > 0 ? 1 : -1;
     });
     _sortLock = false;
