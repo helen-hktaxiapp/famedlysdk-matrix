@@ -799,7 +799,7 @@ class Room {
     final sentDate = DateTime.now();
     final syncUpdate = SyncUpdate(nextBatch: '')
       ..rooms = (RoomsUpdate()
-        ..join = (<String?, JoinedRoomUpdate>{}..[id] = (JoinedRoomUpdate()
+        ..join = (<String, JoinedRoomUpdate>{}..[id!] = (JoinedRoomUpdate()
           ..timeline = (TimelineUpdate()
             ..events = [
               MatrixEvent(
@@ -813,7 +813,7 @@ class Room {
                   'transaction_id': messageID,
                 },
               )
-            ]))) as Map<String, JoinedRoomUpdate>?);
+            ]))));
     await _handleFakeSync(syncUpdate);
 
     // Send the text and on success, store and display a *sent* event.
